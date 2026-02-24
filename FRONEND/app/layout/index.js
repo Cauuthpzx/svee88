@@ -128,19 +128,24 @@ const handleLogout = () => {
   })
 }
 
+const setHeaderName = (user) => {
+  const el = document.getElementById('headerUserName')
+  if (el && user) el.textContent = user.name || user.username || ''
+}
+
 const loadUserInfo = async () => {
   const cached = store.get('user')
   if (cached) {
-    const el = document.getElementById('headerUserName')
-    if (el) el.textContent = cached.name
+    setHeaderName(cached)
     return
   }
   try {
     const user = await authApi.getMe()
     store.set('user', user)
-    const el = document.getElementById('headerUserName')
-    if (el) el.textContent = user.name
-  } catch (_) { /* handled by http interceptor */ }
+    setHeaderName(user)
+  } catch (err) {
+    console.warn('[layout] loadUserInfo failed:', err?.message || err)
+  }
 }
 
 export const isRendered = () => !!document.getElementById(LAYOUT_ID)
@@ -152,7 +157,7 @@ const handleSidebarHover = (e) => {
 
 export const render = async () => {
   document.getElementById('app').innerHTML = template()
-  layui.use('element', function () {})
+  layui.use('element', function (element) { element.render('nav') })
   initTheme()
   document.getElementById('themeToggle')
     ?.addEventListener('click', toggleTheme)

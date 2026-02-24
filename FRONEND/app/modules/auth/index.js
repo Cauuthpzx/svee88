@@ -51,10 +51,6 @@ const loginTemplate = () => `
           </div>
         </form>
       </div>
-      <div class="auth-footer">
-        <span>Chưa có tài khoản? </span>
-        <a href="${ROUTES.REGISTER}">Đăng ký ngay</a>
-      </div>
     </div>
   </div>
 `
@@ -130,10 +126,6 @@ const registerTemplate = () => `
               lay-filter="submitRegister">Đăng ký</button>
           </div>
         </form>
-      </div>
-      <div class="auth-footer">
-        <span>Đã có tài khoản? </span>
-        <a href="${ROUTES.LOGIN}">Đăng nhập</a>
       </div>
     </div>
   </div>

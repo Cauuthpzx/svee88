@@ -39,4 +39,4 @@ USER app
 # Set the working directory
 WORKDIR /code
 
-CMD ["gunicorn", "app.main:app", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:8000"]
+CMD ["gunicorn", "hubserver.main:app", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:8000"]

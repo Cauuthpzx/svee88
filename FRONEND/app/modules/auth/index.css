@@ -81,21 +81,6 @@
   margin-top: 20px;
 }
 
-.auth-footer {
-  text-align: center;
-  padding: 0 28px 22px;
-  font-size: 13px;
-  color: #999;
-}
-
-.auth-footer a {
-  color: #16baaa;
-}
-
-.auth-footer a:hover {
-  color: #0a8a7d;
-}
-
 /* ── Dark mode ── */
 .dark .auth-wrapper {
   background-color: var(--lay-color-bg-1, #1e1e1e);
@@ -118,10 +103,6 @@
   color: var(--lay-color-text-3, #888);
 }
 
-.dark .auth-footer {
-  color: var(--lay-color-text-3, #888);
-}
-
 @media (max-width: 480px) {
   .auth-card {
     border-radius: 4px;
@@ -135,7 +116,4 @@
     padding: 12px 18px 16px;
   }
 
-  .auth-footer {
-    padding: 0 18px 18px;
-  }
 }

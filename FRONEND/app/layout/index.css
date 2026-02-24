@@ -40,6 +40,7 @@
   background-color: #fff;
   border-bottom: none;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  z-index: 1010;
 }
 .layui-layout-admin .layui-header .layui-nav {
   background: transparent;
@@ -241,6 +242,15 @@
 /* ── Avatar ── */
 .layui-nav-img {
   margin-right: 6px;
+}
+
+/* ── Header dropdown indicator ── */
+.layui-header .layui-layout-right .layui-nav-item > a:has(+ .layui-nav-child)::after {
+  content: '\e61a';
+  font-family: 'layui-icon';
+  font-size: 12px;
+  margin-left: 5px;
+  vertical-align: middle;
 }
 
 /* ── Theme toggle ── */

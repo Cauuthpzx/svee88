@@ -1,7 +1,7 @@
 [project]
-name = "fastapi-boilerplate"
-version = "0.1.0"
-description = "Batteries-included FastAPI starter with production-ready defaults, optional modules, and clear docs."
+name = "hubserver"
+version = "1.0.0"
+description = "Hubserver — FastAPI backend with feature-based modules."
 authors = [{ name = "Benav Labs", email = "contact@benav.io" }]
 license = { text = "MIT" }
 readme = "README.md"
@@ -121,5 +121,5 @@ mypy_path = "src"
 explicit_package_bases = true
 
 [[tool.mypy.overrides]]
-module = "src.app.*"
+module = "src.hubserver.*"
 disallow_untyped_defs = true
