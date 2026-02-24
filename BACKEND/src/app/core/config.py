@@ -1,5 +1,6 @@
 import os
 from enum import Enum
+from zoneinfo import ZoneInfo
 
 from pydantic import SecretStr, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -12,10 +13,11 @@ class AppSettings(BaseSettings):
     LICENSE_NAME: str | None = None
     CONTACT_NAME: str | None = None
     CONTACT_EMAIL: str | None = None
+    APP_TIMEZONE: str = "Asia/Ho_Chi_Minh"
 
 
 class CryptSettings(BaseSettings):
-    SECRET_KEY: SecretStr = SecretStr("secret-key")
+    SECRET_KEY: SecretStr
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
@@ -61,7 +63,7 @@ class MySQLSettings(DatabaseSettings):
     MYSQL_USER: str = "username"
     MYSQL_PASSWORD: str = "password"
     MYSQL_SERVER: str = "localhost"
-    MYSQL_PORT: int = 5432
+    MYSQL_PORT: int = 3306
     MYSQL_DB: str = "dbname"
     MYSQL_SYNC_PREFIX: str = "mysql://"
     MYSQL_ASYNC_PREFIX: str = "mysql+aiomysql://"
@@ -77,7 +79,7 @@ class MySQLSettings(DatabaseSettings):
 
 class PostgresSettings(DatabaseSettings):
     POSTGRES_USER: str = "postgres"
-    POSTGRES_PASSWORD: str = "postgres"
+    POSTGRES_PASSWORD: SecretStr = SecretStr("postgres")
     POSTGRES_SERVER: str = "localhost"
     POSTGRES_PORT: int = 5432
     POSTGRES_DB: str = "postgres"
@@ -88,7 +90,7 @@ class PostgresSettings(DatabaseSettings):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def POSTGRES_URI(self) -> str:
-        credentials = f"{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
+        credentials = f"{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD.get_secret_value()}"
         location = f"{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
         return f"{credentials}@{location}"
 
@@ -97,7 +99,7 @@ class FirstUserSettings(BaseSettings):
     ADMIN_NAME: str = "admin"
     ADMIN_EMAIL: str = "admin@admin.com"
     ADMIN_USERNAME: str = "admin"
-    ADMIN_PASSWORD: str = "!Ch4ng3Th1sP4ssW0rd!"
+    ADMIN_PASSWORD: str = "123123"
 
 
 class TestSettings(BaseSettings):
@@ -155,7 +157,7 @@ class CRUDAdminSettings(BaseSettings):
     CRUD_ADMIN_REDIS_HOST: str = "localhost"
     CRUD_ADMIN_REDIS_PORT: int = 6379
     CRUD_ADMIN_REDIS_DB: int = 0
-    CRUD_ADMIN_REDIS_PASSWORD: str | None = "None"
+    CRUD_ADMIN_REDIS_PASSWORD: str | None = None
     CRUD_ADMIN_REDIS_SSL: bool = False
 
 
@@ -202,3 +204,5 @@ class Settings(
 
 
 settings = Settings()
+
+APP_TZ = ZoneInfo(settings.APP_TIMEZONE)

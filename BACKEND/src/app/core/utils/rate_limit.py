@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from datetime import UTC, datetime
-from typing import Optional
 
 from redis.asyncio import ConnectionPool, Redis
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,9 +12,9 @@ logger = logging.getLogger(__name__)
 
 
 class RateLimiter:
-    _instance: Optional["RateLimiter"] = None
-    pool: Optional[ConnectionPool] = None
-    client: Optional[Redis] = None
+    _instance: "RateLimiter" | None = None
+    pool: ConnectionPool | None = None
+    client: Redis | None = None
 
     def __new__(cls) -> "RateLimiter":
         if cls._instance is None:
@@ -31,8 +32,8 @@ class RateLimiter:
     def get_client(cls) -> Redis:
         instance = cls()
         if instance.client is None:
-            logger.error("Redis client chưa được khởi tạo.")
-            raise Exception("Redis client chưa được khởi tạo.")
+            logger.error("Redis client is not initialized.")
+            raise RuntimeError("Redis client is not initialized.")
         return instance.client
 
     async def is_rate_limited(self, db: AsyncSession, user_id: int, path: str, limit: int, period: int) -> bool:
@@ -52,7 +53,7 @@ class RateLimiter:
                 return True
 
         except Exception as e:
-            logger.exception(f"Lỗi khi kiểm tra giới hạn tốc độ cho người dùng {user_id} trên đường dẫn {path}: {e}")
+            logger.exception("Error checking rate limit for user %s on path %s: %s", user_id, path, e)
             raise e
 
         return False

@@ -26,7 +26,7 @@ async def get_current_user(
 ) -> dict[str, Any]:
     token_data = await verify_token(token, TokenType.ACCESS, db)
     if token_data is None:
-        raise UnauthorizedException("Người dùng chưa được xác thực.")
+        raise UnauthorizedException("User is not authenticated.")
 
     if "@" in token_data.username_or_email:
         user = await crud_users.get(db=db, email=token_data.username_or_email, is_deleted=False)
@@ -36,7 +36,7 @@ async def get_current_user(
     if user:
         return user
 
-    raise UnauthorizedException("Người dùng chưa được xác thực.")
+    raise UnauthorizedException("User is not authenticated.")
 
 
 async def get_optional_user(request: Request, db: AsyncSession = Depends(async_get_db)) -> dict | None:
@@ -57,17 +57,17 @@ async def get_optional_user(request: Request, db: AsyncSession = Depends(async_g
 
     except HTTPException as http_exc:
         if http_exc.status_code != 401:
-            logger.error(f"Lỗi HTTPException không mong đợi trong get_optional_user: {http_exc.detail}")
+            logger.error("Unexpected HTTPException in get_optional_user: %s", http_exc.detail)
         return None
 
     except Exception as exc:
-        logger.error(f"Lỗi không mong đợi trong get_optional_user: {exc}")
+        logger.error("Unexpected error in get_optional_user: %s", exc)
         return None
 
 
 async def get_current_superuser(current_user: Annotated[dict, Depends(get_current_user)]) -> dict:
     if not current_user["is_superuser"]:
-        raise ForbiddenException("Bạn không có đủ quyền truy cập.")
+        raise ForbiddenException("You do not have enough privileges.")
 
     return current_user
 
@@ -90,12 +90,12 @@ async def rate_limiter_dependency(
                 limit, period = rate_limit["limit"], rate_limit["period"]
             else:
                 logger.warning(
-                    f"Người dùng {user_id} với gói '{tier['name']}' không có giới hạn tốc độ riêng cho đường dẫn '{path}'. \
-                        Áp dụng giới hạn tốc độ mặc định."
+                    "User %s with tier '%s' has no specific rate limit for path '%s'. Applying default rate limit.",
+                    user_id, tier['name'], path
                 )
                 limit, period = DEFAULT_LIMIT, DEFAULT_PERIOD
         else:
-            logger.warning(f"Người dùng {user_id} chưa được gán gói dịch vụ. Áp dụng giới hạn tốc độ mặc định.")
+            logger.warning("User %s has no assigned tier. Applying default rate limit.", user_id)
             limit, period = DEFAULT_LIMIT, DEFAULT_PERIOD
     else:
         user_id = request.client.host if request.client else "unknown"
@@ -103,4 +103,4 @@ async def rate_limiter_dependency(
 
     is_limited = await rate_limiter.is_rate_limited(db=db, user_id=user_id, path=path, limit=limit, period=period)
     if is_limited:
-        raise RateLimitException("Đã vượt quá giới hạn tốc độ.")
+        raise RateLimitException("Rate limit exceeded.")

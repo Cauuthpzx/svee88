@@ -823,7 +823,7 @@ a cite {
 .layui-header {
   position: relative;
   z-index: 1000;
-  height: 60px;
+  height: 50px;
 }
 .layui-header a:hover {
   -webkit-transition: all 0.5s;
@@ -840,18 +840,19 @@ a cite {
 }
 .layui-side-scroll {
   position: relative;
-  width: 220px;
+  width: 200px;
   height: 100%;
   overflow-x: hidden;
 }
 .layui-body {
   position: relative;
-  left: 200px;
+  left: 50px;
   right: 0;
   top: 0;
   bottom: 0;
   width: auto;
   box-sizing: border-box;
+  transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* 后台框架大布局 */
@@ -866,13 +867,12 @@ a cite {
   background-color: #23292e;
 }
 .layui-layout-admin .layui-side {
-  top: 60px;
-  width: 200px;
-  overflow-x: hidden;
+  display: none;
 }
 .layui-layout-admin .layui-body {
   position: absolute;
-  top: 60px;
+  left: 50px;
+  top: 50px;
   padding-bottom: 44px;
 }
 .layui-layout-admin .layui-main {
@@ -881,7 +881,7 @@ a cite {
 }
 .layui-layout-admin .layui-footer {
   position: fixed;
-  left: 200px;
+  left: 50px;
   right: 0;
   bottom: 0;
   z-index: 990;
@@ -897,18 +897,22 @@ a cite {
   top: 0;
   width: 200px;
   height: 100%;
-  line-height: 60px;
+  line-height: 50px;
   text-align: center;
-  color: #16baaa;
+  background-color: #fff;
+  color: #333;
   font-size: 16px;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 15%);
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 1px solid #e8e8e8;
+  box-shadow: none;
 }
 .layui-layout-admin .layui-header .layui-nav {
   background: none;
 }
 .layui-layout-left {
   position: absolute !important;
-  left: 200px;
+  left: 50px;
   top: 0;
 }
 .layui-layout-right {
@@ -4510,7 +4514,7 @@ body .layui-table-tips .layui-layer-content {
   margin-top: 0;
   list-style: none;
   vertical-align: middle;
-  line-height: 60px;
+  line-height: 50px;
 }
 .layui-nav .layui-nav-item a {
   display: block;
@@ -4576,7 +4580,7 @@ body .layui-table-tips .layui-layer-content {
   display: none;
   position: absolute;
   left: 0;
-  top: 65px;
+  top: 55px;
   min-width: 100%;
   line-height: 36px;
   padding: 5px 0;
@@ -4623,7 +4627,7 @@ body .layui-table-tips .layui-layer-content {
 .layui-nav-tree .layui-nav-item {
   display: block;
   width: 100%;
-  line-height: 40px;
+  line-height: 36px;
 }
 .layui-nav-tree .layui-nav-item a {
   position: relative;
@@ -4634,8 +4638,8 @@ body .layui-table-tips .layui-layer-content {
   white-space: nowrap;
 }
 .layui-nav-tree .layui-nav-item > a {
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 .layui-nav-tree .layui-nav-more {
   right: 15px;

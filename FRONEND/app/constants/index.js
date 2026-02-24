@@ -10,14 +10,60 @@ export const USERNAME_PATTERN = /^[a-z0-9]+$/
 export const ROUTES = {
   LOGIN: '#/login',
   REGISTER: '#/register',
-  DASHBOARD: '#/dashboard'
+  DASHBOARD: '#/dashboard',
+  USERS: '#/users',
+  POSTS: '#/posts',
+  TIERS: '#/tiers',
+  TASKS: '#/tasks'
 }
 
 export const API = {
   LOGIN: '/api/v1/login',
   REGISTER: '/api/v1/user',
   LOGOUT: '/api/v1/logout',
-  USER_ME: '/api/v1/user/me/'
+  USER_ME: '/api/v1/user/me/',
+  USERS: '/api/v1/users',
+  USER: (username) => `/api/v1/user/${username}`,
+  POSTS: (username) => `/api/v1/${username}/posts`,
+  POST: (username, id) => `/api/v1/${username}/post/${id}`,
+  POST_CREATE: (username) => `/api/v1/${username}/post`,
+  TIERS: '/api/v1/tiers',
+  TIER: (name) => `/api/v1/tier/${name}`,
+  TASKS_CREATE: '/api/v1/tasks/task',
+  TASK: (id) => `/api/v1/tasks/task/${id}`
+}
+
+/** Sync API — backend endpoints for data synchronization */
+export const SYNC_API = {
+  STATUS: '/api/v1/sync/status',
+  MEMBERS: '/api/v1/sync/members',
+  BET_ORDERS: '/api/v1/sync/bet-orders',
+  BET_LOTTERY: '/api/v1/sync/bet-lottery',
+  DEPOSITS: '/api/v1/sync/deposits',
+  REPORT_LOTTERY: '/api/v1/sync/reports/lottery',
+  REPORT_FUNDS: '/api/v1/sync/reports/funds',
+  REPORT_THIRD_GAME: '/api/v1/sync/reports/third-game',
+  CONFIG: '/api/v1/sync/config',
+  VERIFY: (ep) => `/api/v1/sync/verify/${ep}`
+}
+
+/** Upstream (remote management system) endpoints */
+export const UPSTREAM = {
+  MEMBERS: '/agent/user.html',
+  INVITE_LIST: '/agent/inviteList.html',
+  REPORT_LOTTERY: '/agent/reportLottery.html',
+  REPORT_FUNDS: '/agent/reportFunds.html',
+  REPORT_THIRD_GAME: '/agent/reportThirdGame.html',
+  BANK_LIST: '/agent/bankList.html',
+  DEPOSIT_WITHDRAWAL: '/agent/depositAndWithdrawal.html',
+  WITHDRAWAL_RECORD: '/agent/withdrawalsRecord.html',
+  BET: '/agent/bet.html',
+  BET_ORDER: '/agent/betOrder.html',
+  GET_LOTTERY: '/agent/getLottery',
+  REBATE_ODDS: '/agent/getRebateOddsPanel',
+  WITHDRAW: '/agent/withdraw.html',
+  EDIT_PASSWORD: '/agent/editPassword',
+  EDIT_FUND_PASSWORD: '/agent/editFundPassword'
 }
 
 export const MSG = {

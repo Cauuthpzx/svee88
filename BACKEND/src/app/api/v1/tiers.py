@@ -1,6 +1,6 @@
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Query, Request
 from fastcrud import PaginatedListResponse, compute_offset, paginated_response
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -20,20 +20,20 @@ async def write_tier(
     tier_internal_dict = tier.model_dump()
     db_tier = await crud_tiers.exists(db=db, name=tier_internal_dict["name"])
     if db_tier:
-        raise DuplicateValueException("Tên gói dịch vụ không khả dụng")
+        raise DuplicateValueException("Tier name not available.")
 
     tier_internal = TierCreateInternal(**tier_internal_dict)
     created_tier = await crud_tiers.create(db=db, object=tier_internal, schema_to_select=TierRead)
 
     if created_tier is None:
-        raise NotFoundException("Không thể tạo gói dịch vụ")
+        raise NotFoundException("Could not create tier.")
 
     return created_tier
 
 
 @router.get("/tiers", response_model=PaginatedListResponse[TierRead])
 async def read_tiers(
-    request: Request, db: Annotated[AsyncSession, Depends(async_get_db)], page: int = 1, items_per_page: int = 10
+    request: Request, db: Annotated[AsyncSession, Depends(async_get_db)], page: int = Query(default=1, ge=1), items_per_page: int = Query(default=10, ge=1, le=100)
 ) -> dict:
     tiers_data = await crud_tiers.get_multi(db=db, offset=compute_offset(page, items_per_page), limit=items_per_page)
 
@@ -45,7 +45,7 @@ async def read_tiers(
 async def read_tier(request: Request, name: str, db: Annotated[AsyncSession, Depends(async_get_db)]) -> dict[str, Any]:
     db_tier = await crud_tiers.get(db=db, name=name, schema_to_select=TierRead)
     if db_tier is None:
-        raise NotFoundException("Không tìm thấy gói dịch vụ")
+        raise NotFoundException("Tier not found.")
 
     return db_tier
 
@@ -56,17 +56,17 @@ async def patch_tier(
 ) -> dict[str, str]:
     db_tier = await crud_tiers.get(db=db, name=name, schema_to_select=TierRead)
     if db_tier is None:
-        raise NotFoundException("Không tìm thấy gói dịch vụ")
+        raise NotFoundException("Tier not found.")
 
     await crud_tiers.update(db=db, object=values, name=name)
-    return {"message": "Đã cập nhật gói dịch vụ"}
+    return {"message": "Tier updated."}
 
 
 @router.delete("/tier/{name}", dependencies=[Depends(get_current_superuser)])
 async def erase_tier(request: Request, name: str, db: Annotated[AsyncSession, Depends(async_get_db)]) -> dict[str, str]:
     db_tier = await crud_tiers.get(db=db, name=name, schema_to_select=TierRead)
     if db_tier is None:
-        raise NotFoundException("Không tìm thấy gói dịch vụ")
+        raise NotFoundException("Tier not found.")
 
     await crud_tiers.delete(db=db, name=name)
-    return {"message": "Đã xóa gói dịch vụ"}
+    return {"message": "Tier deleted."}

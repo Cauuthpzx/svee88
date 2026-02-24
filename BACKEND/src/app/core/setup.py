@@ -213,6 +213,15 @@ def create_application(
         application.add_middleware(ClientCacheMiddleware, max_age=settings.CLIENT_CACHE_MAX_AGE)
 
     if isinstance(settings, CORSSettings):
+        if isinstance(settings, EnvironmentSettings):
+            if settings.CORS_ORIGINS == ["*"] and settings.ENVIRONMENT == EnvironmentOption.PRODUCTION:
+                import warnings
+
+                warnings.warn(
+                    "CORS_ORIGINS=['*'] with allow_credentials=True in production is a security risk. "
+                    "Set CORS_ORIGINS to specific allowed domains.",
+                    stacklevel=2,
+                )
         application.add_middleware(
             CORSMiddleware,
             allow_origins=settings.CORS_ORIGINS,

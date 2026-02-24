@@ -29,12 +29,12 @@ async def login_for_access_token(
 ) -> dict[str, str]:
     user = await authenticate_user(username_or_email=form_data.username, password=form_data.password, db=db)
     if not user:
-        raise UnauthorizedException("Sai tên đăng nhập, email hoặc mật khẩu.")
+        raise UnauthorizedException("Wrong username, email or password.")
 
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = await create_access_token(data={"sub": user["username"]}, expires_delta=access_token_expires)
+    access_token = create_access_token(data={"sub": user["username"]}, expires_delta=access_token_expires)
 
-    refresh_token = await create_refresh_token(data={"sub": user["username"]})
+    refresh_token = create_refresh_token(data={"sub": user["username"]})
     max_age = settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
 
     response.set_cookie(
@@ -48,11 +48,11 @@ async def login_for_access_token(
 async def refresh_access_token(request: Request, db: AsyncSession = Depends(async_get_db)) -> dict[str, str]:
     refresh_token = request.cookies.get("refresh_token")
     if not refresh_token:
-        raise UnauthorizedException("Thiếu token làm mới.")
+        raise UnauthorizedException("Missing refresh token.")
 
     user_data = await verify_token(refresh_token, TokenType.REFRESH, db)
     if not user_data:
-        raise UnauthorizedException("Token làm mới không hợp lệ.")
+        raise UnauthorizedException("Invalid refresh token.")
 
-    new_access_token = await create_access_token(data={"sub": user_data.username_or_email})
+    new_access_token = create_access_token(data={"sub": user_data.username_or_email})
     return {"access_token": new_access_token, "token_type": "bearer"}

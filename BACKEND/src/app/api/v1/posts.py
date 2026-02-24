@@ -1,6 +1,6 @@
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Query, Request
 from fastcrud import PaginatedListResponse, compute_offset, paginated_response
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -26,7 +26,7 @@ async def write_post(
 ) -> dict[str, Any]:
     db_user = await crud_users.get(db=db, username=username, is_deleted=False, schema_to_select=UserRead)
     if db_user is None:
-        raise NotFoundException("Không tìm thấy người dùng")
+        raise NotFoundException("User not found.")
 
     if current_user["id"] != db_user["id"]:
         raise ForbiddenException()
@@ -38,7 +38,7 @@ async def write_post(
     created_post = await crud_posts.create(db=db, object=post_internal, schema_to_select=PostRead)
 
     if created_post is None:
-        raise NotFoundException("Không thể tạo bài viết")
+        raise NotFoundException("Could not create post.")
 
     return created_post
 
@@ -53,12 +53,12 @@ async def read_posts(
     request: Request,
     username: str,
     db: Annotated[AsyncSession, Depends(async_get_db)],
-    page: int = 1,
-    items_per_page: int = 10,
+    page: int = Query(default=1, ge=1),
+    items_per_page: int = Query(default=10, ge=1, le=100),
 ) -> dict:
     db_user = await crud_users.get(db=db, username=username, is_deleted=False, schema_to_select=UserRead)
     if not db_user:
-        raise NotFoundException("Không tìm thấy người dùng")
+        raise NotFoundException("User not found.")
 
     posts_data = await crud_posts.get_multi(
         db=db,
@@ -79,13 +79,13 @@ async def read_post(
 ) -> dict[str, Any]:
     db_user = await crud_users.get(db=db, username=username, is_deleted=False, schema_to_select=UserRead)
     if db_user is None:
-        raise NotFoundException("Không tìm thấy người dùng")
+        raise NotFoundException("User not found.")
 
     db_post = await crud_posts.get(
         db=db, id=id, created_by_user_id=db_user["id"], is_deleted=False, schema_to_select=PostRead
     )
     if db_post is None:
-        raise NotFoundException("Không tìm thấy bài viết")
+        raise NotFoundException("Post not found.")
 
     return db_post
 
@@ -102,17 +102,17 @@ async def patch_post(
 ) -> dict[str, str]:
     db_user = await crud_users.get(db=db, username=username, is_deleted=False, schema_to_select=UserRead)
     if db_user is None:
-        raise NotFoundException("Không tìm thấy người dùng")
+        raise NotFoundException("User not found.")
 
     if current_user["id"] != db_user["id"]:
         raise ForbiddenException()
 
     db_post = await crud_posts.get(db=db, id=id, is_deleted=False, schema_to_select=PostRead)
     if db_post is None:
-        raise NotFoundException("Không tìm thấy bài viết")
+        raise NotFoundException("Post not found.")
 
     await crud_posts.update(db=db, object=values, id=id)
-    return {"message": "Đã cập nhật bài viết"}
+    return {"message": "Post updated."}
 
 
 @router.delete("/{username}/post/{id}")
@@ -126,18 +126,18 @@ async def erase_post(
 ) -> dict[str, str]:
     db_user = await crud_users.get(db=db, username=username, is_deleted=False, schema_to_select=UserRead)
     if db_user is None:
-        raise NotFoundException("Không tìm thấy người dùng")
+        raise NotFoundException("User not found.")
 
     if current_user["id"] != db_user["id"]:
         raise ForbiddenException()
 
     db_post = await crud_posts.get(db=db, id=id, is_deleted=False, schema_to_select=PostRead)
     if db_post is None:
-        raise NotFoundException("Không tìm thấy bài viết")
+        raise NotFoundException("Post not found.")
 
     await crud_posts.delete(db=db, id=id)
 
-    return {"message": "Đã xóa bài viết"}
+    return {"message": "Post deleted."}
 
 
 @router.delete("/{username}/db_post/{id}", dependencies=[Depends(get_current_superuser)])
@@ -147,11 +147,11 @@ async def erase_db_post(
 ) -> dict[str, str]:
     db_user = await crud_users.get(db=db, username=username, is_deleted=False, schema_to_select=UserRead)
     if db_user is None:
-        raise NotFoundException("Không tìm thấy người dùng")
+        raise NotFoundException("User not found.")
 
     db_post = await crud_posts.get(db=db, id=id, is_deleted=False, schema_to_select=PostRead)
     if db_post is None:
-        raise NotFoundException("Không tìm thấy bài viết")
+        raise NotFoundException("Post not found.")
 
     await crud_posts.db_delete(db=db, id=id)
-    return {"message": "Đã xóa bài viết khỏi cơ sở dữ liệu"}
+    return {"message": "Post permanently deleted."}

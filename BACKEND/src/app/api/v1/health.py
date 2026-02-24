@@ -15,8 +15,8 @@ from ...core.utils.cache import async_get_redis
 
 router = APIRouter(tags=["health"])
 
-STATUS_HEALTHY = "hoạt động tốt"
-STATUS_UNHEALTHY = "không hoạt động"
+STATUS_HEALTHY = "healthy"
+STATUS_UNHEALTHY = "unhealthy"
 
 LOGGER = logging.getLogger(__name__)
 
@@ -37,9 +37,9 @@ async def health():
 @router.get("/ready", response_model=ReadyCheck)
 async def ready(redis: Annotated[Redis, Depends(async_get_redis)], db: Annotated[AsyncSession, Depends(async_get_db)]):
     database_status = await check_database_health(db=db)
-    LOGGER.debug(f"Trạng thái kiểm tra sức khỏe cơ sở dữ liệu: {database_status}")
+    LOGGER.debug("Database health check status: %s", database_status)
     redis_status = await check_redis_health(redis=redis)
-    LOGGER.debug(f"Trạng thái kiểm tra sức khỏe Redis: {redis_status}")
+    LOGGER.debug("Redis health check status: %s", redis_status)
 
     overall_status = STATUS_HEALTHY if database_status and redis_status else STATUS_UNHEALTHY
     http_status = status.HTTP_200_OK if overall_status == STATUS_HEALTHY else status.HTTP_503_SERVICE_UNAVAILABLE

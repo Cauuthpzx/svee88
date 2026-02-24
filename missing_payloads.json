@@ -1,0 +1,224 @@
+{
+  "bet": {
+    "data": [
+      {
+        "id": 1985395159,
+        "serial_no": "17718434851248361312371995273",
+        "uid": 2481612,
+        "user_parent": 2470861,
+        "user_tree": [
+          2470861
+        ],
+        "bet_data_set": {
+          "2470861": {
+            "odds": 65,
+            "rebate": 0.1
+          },
+          "2481612": {
+            "odds": 65,
+            "rebate": 0.1
+          }
+        },
+        "issue": "20260223",
+        "issue_id": 53630518,
+        "lottery_id": 32,
+        "lottery_name": "Miền Bắc",
+        "play_id": 219,
+        "play_type_id": 20202,
+        "odds_id": 20202,
+        "odds": "65.0000",
+        "content": "48,82,83",
+        "count": 1,
+        "win_count": 0,
+        "real_count": 1,
+        "real_win_count": 0,
+        "price": "50,000.0000",
+        "money": "50,000.0000",
+        "rebate": "0.0000",
+        "rebate_amount": "0.0000",
+        "result": "-50,000.0000",
+        "prize": "0.0000",
+        "status": -1,
+        "commission_status": 1,
+        "source": 1,
+        "prize_time": "2026-02-23 18:36:51",
+        "ip": "2401:d800:b631:d5b3:282e:5dff:fedf:8da9",
+        "is_tester": 0,
+        "create_time": "2026-02-23 17:44:45",
+        "update_time": "2026-02-23 18:36:59",
+        "username": "tuanhue96",
+        "play_type_name": "[Lô Xiên]Xiên 3",
+        "play_name": "Xiên 3",
+        "status_text": "Không trúng"
+      },
+      {
+        "id": 1985393289,
+        "serial_no": "17718434361248361340161955503",
+        "uid": 2481612,
+        "user_parent": 2470861,
+        "user_tree": [
+          2470861
+        ],
+        "bet_data_set": {
+          "2470861": {
+            "odds": 99.5,
+            "rebate": 0.1
+          },
+          "2481612": {
+            "odds": 99.5,
+            "rebate": 0.1
+          }
+        },
+        "issue": "20260223",
+        "issue_id": 53630518,
+        "lottery_id": 32,
+        "lottery_name": "Miền Bắc",
+        "play_id": 226,
+        "play_type_id": 20301,
+        "odds_id": 20301,
+        "odds": "99.5000",
+        "content": "04,24,65,66,69,76,79,80,84,86",
+        "count": 10,
+        "win_count": 0,
+        "real_count": 10,
+        "real_win_count": 0,
+        "price": "15,000.0000",
+        "money": "150,000.0000",
+        "rebate": "0.0000",
+        "rebate_amount": "0.0000",
+        "result": "-150,000.0000",
+        "prize": "0.0000",
+        "status": -1,
+        "commission_status": 1,
+        "source": 1,
+        "prize_time": "2026-02-23 18:36:51",
+        "ip": "2401:d800:b631:d5b3:282e:5dff:fedf:8da9",
+        "is_tester": 0,
+        "create_time": "2026-02-23 17:43:56",
+        "update_time": "2026-02-23 18:36:59",
+        "username": "tuanhue96",
+        "play_type_name": "[Đánh Đề]Đề đặc biệt",
+        "play_name": "Đề đặc biệt",
+        "status_text": "Không trúng"
+      },
+      {
+        "id": 1985387815,
+        "serial_no": "17718432761248361385184388930",
+        "uid": 2481612,
+        "user_parent": 2470861,
+        "user_tree": [
+          2470861
+        ],
+        "bet_data_set": {
+          "2470861": {
+            "odds": 65,
+            "rebate": 0.1
+          },
+          "2481612": {
+            "odds": 65,
+            "rebate": 0.1
+          }
+        },
+        "issue": "20260223",
+        "issue_id": 53630518,
+        "lottery_id": 32,
+        "lottery_name": "Miền Bắc",
+        "play_id": 219,
+        "play_type_id": 20202,
+        "odds_id": 20202,
+        "odds": "65.0000",
+        "content": "16,38,58",
+        "count": 1,
+        "win_count": 0,
+        "real_count": 1,
+        "real_win_count": 0,
+        "price": "100,000.0000",
+        "money": "100,000.0000",
+        "rebate": "0.0000",
+        "rebate_amount": "0.0000",
+        "result": "-100,000.0000",
+        "prize": "0.0000",
+        "status": -1,
+        "commission_status": 1,
+        "source": 1,
+        "prize_time": "2026-02-23 18:36:51",
+        "ip": "2401:d800:b631:d5b3:282e:5dff:fedf:8da9",
+        "is_tester": 0,
+        "create_time": "2026-02-23 17:41:16",
+        "update_time": "2026-02-23 18:36:59",
+        "username": "tuanhue96",
+        "play_type_name": "[Lô Xiên]Xiên 3",
+        "play_name": "Xiên 3",
+        "status_text": "Không trúng"
+      }
+    ],
+    "count": 3,
+    "code": 0,
+    "create_time": "2026-02-23 00:00:00|2026-02-23 23:59:59",
+    "form_data": {
+      "create_time": "2026-02-23 00:00:00|2026-02-23 23:59:59"
+    }
+  },
+  "report_lottery": {
+    "data": [],
+    "count": 0,
+    "code": 0,
+    "hsDateTime": "2026-02-24 | 2026-02-24",
+    "total_data": {
+      "total_bet_count": null,
+      "total_bet_amount": null,
+      "total_valid_amount": null,
+      "total_rebate_amount": null,
+      "total_result": null,
+      "total_win_lose": null,
+      "total_prize": null,
+      "total_bet_number": 0
+    }
+  },
+  "report_funds": {
+    "data": [],
+    "count": 0,
+    "code": 0,
+    "hsDateTime": "2026-02-24 | 2026-02-24",
+    "total_data": {
+      "total_deposit_count": null,
+      "total_deposit_amount": null,
+      "total_withdrawal_count": null,
+      "total_withdrawal_amount": null,
+      "total_charge_fee": null,
+      "total_agent_commission": null,
+      "total_promotion": null,
+      "total_third_rebate": null,
+      "third_activity_amount": 0
+    }
+  },
+  "report_third": {
+    "data": [],
+    "count": 0,
+    "code": 0,
+    "hsDateTime": "2026-02-24 | 2026-02-24",
+    "total_data": {
+      "total_bet_amount": null,
+      "total_turnover": null,
+      "total_prize": null,
+      "total_win_lose": null,
+      "total_bet_times": null,
+      "total_bet_number": 0
+    }
+  },
+  "bet_order": {
+    "data": [],
+    "count": 0,
+    "code": 0,
+    "bet_time": "2026-02-24 | 2026-02-24",
+    "form_data": {
+      "bet_time": "2026-02-24 | 2026-02-24"
+    }
+  },
+  "withdrawal": {
+    "data": [],
+    "count": 0,
+    "code": 0,
+    "hsDateTime": "2026-02-01|2026-02-07"
+  }
+}

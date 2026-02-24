@@ -25,11 +25,11 @@ async def create_task(message: str) -> dict[str, str]:
         A dictionary containing the ID of the created task.
     """
     if queue.pool is None:
-        raise HTTPException(status_code=503, detail="Hàng đợi không khả dụng")
+        raise HTTPException(status_code=503, detail="Queue not available.")
 
     job = await queue.pool.enqueue_job("sample_background_task", message)
     if job is None:
-        raise HTTPException(status_code=500, detail="Không thể tạo tác vụ")
+        raise HTTPException(status_code=500, detail="Could not create task.")
 
     return {"id": job.job_id}
 
@@ -49,7 +49,7 @@ async def get_task(task_id: str) -> dict[str, Any] | None:
         A dictionary containing information about the task if found, or None otherwise.
     """
     if queue.pool is None:
-        raise HTTPException(status_code=503, detail="Hàng đợi không khả dụng")
+        raise HTTPException(status_code=503, detail="Queue not available.")
 
     job = ArqJob(task_id, queue.pool)
     job_info = await job.info()

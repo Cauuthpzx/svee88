@@ -1,6 +1,6 @@
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Query, Request
 from fastcrud import PaginatedListResponse, compute_offset, paginated_response
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -21,14 +21,14 @@ async def write_rate_limit(
 ) -> dict[str, Any]:
     db_tier = await crud_tiers.get(db=db, name=tier_name, schema_to_select=TierRead)
     if not db_tier:
-        raise NotFoundException("Không tìm thấy gói dịch vụ")
+        raise NotFoundException("Tier not found.")
 
     rate_limit_internal_dict = rate_limit.model_dump()
     rate_limit_internal_dict["tier_id"] = db_tier["id"]
 
     db_rate_limit = await crud_rate_limits.exists(db=db, name=rate_limit_internal_dict["name"])
     if db_rate_limit:
-        raise DuplicateValueException("Tên giới hạn tốc độ không khả dụng")
+        raise DuplicateValueException("Rate limit name not available.")
 
     rate_limit_internal = RateLimitCreateInternal(**rate_limit_internal_dict)
     created_rate_limit = await crud_rate_limits.create(
@@ -36,7 +36,7 @@ async def write_rate_limit(
     )
 
     if created_rate_limit is None:
-        raise NotFoundException("Không thể tạo giới hạn tốc độ")
+        raise NotFoundException("Could not create rate limit.")
 
     return created_rate_limit
 
@@ -46,12 +46,12 @@ async def read_rate_limits(
     request: Request,
     tier_name: str,
     db: Annotated[AsyncSession, Depends(async_get_db)],
-    page: int = 1,
-    items_per_page: int = 10,
+    page: int = Query(default=1, ge=1),
+    items_per_page: int = Query(default=10, ge=1, le=100),
 ) -> dict:
     db_tier = await crud_tiers.get(db=db, name=tier_name, schema_to_select=TierRead)
     if not db_tier:
-        raise NotFoundException("Không tìm thấy gói dịch vụ")
+        raise NotFoundException("Tier not found.")
 
     rate_limits_data = await crud_rate_limits.get_multi(
         db=db,
@@ -70,11 +70,11 @@ async def read_rate_limit(
 ) -> dict[str, Any]:
     db_tier = await crud_tiers.get(db=db, name=tier_name, schema_to_select=TierRead)
     if not db_tier:
-        raise NotFoundException("Không tìm thấy gói dịch vụ")
+        raise NotFoundException("Tier not found.")
 
     db_rate_limit = await crud_rate_limits.get(db=db, tier_id=db_tier["id"], id=id, schema_to_select=RateLimitRead)
     if db_rate_limit is None:
-        raise NotFoundException("Không tìm thấy giới hạn tốc độ")
+        raise NotFoundException("Rate limit not found.")
 
     return db_rate_limit
 
@@ -89,14 +89,14 @@ async def patch_rate_limit(
 ) -> dict[str, str]:
     db_tier = await crud_tiers.get(db=db, name=tier_name, schema_to_select=TierRead)
     if not db_tier:
-        raise NotFoundException("Không tìm thấy gói dịch vụ")
+        raise NotFoundException("Tier not found.")
 
     db_rate_limit = await crud_rate_limits.get(db=db, tier_id=db_tier["id"], id=id, schema_to_select=RateLimitRead)
     if db_rate_limit is None:
-        raise NotFoundException("Không tìm thấy giới hạn tốc độ")
+        raise NotFoundException("Rate limit not found.")
 
     await crud_rate_limits.update(db=db, object=values, id=id)
-    return {"message": "Đã cập nhật giới hạn tốc độ"}
+    return {"message": "Rate limit updated."}
 
 
 @router.delete("/tier/{tier_name}/rate_limit/{id}", dependencies=[Depends(get_current_superuser)])
@@ -105,11 +105,11 @@ async def erase_rate_limit(
 ) -> dict[str, str]:
     db_tier = await crud_tiers.get(db=db, name=tier_name, schema_to_select=TierRead)
     if not db_tier:
-        raise NotFoundException("Không tìm thấy gói dịch vụ")
+        raise NotFoundException("Tier not found.")
 
     db_rate_limit = await crud_rate_limits.get(db=db, tier_id=db_tier["id"], id=id, schema_to_select=RateLimitRead)
     if db_rate_limit is None:
-        raise NotFoundException("Không tìm thấy giới hạn tốc độ")
+        raise NotFoundException("Rate limit not found.")
 
     await crud_rate_limits.delete(db=db, id=id)
-    return {"message": "Đã xóa giới hạn tốc độ"}
+    return {"message": "Rate limit deleted."}

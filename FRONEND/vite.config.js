@@ -36,6 +36,22 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target: env.VITE_API_BASE || 'http://localhost:8000',
           changeOrigin: true
+        },
+        '/agent': {
+          target: env.VITE_UPSTREAM_BASE || 'https://a2u4k.ee88dly.com',
+          changeOrigin: true,
+          secure: true,
+          configure: (proxy) => {
+            const upstreamBase = env.VITE_UPSTREAM_BASE || 'https://a2u4k.ee88dly.com'
+            proxy.on('proxyReq', (proxyReq, req) => {
+              const cookie = env.VITE_UPSTREAM_COOKIE
+              if (cookie) proxyReq.setHeader('Cookie', cookie)
+              proxyReq.setHeader('User-Agent',
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36')
+              proxyReq.setHeader('Referer', upstreamBase + req.url)
+              proxyReq.setHeader('Origin', upstreamBase)
+            })
+          }
         }
       }
     },
@@ -45,6 +61,22 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target: env.VITE_API_BASE || 'http://localhost:8000',
           changeOrigin: true
+        },
+        '/agent': {
+          target: env.VITE_UPSTREAM_BASE || 'https://a2u4k.ee88dly.com',
+          changeOrigin: true,
+          secure: true,
+          configure: (proxy) => {
+            const upstreamBase = env.VITE_UPSTREAM_BASE || 'https://a2u4k.ee88dly.com'
+            proxy.on('proxyReq', (proxyReq, req) => {
+              const cookie = env.VITE_UPSTREAM_COOKIE
+              if (cookie) proxyReq.setHeader('Cookie', cookie)
+              proxyReq.setHeader('User-Agent',
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36')
+              proxyReq.setHeader('Referer', upstreamBase + req.url)
+              proxyReq.setHeader('Origin', upstreamBase)
+            })
+          }
         }
       }
     }

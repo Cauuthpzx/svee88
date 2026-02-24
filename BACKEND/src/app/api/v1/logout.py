@@ -1,5 +1,3 @@
-from typing import Optional
-
 from fastapi import APIRouter, Cookie, Depends, Response
 from jose import JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,17 +13,17 @@ router = APIRouter(tags=["login"])
 async def logout(
     response: Response,
     access_token: str = Depends(oauth2_scheme),
-    refresh_token: Optional[str] = Cookie(None, alias="refresh_token"),
+    refresh_token: str | None = Cookie(None, alias="refresh_token"),
     db: AsyncSession = Depends(async_get_db),
 ) -> dict[str, str]:
     try:
         if not refresh_token:
-            raise UnauthorizedException("Không tìm thấy token làm mới")
+            raise UnauthorizedException("Refresh token not found.")
 
         await blacklist_tokens(access_token=access_token, refresh_token=refresh_token, db=db)
         response.delete_cookie(key="refresh_token")
 
-        return {"message": "Đăng xuất thành công"}
+        return {"message": "Logged out successfully."}
 
     except JWTError:
-        raise UnauthorizedException("Token không hợp lệ.")
+        raise UnauthorizedException("Invalid token.")

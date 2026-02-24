@@ -1,0 +1,184 @@
+#main-content {
+  padding: 15px;
+}
+
+/* ── Header ── */
+.layui-layout-admin .layui-header {
+  background-color: #fff;
+  border-bottom: 1px solid #e8e8e8;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+.layui-layout-admin .layui-header .layui-nav {
+  background: transparent;
+}
+.layui-layout-admin .layui-header .layui-nav.layui-layout-right {
+  margin-right: 30px;
+}
+.layui-layout-admin .layui-header .layui-nav .layui-nav-item a {
+  color: #555;
+}
+.layui-layout-admin .layui-header .layui-nav .layui-nav-item a:hover {
+  color: #16baaa;
+}
+
+/* ── Sidebar ── var() fallback = light value, resolves dark via theme CSS vars */
+.hub-sidebar {
+  position: fixed;
+  top: 50px;
+  bottom: 0;
+  width: 50px;
+  background: var(--lay-color-bg-2, #2F363C);
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+  transition: width 0.25s ease, box-shadow 0.25s ease;
+  z-index: 1000;
+}
+.hub-sidebar::-webkit-scrollbar { display: none; }
+.hub-sidebar:hover { width: 200px; }
+
+.hub-sidebar a {
+  display: block;
+  height: 40px;
+  line-height: 40px;
+  white-space: nowrap;
+  color: var(--lay-color-text-2, #c2c2c2);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.hub-sidebar a:hover {
+  background: var(--lay-color-fill-2, rgba(255, 255, 255, .08));
+  color: var(--lay-color-text-1, #fff);
+}
+.hub-sidebar a .layui-icon {
+  display: inline-block;
+  width: 50px;
+  text-align: center;
+  font-size: 17px;
+  vertical-align: middle;
+  color: var(--lay-color-text-3, #c2c2c2);
+  transition: color 0.15s;
+}
+.hub-sidebar a:hover .layui-icon {
+  color: var(--lay-color-text-1, #fff);
+}
+.hub-sidebar a span {
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+/* Sidebar — layui-nav override */
+.hub-sidebar .layui-nav {
+  background: none;
+}
+.hub-sidebar .layui-nav .layui-nav-bar {
+  background: var(--lay-color-primary, #16BAAA);
+}
+.hub-sidebar .layui-nav-item > a {
+  padding: 0;
+  white-space: nowrap;
+  color: var(--lay-color-text-1, #fff);
+}
+.hub-sidebar .layui-nav-item > a .layui-icon {
+  display: inline-block;
+  width: 50px;
+  text-align: center;
+  font-size: 17px;
+  vertical-align: middle;
+}
+.hub-sidebar:hover .layui-nav-item > a {
+  padding: 0 30px;
+}
+.hub-sidebar:hover .layui-nav-item > a .layui-icon {
+  width: auto;
+  margin-right: 5px;
+}
+
+/* Sidebar — submenu */
+.hub-sidebar .layui-nav-child {
+  display: none;
+  background: rgba(0, 0, 0, .3);
+  border: none;
+  box-shadow: none;
+}
+.hub-sidebar .layui-nav-child a {
+  color: var(--lay-color-text-2, #c2c2c2);
+}
+.hub-sidebar .layui-nav-child a:hover {
+  background: var(--lay-color-fill-2, rgba(255, 255, 255, .08));
+  color: var(--lay-color-text-1, #fff);
+}
+.hub-sidebar .layui-nav-more {
+  display: none;
+}
+.hub-sidebar .layui-nav-item > a::after {
+  content: none;
+}
+.hub-sidebar:hover .layui-nav-child {
+  display: block;
+}
+
+/* Sidebar — active */
+.hub-sidebar .layui-this > a,
+.hub-sidebar .layui-nav-child .layui-this a {
+  background: var(--lay-color-primary, #16BAAA);
+  color: var(--color-white, #fff);
+}
+
+/* Sidebar — position */
+.hub-sidebar-l {
+  left: 0;
+  border-right: 1px solid var(--lay-color-border-1, #2f3240);
+  box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1);
+}
+.hub-sidebar-l:hover {
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.22);
+}
+
+/* ── Body ── */
+.layui-layout-admin .layui-body {
+  background-color: #f2f2f2;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+/* ── Footer ── */
+.layui-layout-admin .layui-footer {
+  background-color: #fff;
+  border-top: 1px solid #e8e8e8;
+  color: #999;
+  text-align: center;
+  line-height: 44px;
+}
+
+/* ── Theme toggle ── */
+#themeToggle .layui-icon {
+  font-size: 20px;
+  transition: color 0.2s;
+}
+
+/* ══════════════════════════════════════
+   DARK — only rules the theme CSS doesn't cover
+   ══════════════════════════════════════ */
+.dark .layui-layout-admin .layui-header {
+  border-bottom-color: var(--lay-color-border-1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+.dark .layui-layout-admin .layui-header .layui-nav .layui-nav-item a {
+  color: var(--lay-color-text-2);
+}
+.dark .layui-layout-admin .layui-header .layui-nav .layui-nav-item a:hover {
+  color: var(--lay-color-primary);
+}
+.dark .layui-layout-admin .layui-logo {
+  background-color: var(--lay-color-bg-2);
+  color: var(--lay-color-primary);
+  border-right-color: var(--lay-color-border-1);
+}
+.dark .layui-layout-admin .layui-body {
+  background-color: var(--lay-color-bg-1);
+  box-shadow: none;
+}
+.dark .layui-layout-admin .layui-footer {
+  border-top-color: var(--lay-color-border-1);
+}

@@ -19,23 +19,59 @@ Layui 2.13.3 | Axios 1.x | Vite 5.x | Vanilla JS ES2022
 
 ## ICONS — LOCAL (BẮT BUỘC)
 
-**Toàn bộ icon dùng local từ `public/icons/` (1454 file PNG, style Icons8 Liquid).**
-- Nguồn gốc: `FRONEND/icons8-liquid/` → đã copy vào `public/icons/`
+**Toàn bộ icon dùng local từ `public/icons/` (PNG, style Icons8 Fluency).**
+- Nguồn tải: `C:\Users\Admin\Desktop\icons8-download\icons8-fluency\`
+- Khi cần icon mới → vào thư mục trên tìm file → copy vào `public/icons/` → đổi tên cho đúng nghĩa
+- Script tải thêm: `download-icons.mjs`, `download-business-icons.mjs` (root project)
 - Vite serve tại: `/icons/ten-file.png`
-- KHÔNG dùng CDN icon, KHÔNG dùng icon URL bên ngoài
-- Khi cần icon, tìm file gần nghĩa nhất trong `public/icons/`
-- **Đổi tên file cho đúng nghĩa trước khi sử dụng** (ví dụ: copy `user-male-circle.png` → `avatar.png`)
+- KHÔNG dùng CDN icon, KHÔNG dùng icon URL bên ngoài, KHÔNG dùng SVG (không có màu)
+- **Đổi tên file cho đúng nghĩa trước khi sử dụng** (ví dụ: `user-male-circle.png` → `avatar.png`)
 - Dùng kết hợp: layui-icon cho icon hệ thống form, PNG local cho icon trang trí/minh hoạ
-
-**Icon auth liên quan:**
-`user.png`, `password.png`, `email.png`, `lock.png`, `unlock-2.png`,
-`forgot-password.png`, `verified-account.png`, `user-shield.png`,
-`home.png`, `dashboard.png`, `test-account.png`, `keyhole-shield.png`
 
 **Cách dùng trong HTML:**
 ```html
 <img src="/icons/dashboard.png" alt="Dashboard" width="24" height="24">
 ```
+
+---
+
+## KIỂM TRA SAU KHI VIẾT CODE (BẮT BUỘC)
+
+Mỗi lần viết code xong, **tự kiểm tra lại toàn bộ** theo checklist:
+
+### Layui 2.13.3
+- [ ] HTML structure đúng chuẩn gốc Layui (form, layout, nav, table...)
+- [ ] Admin layout dùng `layui-layout-admin` + `layui-header` + `layui-side` + `layui-body`
+- [ ] `layui.use` dùng positional args: `function (form, layer)`, KHÔNG destructure object
+- [ ] `form.render()` sau mỗi lần thay đổi DOM chứa form elements
+- [ ] **KHÔNG dùng `!important`** — mọi thay đổi CSS sửa trực tiếp trong source `public/layui/css/layui.css`
+- [ ] **KHÔNG override CSS gốc Layui bằng file riêng** — sửa thẳng source, build lại
+
+### SPA Architecture
+- [ ] Layout render 1 lần — module chỉ swap nội dung trong content area
+- [ ] Public route render trực tiếp `#app`, private route render trong layout
+- [ ] Không có logic/state duplicate giữa layout và module
+- [ ] Event listener cleanup khi unmount module
+
+### Axios 1.x
+- [ ] 1 instance duy nhất (`http.js`), không tạo thêm
+- [ ] Token inject qua request interceptor, không set thủ công
+- [ ] Lỗi 401 xử lý tập trung ở response interceptor
+
+### Vite 5.x
+- [ ] Import path đúng (có `.js` extension cho local modules)
+- [ ] Static assets trong `public/`, không trong `app/`
+- [ ] Lazy load module theo route: `() => import('../modules/x/index.js')`
+
+### Icons
+- [ ] Chỉ dùng local từ `public/icons/` — KHÔNG CDN, KHÔNG URL ngoài
+- [ ] Đổi tên file cho đúng nghĩa trước khi dùng
+- [ ] layui-icon cho icon hệ thống form, PNG local cho icon trang trí/minh hoạ
+
+### Vanilla JS ES2022
+- [ ] `const`/`let` only, zero `var`
+- [ ] Zero: inline style, console.log, magic number/string, dead code
+- [ ] Named constants từ `constants/index.js`
 
 ---
 
