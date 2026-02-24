@@ -254,3 +254,20 @@
 }
 .dark .not-found-title { color: #444; }
 .dark .not-found-text { color: var(--lay-color-text-3); }
+
+/* ── Placeholder page ── */
+.placeholder-body {
+  text-align: center;
+  padding: 60px 20px;
+}
+.placeholder-icon {
+  font-size: 48px;
+  color: #ddd;
+}
+.placeholder-text {
+  font-size: 14px;
+  color: #999;
+  margin: 12px 0 0;
+}
+.dark .placeholder-icon { color: #444; }
+.dark .placeholder-text { color: var(--lay-color-text-3); }

@@ -19,7 +19,39 @@ export const ROUTES = {
   USERS: '#/users',
   POSTS: '#/posts',
   TIERS: '#/tiers',
-  TASKS: '#/tasks'
+  TASKS: '#/tasks',
+  INVITE_LIST: '#/invite-list',
+  REPORT_LOTTERY: '#/report-lottery',
+  REPORT_FUNDS: '#/report-funds',
+  REPORT_PROVIDER: '#/report-provider',
+  BANK_LIST: '#/bank-list',
+  DEPOSIT_LIST: '#/deposit-list',
+  WITHDRAWAL_HISTORY: '#/withdrawal-history',
+  BET_LIST: '#/bet-list',
+  BET_THIRD_PARTY: '#/bet-third-party',
+  CHANGE_LOGIN_PW: '#/change-login-pw',
+  CHANGE_TRADE_PW: '#/change-trade-pw',
+  REBATE_LIST: '#/rebate-list'
+}
+
+export const ROUTE_TITLES = {
+  [ROUTES.DASHBOARD]: 'Trang chủ',
+  [ROUTES.USERS]: 'Member List',
+  [ROUTES.INVITE_LIST]: 'Invite List',
+  [ROUTES.REPORT_LOTTERY]: 'Lottery Report',
+  [ROUTES.REPORT_FUNDS]: 'Transaction Statement',
+  [ROUTES.REPORT_PROVIDER]: 'Provider Report',
+  [ROUTES.BANK_LIST]: 'Bank List',
+  [ROUTES.DEPOSIT_LIST]: 'Deposit List',
+  [ROUTES.WITHDRAWAL_HISTORY]: 'Withdrawal History',
+  [ROUTES.BET_LIST]: 'Bet List',
+  [ROUTES.BET_THIRD_PARTY]: '3rd Party Bets',
+  [ROUTES.CHANGE_LOGIN_PW]: 'Change Login Password',
+  [ROUTES.CHANGE_TRADE_PW]: 'Change Trade Password',
+  [ROUTES.REBATE_LIST]: 'Rebate List',
+  [ROUTES.POSTS]: 'Quản lý bài viết',
+  [ROUTES.TIERS]: 'Quản lý cấp bậc',
+  [ROUTES.TASKS]: 'Quản lý tác vụ'
 }
 
 export const API = {

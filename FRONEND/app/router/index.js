@@ -1,6 +1,8 @@
 import { getToken } from '../utils/index.js'
 import { ROUTES, INTENDED_ROUTE_KEY } from '../constants/index.js'
 
+const placeholder = () => import('../modules/placeholder/index.js')
+
 const ROUTE_MAP = {
   [ROUTES.LOGIN]: () => import('../modules/auth/index.js'),
   [ROUTES.REGISTER]: () => import('../modules/auth/index.js'),
@@ -8,7 +10,19 @@ const ROUTE_MAP = {
   [ROUTES.USERS]: () => import('../modules/users/index.js'),
   [ROUTES.POSTS]: () => import('../modules/posts/index.js'),
   [ROUTES.TIERS]: () => import('../modules/tiers/index.js'),
-  [ROUTES.TASKS]: () => import('../modules/tasks/index.js')
+  [ROUTES.TASKS]: () => import('../modules/tasks/index.js'),
+  [ROUTES.INVITE_LIST]: placeholder,
+  [ROUTES.REPORT_LOTTERY]: placeholder,
+  [ROUTES.REPORT_FUNDS]: placeholder,
+  [ROUTES.REPORT_PROVIDER]: placeholder,
+  [ROUTES.BANK_LIST]: placeholder,
+  [ROUTES.DEPOSIT_LIST]: placeholder,
+  [ROUTES.WITHDRAWAL_HISTORY]: placeholder,
+  [ROUTES.BET_LIST]: placeholder,
+  [ROUTES.BET_THIRD_PARTY]: placeholder,
+  [ROUTES.CHANGE_LOGIN_PW]: placeholder,
+  [ROUTES.CHANGE_TRADE_PW]: placeholder,
+  [ROUTES.REBATE_LIST]: placeholder
 }
 
 const PUBLIC_ROUTES = new Set([ROUTES.LOGIN, ROUTES.REGISTER])
@@ -88,7 +102,7 @@ const navigate = async (hash) => {
       const mod = await loader()
       currentModule = mod
       layoutModule.getContentContainer().innerHTML = ''
-      mod.render()
+      mod.render(hash)
       layoutModule.setActiveMenu(hash)
       layoutModule.hideLoading()
     }

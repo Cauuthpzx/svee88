@@ -13,41 +13,44 @@ const MENU_ITEMS = [
   { hash: ROUTES.DASHBOARD, icon: 'layui-icon-home', label: 'Trang chủ' },
   {
     icon: 'layui-icon-username', label: 'Sub-member Management',
-    children: [{ hash: ROUTES.USERS, label: 'Member List' }]
+    children: [
+      { hash: ROUTES.USERS, label: 'Member List' },
+      { hash: ROUTES.INVITE_LIST, label: 'Invite List' }
+    ]
   },
   {
     icon: 'layui-icon-tabs', label: 'Reports',
     children: [
-      { hash: null, label: 'Lottery Report' },
-      { hash: null, label: 'Transaction Statement' },
-      { hash: null, label: 'Provider Report' }
+      { hash: ROUTES.REPORT_LOTTERY, label: 'Lottery Report' },
+      { hash: ROUTES.REPORT_FUNDS, label: 'Transaction Statement' },
+      { hash: ROUTES.REPORT_PROVIDER, label: 'Provider Report' }
     ]
   },
   {
     icon: 'layui-icon-dollar', label: 'Commission Withdraw',
     children: [
-      { hash: null, label: 'Bank List' },
-      { hash: null, label: 'Deposit List' },
-      { hash: null, label: 'Withdrawal History' }
+      { hash: ROUTES.BANK_LIST, label: 'Bank List' },
+      { hash: ROUTES.DEPOSIT_LIST, label: 'Deposit List' },
+      { hash: ROUTES.WITHDRAWAL_HISTORY, label: 'Withdrawal History' }
     ]
   },
   {
     icon: 'layui-icon-chart-screen', label: 'Bet Management',
     children: [
-      { hash: null, label: 'Bet List' },
-      { hash: null, label: '3rd Party Bets' }
+      { hash: ROUTES.BET_LIST, label: 'Bet List' },
+      { hash: ROUTES.BET_THIRD_PARTY, label: '3rd Party Bets' }
     ]
   },
   {
     icon: 'layui-icon-survey', label: 'Customer Info',
     children: [
-      { hash: null, label: 'Change Login PW' },
-      { hash: null, label: 'Change Trade PW' }
+      { hash: ROUTES.CHANGE_LOGIN_PW, label: 'Change Login PW' },
+      { hash: ROUTES.CHANGE_TRADE_PW, label: 'Change Trade PW' }
     ]
   },
   {
     icon: 'layui-icon-list', label: 'Rebate Management',
-    children: [{ hash: null, label: 'Rebate List' }]
+    children: [{ hash: ROUTES.REBATE_LIST, label: 'Rebate List' }]
   }
 ]
 
