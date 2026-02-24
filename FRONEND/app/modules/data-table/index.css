@@ -1,0 +1,103 @@
+/* ── Data Panel ── */
+.data-panel {
+  padding: 0;
+}
+.data-panel-title {
+  margin-bottom: 10px;
+}
+.data-panel-title .layui-icon {
+  margin-right: 6px;
+}
+
+/* ── Toolbar / Search ── */
+.data-toolbar {
+  margin-bottom: 10px;
+}
+.data-toolbar .layui-elem-field {
+  margin-bottom: 0;
+}
+.data-toolbar .layui-field-box {
+  padding: 10px 15px;
+}
+.data-toolbar label {
+  font-size: 13px;
+  color: #666;
+}
+
+/* ── Layui Table overrides ── */
+.data-panel .layui-table-tool {
+  background: #f2f2f2;
+  border: none;
+  border-bottom: 1px solid #e6e6e6;
+}
+.data-panel .layui-table-header {
+  border: none;
+}
+.data-panel .layui-table-header th,
+.data-panel .layui-table thead th {
+  background: #f2f2f2;
+  border: none;
+  border-right: 1px solid #e6e6e6;
+}
+.data-panel .layui-table-header th:last-child,
+.data-panel .layui-table thead th:last-child {
+  border-right: none;
+}
+.data-panel .layui-table-view {
+  border: 1px solid #e6e6e6;
+}
+.data-panel .layui-table td,
+.data-panel .layui-table th {
+  border-color: #e6e6e6;
+}
+
+/* ── Total Summary ── */
+.total-summary-quote {
+  padding: 10px 15px;
+  line-height: 1.8;
+  font-size: 13px;
+}
+.total-summary-quote .layui-icon {
+  margin-right: 4px;
+  color: #16baaa;
+}
+.total-summary-quote .total-sep {
+  margin: 0 8px;
+  color: #ddd;
+}
+.total-summary-quote .total-item b {
+  color: #666;
+}
+.total-summary-quote .total-val {
+  font-weight: 600;
+}
+.total-summary-quote .val-pos {
+  color: #16baaa;
+}
+.total-summary-quote .val-neg {
+  color: #ff5722;
+}
+
+/* ── Dark mode ── */
+.dark .data-panel .layui-table-tool {
+  background: var(--lay-color-bg-2);
+  border-bottom-color: var(--lay-color-border-1);
+}
+.dark .data-panel .layui-table-header th,
+.dark .data-panel .layui-table thead th {
+  background: var(--lay-color-bg-2);
+  border-right-color: var(--lay-color-border-1);
+}
+.dark .data-panel .layui-table-view {
+  border-color: var(--lay-color-border-1);
+}
+.dark .data-panel .layui-table td,
+.dark .data-panel .layui-table th {
+  border-color: var(--lay-color-border-1);
+}
+.dark .data-toolbar label {
+  color: var(--lay-color-text-3);
+}
+.dark .total-summary-quote .total-item b {
+  color: var(--lay-color-text-2);
+}

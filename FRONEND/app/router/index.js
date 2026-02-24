@@ -5,27 +5,28 @@ import {
 
 /* ── Route map (lazy imports) ── */
 const placeholder = () => import('../modules/placeholder/index.js')
+const dataTable = () => import('../modules/data-table/index.js')
 
 const ROUTE_MAP = {
   [ROUTES.LOGIN]: () => import('../modules/auth/index.js'),
   [ROUTES.REGISTER]: () => import('../modules/auth/index.js'),
   [ROUTES.DASHBOARD]: () => import('../modules/dashboard/index.js'),
-  [ROUTES.USERS]: () => import('../modules/users/index.js'),
+  [ROUTES.USERS]: dataTable,
   [ROUTES.POSTS]: () => import('../modules/posts/index.js'),
   [ROUTES.TIERS]: () => import('../modules/tiers/index.js'),
   [ROUTES.TASKS]: () => import('../modules/tasks/index.js'),
-  [ROUTES.INVITE_LIST]: placeholder,
-  [ROUTES.REPORT_LOTTERY]: placeholder,
-  [ROUTES.REPORT_FUNDS]: placeholder,
-  [ROUTES.REPORT_PROVIDER]: placeholder,
-  [ROUTES.BANK_LIST]: placeholder,
-  [ROUTES.DEPOSIT_LIST]: placeholder,
-  [ROUTES.WITHDRAWAL_HISTORY]: placeholder,
-  [ROUTES.BET_LIST]: placeholder,
-  [ROUTES.BET_THIRD_PARTY]: placeholder,
+  [ROUTES.INVITE_LIST]: dataTable,
+  [ROUTES.REPORT_LOTTERY]: dataTable,
+  [ROUTES.REPORT_FUNDS]: dataTable,
+  [ROUTES.REPORT_PROVIDER]: dataTable,
+  [ROUTES.BANK_LIST]: dataTable,
+  [ROUTES.DEPOSIT_LIST]: dataTable,
+  [ROUTES.WITHDRAWAL_HISTORY]: dataTable,
+  [ROUTES.BET_LIST]: dataTable,
+  [ROUTES.BET_THIRD_PARTY]: dataTable,
   [ROUTES.CHANGE_LOGIN_PW]: placeholder,
   [ROUTES.CHANGE_TRADE_PW]: placeholder,
-  [ROUTES.REBATE_LIST]: placeholder
+  [ROUTES.REBATE_LIST]: dataTable
 }
 
 const PUBLIC_ROUTES = new Set([ROUTES.LOGIN, ROUTES.REGISTER])
