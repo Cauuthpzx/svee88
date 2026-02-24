@@ -102,7 +102,6 @@ layui.define('component', function (exports) {
           }
           timerMore[index] = setTimeout(function () {
             child.addClass(CONST.CLASS_SHOW);
-            othis.find('.' + CONST.NAV_MORE).addClass(CONST.NAV_MORE + 'd');
           }, 300);
         }
       };
@@ -139,9 +138,6 @@ layui.define('component', function (exports) {
               clearTimeout(timerMore[index]);
               timerMore[index] = setTimeout(function () {
                 othis.find('.' + CONST.NAV_CHILD).removeClass(CONST.CLASS_SHOW);
-                othis
-                  .find('.' + CONST.NAV_MORE)
-                  .removeClass(CONST.NAV_MORE + 'd');
               }, 300);
             }
           });
@@ -166,16 +162,7 @@ layui.define('component', function (exports) {
           var child = thisA.siblings('.' + CONST.NAV_CHILD);
           var clickEventName = 'click.lay_nav_click';
 
-          // 输出小箭头
-          if (child[0] && !thisA.children('.' + CONST.NAV_MORE)[0]) {
-            thisA.append(
-              '<i class="layui-icon ' +
-                CONST.NAV_DOWN +
-                ' ' +
-                CONST.NAV_MORE +
-                '"></i>'
-            );
-          }
+          // 小箭头已移除
 
           // 点击菜单
           thisA

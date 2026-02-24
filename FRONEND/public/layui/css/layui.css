@@ -4561,19 +4561,11 @@ body .layui-table-tips .layui-layer-content {
 }
 
 .layui-nav .layui-nav-more {
-  position: absolute;
-  top: 0;
-  right: 3px;
-  left: auto !important;
-  margin-top: 0;
-  font-size: 12px;
-  cursor: pointer;
-  -webkit-transition: all 0.2s;
-  transition: all 0.2s;
+  display: none;
 }
 .layui-nav .layui-nav-mored,
 .layui-nav-itemed > a .layui-nav-more {
-  transform: rotate(180deg);
+  display: none;
 }
 
 .layui-nav-child {
@@ -4642,10 +4634,10 @@ body .layui-table-tips .layui-layer-content {
   padding-bottom: 0;
 }
 .layui-nav-tree .layui-nav-more {
-  right: 15px;
+  display: none;
 }
 .layui-nav-tree .layui-nav-item > a .layui-nav-more {
-  padding: 5px 0;
+  display: none;
 }
 .layui-nav-tree .layui-nav-bar {
   width: 5px;
