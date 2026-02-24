@@ -43,8 +43,9 @@ const loadUsers = () => {
   })
 }
 
-export const render = () => {
-  document.getElementById('main-content').innerHTML = template()
+export const render = (hash, container) => {
+  const el = container || document.getElementById('main-content')
+  el.innerHTML = template()
   loadUsers()
 }
 

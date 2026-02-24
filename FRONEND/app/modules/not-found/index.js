@@ -11,8 +11,9 @@ const template = (hash) => `
   </div>
 `
 
-export const render = (hash) => {
-  document.getElementById('main-content').innerHTML = template(hash)
+export const render = (hash, container) => {
+  const el = container || document.getElementById('main-content')
+  el.innerHTML = template(hash)
 }
 
 export const destroy = () => {}

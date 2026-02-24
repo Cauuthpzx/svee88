@@ -103,6 +103,30 @@ export const UPSTREAM = {
   EDIT_FUND_PASSWORD: '/agent/editFundPassword'
 }
 
+/** Route → section mapping for transition type detection */
+export const ROUTE_SECTIONS = {
+  [ROUTES.DASHBOARD]: 'dashboard',
+  [ROUTES.USERS]: 'members',
+  [ROUTES.INVITE_LIST]: 'members',
+  [ROUTES.REPORT_LOTTERY]: 'reports',
+  [ROUTES.REPORT_FUNDS]: 'reports',
+  [ROUTES.REPORT_PROVIDER]: 'reports',
+  [ROUTES.BANK_LIST]: 'finance',
+  [ROUTES.DEPOSIT_LIST]: 'finance',
+  [ROUTES.WITHDRAWAL_HISTORY]: 'finance',
+  [ROUTES.BET_LIST]: 'bets',
+  [ROUTES.BET_THIRD_PARTY]: 'bets',
+  [ROUTES.CHANGE_LOGIN_PW]: 'customer',
+  [ROUTES.CHANGE_TRADE_PW]: 'customer',
+  [ROUTES.REBATE_LIST]: 'rebate',
+  [ROUTES.POSTS]: 'content',
+  [ROUTES.TIERS]: 'system',
+  [ROUTES.TASKS]: 'system'
+}
+
+/** Must match longest CSS transition duration */
+export const TRANSITION_MS = 350
+
 export const MSG = {
   LOGIN_SUCCESS: 'Đăng nhập thành công',
   REGISTER_SUCCESS: 'Đăng ký thành công, vui lòng đăng nhập',

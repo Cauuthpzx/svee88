@@ -1,6 +1,9 @@
 import { getToken, escapeHtml } from '../utils/index.js'
-import { ROUTES, INTENDED_ROUTE_KEY } from '../constants/index.js'
+import {
+  ROUTES, INTENDED_ROUTE_KEY, ROUTE_SECTIONS, TRANSITION_MS
+} from '../constants/index.js'
 
+/* ── Route map (lazy imports) ── */
 const placeholder = () => import('../modules/placeholder/index.js')
 
 const ROUTE_MAP = {
@@ -26,7 +29,6 @@ const ROUTE_MAP = {
 }
 
 const PUBLIC_ROUTES = new Set([ROUTES.LOGIN, ROUTES.REGISTER])
-
 const getHash = () => location.hash || ROUTES.DASHBOARD
 
 const guard = (hash) => {
@@ -34,9 +36,71 @@ const guard = (hash) => {
   return !!getToken()
 }
 
+/* ── Transition state ── */
 let layoutModule = null
 let currentModule = null
+let currentPage = null
+let prevHash = null
+let isTransitioning = false
+let transitionTimer = null
 
+/* ── Transition type detection ── */
+const getTransitionType = (from, to) => {
+  if (!from || PUBLIC_ROUTES.has(from)) return 'fade'
+  const fromSection = ROUTE_SECTIONS[from]
+  const toSection = ROUTE_SECTIONS[to]
+  if (fromSection === 'dashboard' || toSection === 'dashboard') return 'slide-up'
+  if (fromSection === toSection) return 'fade'
+  return 'curtain'
+}
+
+/* ── Force-complete pending transition (for rapid clicks) ── */
+const forceComplete = () => {
+  if (!isTransitioning) return
+  clearTimeout(transitionTimer)
+  const container = layoutModule?.getContentContainer()
+  if (container) {
+    const leaving = container.querySelector('.page.is-leaving')
+    if (leaving) leaving.remove()
+  }
+  if (currentPage) {
+    currentPage.className = 'page is-active'
+    currentPage.style.willChange = 'auto'
+  }
+  isTransitioning = false
+}
+
+/* ── Dual-page transition engine ── */
+const transitionTo = (container, nextPage, trType) => {
+  const trClass = `tr-${trType}`
+  nextPage.classList.add(trClass)
+
+  const oldPage = currentPage
+  if (oldPage) {
+    oldPage.classList.remove('is-active')
+    oldPage.classList.add('is-leaving', trClass)
+  }
+
+  isTransitioning = true
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      nextPage.classList.remove('is-entering')
+      nextPage.classList.add('is-active')
+    })
+  })
+
+  transitionTimer = setTimeout(() => {
+    if (oldPage) oldPage.remove()
+    removeSkeleton()
+    nextPage.style.willChange = 'auto'
+    isTransitioning = false
+  }, TRANSITION_MS)
+
+  currentPage = nextPage
+}
+
+/* ── Layout helpers ── */
 const ensureLayout = async () => {
   if (!layoutModule) {
     layoutModule = await import('../layout/index.js')
@@ -46,23 +110,45 @@ const ensureLayout = async () => {
   }
 }
 
-const scrollToTop = () => {
-  const body = document.getElementById('main-content')
-  if (body) body.scrollTop = 0
-  window.scrollTo(0, 0)
+const removeSkeleton = () => {
+  const el = document.getElementById('routeLoading')
+  if (el) el.remove()
 }
 
-const renderNotFound = async (hash) => {
-  await ensureLayout()
-  const mod = await import('../modules/not-found/index.js')
-  currentModule = mod
-  layoutModule.getContentContainer().innerHTML = ''
-  mod.render(hash)
-  layoutModule.setActiveMenu(null)
+/* ── Create a .page wrapper, mount to container, render module into it ── */
+const createPage = (container, trType) => {
+  const page = document.createElement('div')
+  page.className = `page is-entering tr-${trType}`
+  container.appendChild(page)
+  return page
 }
 
+/* ── Error rendering ── */
+const renderError = (err) => {
+  forceComplete()
+  const container = layoutModule?.getContentContainer()
+    || document.getElementById('app')
+  if (!container) return
+  container.querySelectorAll('.page').forEach((p) => p.remove())
+  const page = document.createElement('div')
+  page.className = 'page is-active'
+  page.innerHTML = `
+    <div class="error-boundary">
+      <p class="error-boundary-title">Đã xảy ra lỗi</p>
+      <p class="error-boundary-text">${escapeHtml(err?.message) || 'Không thể tải trang'}</p>
+      <a href="${ROUTES.DASHBOARD}" class="layui-btn layui-btn-sm">Về trang chủ</a>
+    </div>`
+  container.appendChild(page)
+  currentPage = page
+  isTransitioning = false
+  layoutModule?.hideLoading?.()
+}
+
+/* ── Main navigate ── */
 const navigate = async (hash) => {
   hash = hash || getHash()
+
+  if (hash === prevHash) return
 
   if (!guard(hash)) {
     sessionStorage.setItem(INTENDED_ROUTE_KEY, hash)
@@ -77,6 +163,8 @@ const navigate = async (hash) => {
     return
   }
 
+  forceComplete()
+
   if (currentModule?.destroy) {
     currentModule.destroy()
   }
@@ -84,45 +172,46 @@ const navigate = async (hash) => {
   const loader = ROUTE_MAP[hash]
 
   if (!loader) {
-    await renderNotFound(hash)
-    scrollToTop()
+    await ensureLayout()
+    /* skeleton removed in transitionTo cleanup */
+    const container = layoutModule.getContentContainer()
+    const trType = getTransitionType(prevHash, hash)
+    const mod = await import('../modules/not-found/index.js')
+    currentModule = mod
+    const nextPage = createPage(container, trType)
+    mod.render(hash, nextPage)
+    transitionTo(container, nextPage, trType)
+    layoutModule.setActiveMenu(null)
+    prevHash = hash
     return
   }
 
   try {
     if (PUBLIC_ROUTES.has(hash)) {
       layoutModule = null
+      currentPage = null
+      prevHash = null
       document.getElementById('app').innerHTML = ''
       const mod = await loader()
       currentModule = mod
       mod.render(hash)
     } else {
       await ensureLayout()
-      layoutModule.showLoading()
+      /* skeleton removed in transitionTo cleanup */
+      const container = layoutModule.getContentContainer()
+      const trType = getTransitionType(prevHash, hash)
       const mod = await loader()
       currentModule = mod
-      layoutModule.getContentContainer().innerHTML = ''
-      mod.render(hash)
+      const nextPage = createPage(container, trType)
+      mod.render(hash, nextPage)
+      transitionTo(container, nextPage, trType)
       layoutModule.setActiveMenu(hash)
-      layoutModule.hideLoading()
     }
   } catch (err) {
     renderError(err)
   }
 
-  scrollToTop()
-}
-
-const renderError = (err) => {
-  const container = layoutModule?.getContentContainer() || document.getElementById('app')
-  if (!container) return
-  container.innerHTML = `
-    <div class="error-boundary">
-      <p class="error-boundary-title">Đã xảy ra lỗi</p>
-      <p class="error-boundary-text">${escapeHtml(err?.message) || 'Không thể tải trang'}</p>
-      <a href="${ROUTES.DASHBOARD}" class="layui-btn layui-btn-sm">Về trang chủ</a>
-    </div>`
-  layoutModule?.hideLoading?.()
+  prevHash = hash
 }
 
 /** Preload a route module on hover for faster navigation */

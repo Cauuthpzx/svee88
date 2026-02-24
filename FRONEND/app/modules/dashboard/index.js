@@ -14,10 +14,9 @@ const template = (user) => `
 
 let unsubUser = null
 
-export const render = () => {
-  const update = () => {
-    document.getElementById('main-content').innerHTML = template(store.get('user'))
-  }
+export const render = (hash, container) => {
+  const el = container || document.getElementById('main-content')
+  const update = () => { el.innerHTML = template(store.get('user')) }
   update()
   unsubUser = store.on('user', update)
 }

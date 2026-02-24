@@ -13,10 +13,11 @@ const template = (title) => `
 
 let currentHash = null
 
-export const render = (hash) => {
+export const render = (hash, container) => {
   currentHash = hash
+  const el = container || document.getElementById('main-content')
   const title = ROUTE_TITLES[hash] || hash.replace('#/', '')
-  document.getElementById('main-content').innerHTML = template(title)
+  el.innerHTML = template(title)
 }
 
 export const destroy = () => {

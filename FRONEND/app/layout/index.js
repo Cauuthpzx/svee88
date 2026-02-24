@@ -175,6 +175,12 @@ export const hideLoading = () => {
   if (el) el.style.display = 'none'
 }
 
+/** Remove skeleton permanently (called once by router after first page mounts) */
+export const removeSkeleton = () => {
+  const el = document.getElementById('routeLoading')
+  if (el) el.remove()
+}
+
 export const setActiveMenu = (hash) => {
   const sidebar = document.getElementById('hubSidebarL')
   if (!sidebar) return

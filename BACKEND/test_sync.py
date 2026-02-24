@@ -67,7 +67,7 @@ def create_upstream_client():
 def create_backend_client():
     return httpx.AsyncClient(
         base_url=BACKEND_BASE,
-        timeout=120.0,
+        timeout=300.0,
         headers={"Content-Type": "application/json"},
     )
 
@@ -157,7 +157,23 @@ async def post_batched(backend_client, url, records):
         batch_num = i // BATCH_SIZE + 1
         print(f"    uploading batch {batch_num}/{batches} ({len(batch)} records)...", end="", flush=True)
         resp = await backend_client.post(url, json={"data": batch, "agent_id": AGENT_ID})
-        resp.raise_for_status()
+        if resp.status_code != 200:
+            print(f" ERROR {resp.status_code}: {resp.text[:300]}")
+            # Try smaller sub-batches to find the problem
+            sub_size = max(len(batch) // 10, 1)
+            for j in range(0, len(batch), sub_size):
+                sub = batch[j:j + sub_size]
+                sr = await backend_client.post(url, json={"data": sub, "agent_id": AGENT_ID})
+                if sr.status_code != 200:
+                    print(f"      sub-batch {j}-{j+len(sub)} FAILED: {sr.text[:200]}")
+                    if len(sub) <= 5:
+                        for idx, rec in enumerate(sub):
+                            single = await backend_client.post(url, json={"data": [rec], "agent_id": AGENT_ID})
+                            if single.status_code != 200:
+                                print(f"      record[{j+idx}] id={rec.get('id','')} FAILED: {single.text[:200]}")
+                    continue
+                total += sr.json().get("processed", 0)
+            continue
         processed = resp.json().get("processed", 0)
         total += processed
         print(f" done ({processed})")
