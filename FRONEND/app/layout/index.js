@@ -81,10 +81,24 @@ const template = () => `
   <div class="layui-layout layui-layout-admin" id="${LAYOUT_ID}">
     <header class="layui-header" role="banner">
       <div class="layui-logo layui-hide-xs">Hệ thống quản lý</div>
+      <div id="header-clock" role="timer" aria-label="Current time">
+        <span id="clock-display" aria-live="off"></span>
+        <span id="clock-date"></span>
+      </div>
       <ul class="layui-nav layui-layout-right" role="toolbar">
+        <li class="layui-nav-item">
+          <a href="javascript:;" id="i18nToggle" aria-label="Ngôn ngữ" role="button">
+            <i class="layui-icon layui-icon-website"></i>
+          </a>
+        </li>
         <li class="layui-nav-item">
           <a href="javascript:;" id="themeToggle" aria-label="Chuyển đổi giao diện sáng/tối" role="button">
             <i class="layui-icon layui-icon-moon" id="themeIcon"></i>
+          </a>
+        </li>
+        <li class="layui-nav-item">
+          <a href="javascript:;" id="notifyBtn" aria-label="Thông báo" role="button">
+            <i class="layui-icon layui-icon-notice"></i>
           </a>
         </li>
         <li class="layui-nav-item">
@@ -148,6 +162,25 @@ const loadUserInfo = async () => {
   }
 }
 
+let clockTimer = null
+const pad = (n) => String(n).padStart(2, '0')
+const updateClock = () => {
+  const now = new Date()
+  const h = now.getHours()
+  const h12 = h % 12 || 12
+  const ampm = h < 12 ? 'AM' : 'PM'
+  const time = `${pad(h12)}:${pad(now.getMinutes())}:${pad(now.getSeconds())}  ${ampm}`
+  const date = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()}`
+  const timeEl = document.getElementById('clock-display')
+  const dateEl = document.getElementById('clock-date')
+  if (timeEl) timeEl.textContent = time
+  if (dateEl) dateEl.textContent = date
+}
+const startClock = () => {
+  updateClock()
+  clockTimer = setInterval(updateClock, 1000)
+}
+
 export const isRendered = () => !!document.getElementById(LAYOUT_ID)
 
 const handleSidebarHover = (e) => {
@@ -165,6 +198,7 @@ export const render = async () => {
     ?.addEventListener('click', handleLogout)
   document.getElementById('hubSidebarL')
     ?.addEventListener('mouseenter', handleSidebarHover, true)
+  startClock()
   await loadUserInfo()
 }
 

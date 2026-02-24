@@ -51,9 +51,55 @@
 .layui-layout-admin .layui-header .layui-nav .layui-nav-item a {
   color: #555;
 }
+.layui-layout-admin .layui-header .layui-nav .layui-nav-item a .layui-icon {
+  font-size: 18px;
+}
 .layui-layout-admin .layui-header .layui-nav .layui-nav-item a:hover {
   color: #16baaa;
 }
+
+/* ── Header clock ── */
+#header-clock {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;
+  height: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  white-space: nowrap;
+}
+#clock-display {
+  font-size: 16px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 2px;
+  line-height: 1.2;
+  color: #333;
+}
+#clock-date {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  line-height: 1.2;
+  color: #999;
+}
+@media (max-width: 768px) {
+  #header-clock { display: none; }
+}
+.dark #clock-display {
+  color: #5ce0d2;
+  text-shadow: 0 0 8px rgba(92, 224, 210, .5), 0 0 20px rgba(92, 224, 210, .2);
+  animation-name: clock-glow;
+}
+@keyframes clock-glow {
+  0%, 100% { text-shadow: 0 0 8px rgba(92, 224, 210, .5), 0 0 20px rgba(92, 224, 210, .2); }
+  50%      { text-shadow: 0 0 12px rgba(92, 224, 210, .7), 0 0 30px rgba(92, 224, 210, .35); }
+}
+.dark #clock-date { color: var(--lay-color-text-3); }
 
 /* ── Sidebar ── var() fallback = light value, resolves dark via theme CSS vars */
 .hub-sidebar {
@@ -263,8 +309,17 @@
 
 /* ── Theme toggle ── */
 #themeToggle .layui-icon {
+  display: inline-block;
   font-size: 20px;
-  transition: color 0.2s;
+  animation: none;
+}
+.layui-header .layui-nav #themeToggle:hover .layui-icon {
+  animation: toggle-wobble 0.6s ease;
+}
+@keyframes toggle-wobble {
+  0%   { transform: rotate(0deg); }
+  40%  { transform: rotate(30deg); }
+  100% { transform: rotate(0deg); }
 }
 
 /* ══════════════════════════════════════
