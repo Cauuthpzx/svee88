@@ -5,285 +5,188 @@
 
 const LOTTERY_OPTIONS = [
   { value: '', text: '--' },
-  { value: '67', text: 'Sicbo 30s' }, { value: '66', text: 'Sicbo 20s' },
+  // Sicbo
+  { value: '66', text: 'Sicbo 20s' }, { value: '67', text: 'Sicbo 30s' },
   { value: '68', text: 'Sicbo 40s' }, { value: '69', text: 'Sicbo 50s' },
   { value: '70', text: 'Sicbo 1m' }, { value: '71', text: 'Sicbo 1.5m' },
-  { value: '73', text: 'Win go 45s' }, { value: '74', text: 'Win go 1m' },
-  { value: '75', text: 'Win go 3m' }, { value: '76', text: 'Win go 5m' }, { value: '77', text: 'Win go 30s' },
+  // Win go
+  { value: '77', text: 'Win go 30s' }, { value: '73', text: 'Win go 45s' },
+  { value: '74', text: 'Win go 1m' }, { value: '75', text: 'Win go 3m' }, { value: '76', text: 'Win go 5m' },
+  // Keno VIP
   { value: '51', text: 'Keno VIP 20s' }, { value: '52', text: 'Keno VIP 30s' },
   { value: '53', text: 'Keno VIP 40s' }, { value: '54', text: 'Keno VIP 50s' },
   { value: '55', text: 'Keno VIP 1m' }, { value: '56', text: 'Keno VIP 5m' },
+  // Miền Bắc
   { value: '32', text: 'Miền Bắc' }, { value: '63', text: 'XS Miền Bắc' },
-  { value: '46', text: 'M.Bắc nhanh 3m' }, { value: '45', text: 'M.Bắc nhanh 5m' },
+  { value: '45', text: 'M.Bắc nhanh 5m' }, { value: '46', text: 'M.Bắc nhanh 3m' },
   { value: '47', text: 'M.Bắc VIP 45s' }, { value: '48', text: 'M.Bắc VIP 75s' }, { value: '49', text: 'M.Bắc VIP 2m' },
+  // Miền Nam VIP
   { value: '44', text: 'M.Nam VIP 5m' }, { value: '57', text: 'M.Nam VIP 45s' },
-  { value: '58', text: 'M.Nam VIP 1m' }, { value: '59', text: 'M.Nam VIP 90s' }, { value: '60', text: 'M.Nam VIP 2m' }
+  { value: '58', text: 'M.Nam VIP 1m' }, { value: '59', text: 'M.Nam VIP 90s' }, { value: '60', text: 'M.Nam VIP 2m' },
+  // Xổ số Miền Nam
+  { value: '1', text: 'Bạc Liêu' }, { value: '2', text: 'Vũng Tàu' }, { value: '3', text: 'Tiền Giang' },
+  { value: '4', text: 'Kiên Giang' }, { value: '5', text: 'Đà Lạt' }, { value: '6', text: 'Bình Phước' },
+  { value: '7', text: 'Bình Dương' }, { value: '8', text: 'An Giang' }, { value: '9', text: 'Bình Thuận' },
+  { value: '10', text: 'Cà Mau' }, { value: '11', text: 'Cần Thơ' }, { value: '12', text: 'Hậu Giang' },
+  { value: '13', text: 'Đồng Tháp' }, { value: '14', text: 'Tây Ninh' }, { value: '15', text: 'Sóc Trăng' },
+  { value: '16', text: 'TP Hồ Chí Minh' }, { value: '17', text: 'Đồng Nai' },
+  { value: '30', text: 'Đắk Lắk' }, { value: '31', text: 'Đắk Nông' },
+  { value: '42', text: 'Trà Vinh' }, { value: '43', text: 'Vĩnh Long' },
+  // Xổ số Miền Trung
+  { value: '18', text: 'Đà Nẵng' }, { value: '19', text: 'Thừa Thiên Huế' },
+  { value: '20', text: 'Quảng Trị' }, { value: '21', text: 'Phú Yên' },
+  { value: '22', text: 'Quảng Bình' }, { value: '23', text: 'Quảng Nam' },
+  { value: '24', text: 'Quảng Ngãi' }, { value: '25', text: 'Ninh Thuận' },
+  { value: '26', text: 'Kon Tum' }, { value: '27', text: 'Khánh Hoà' },
+  { value: '28', text: 'Gia Lai' }, { value: '29', text: 'Bình Định' }
 ]
 
-/** Column configs — field names match backend SQLAlchemy models */
+const PLATFORM_OPTIONS = [
+  { value: '', text: '--' },
+  { value: '8', text: 'PA' }, { value: '9', text: 'BBIN' }, { value: '10', text: 'WM' },
+  { value: '14', text: 'MINI' }, { value: '20', text: 'KY' }, { value: '28', text: 'PGSOFT' },
+  { value: '29', text: 'LUCKYWIN' }, { value: '30', text: 'SABA' }, { value: '31', text: 'PT' },
+  { value: '38', text: 'RICH88' }, { value: '43', text: 'ASTAR' }, { value: '45', text: 'FB' },
+  { value: '46', text: 'JILI' }, { value: '47', text: 'KA' }, { value: '48', text: 'MW' },
+  { value: '50', text: 'SBO' }, { value: '51', text: 'NEXTSPIN' }, { value: '52', text: 'AMB' },
+  { value: '53', text: 'FunTa' }, { value: '62', text: 'MG' }, { value: '63', text: 'WS168' },
+  { value: '69', text: 'DG CASINO' }, { value: '70', text: 'V8' }, { value: '71', text: 'AE' },
+  { value: '72', text: 'TP' }, { value: '73', text: 'FC' }, { value: '74', text: 'JDB' },
+  { value: '75', text: 'CQ9' }, { value: '76', text: 'PP' }, { value: '77', text: 'VA' },
+  { value: '78', text: 'BNG' }, { value: '84', text: 'DB CASINO' }, { value: '85', text: 'EVO CASINO' },
+  { value: '90', text: 'CMD SPORTS' }, { value: '91', text: 'PG NEW' }, { value: '92', text: 'FBLIVE' },
+  { value: '93', text: 'ON CASINO' }, { value: '94', text: 'MT' }, { value: '102', text: 'fC NEW' }
+]
+
+/** Column configs — field names & Vietnamese titles match upstream exactly */
 export const ENDPOINT_COLS = {
-  // Model: Member (sync/member/model.py) — 35 columns
+  // Member — upstream trả 12 fields (mapped qua clean_member)
   members: [
-    { field: 'username', title: 'Username', minWidth: 150, fixed: 'left' },
+    { field: 'username', title: 'Hội viên', minWidth: 150, fixed: 'left' },
     { field: 'id', title: 'ID', minWidth: 90 },
-    { field: 'agent_id', title: 'Agent ID', minWidth: 90 },
-    { field: 'user_parent', title: 'Parent ID', minWidth: 100 },
-    { field: 'user_tree', title: 'User Tree', minWidth: 200 },
-    { field: 'type', title: 'Type', minWidth: 80 },
-    { field: 'agent_type', title: 'Agent Type', minWidth: 90 },
-    { field: 'level', title: 'Level', minWidth: 80 },
-    { field: 'group_id', title: 'Group', minWidth: 80 },
-    { field: 'status', title: 'Status', minWidth: 80 },
-    { field: 'is_tester', title: 'Tester', minWidth: 80 },
-    { field: 'truename', title: 'Real Name', minWidth: 150 },
-    { field: 'phone', title: 'Phone', minWidth: 120 },
-    { field: 'phone_verified', title: 'Phone Verified', minWidth: 110 },
-    { field: 'phone_verified_time', title: 'Phone Verify Time', minWidth: 160 },
-    { field: 'email', title: 'Email', minWidth: 200 },
-    { field: 'email_verified', title: 'Email Verified', minWidth: 110 },
-    { field: 'invite_code', title: 'Invite Code', minWidth: 120 },
-    { field: 'money', title: 'Balance', minWidth: 130, sort: true },
-    { field: 'deposit_times', title: 'Dep#', minWidth: 80 },
-    { field: 'deposit_money', title: 'Total Dep', minWidth: 130, sort: true },
-    { field: 'withdrawal_times', title: 'Wd#', minWidth: 80 },
-    { field: 'withdrawal_money', title: 'Total Wd', minWidth: 130, sort: true },
-    { field: 'first_deposit_time', title: 'First Dep Time', minWidth: 160 },
-    { field: 'device', title: 'Device', minWidth: 100 },
-    { field: 'useragent', title: 'User Agent', minWidth: 250 },
-    { field: 'login_ip', title: 'Login IP', minWidth: 140 },
-    { field: 'register_ip', title: 'Register IP', minWidth: 140 },
-    { field: 'login_time', title: 'Last Login', minWidth: 160, sort: true },
-    { field: 'register_time', title: 'Register Time', minWidth: 160, sort: true },
-    { field: 'create_time', title: 'Created', minWidth: 160 },
-    { field: 'update_time', title: 'Updated', minWidth: 160 },
-    { field: 'remark', title: 'Remark', minWidth: 180 },
-    { field: 'note', title: 'Note', minWidth: 180 }
+    { field: 'type', title: 'Loại hình', minWidth: 120 },
+    { field: 'user_parent', title: 'Đại lý', minWidth: 100 },
+    { field: 'status', title: 'Trạng thái', minWidth: 100 },
+    { field: 'money', title: 'Số dư', minWidth: 140, sort: true },
+    { field: 'deposit_times', title: 'Lần nạp', minWidth: 90, sort: true },
+    { field: 'deposit_money', title: 'Tổng nạp', minWidth: 140, sort: true },
+    { field: 'withdrawal_times', title: 'Lần rút', minWidth: 90, sort: true },
+    { field: 'withdrawal_money', title: 'Tổng rút', minWidth: 140, sort: true },
+    { field: 'login_time', title: 'Đăng nhập cuối', minWidth: 160, sort: true },
+    { field: 'register_time', title: 'Đăng ký', minWidth: 160, sort: true }
   ],
-  // Model: InviteList (sync/config/model.py) — 15 columns
+  // InviteList — upstream trả 10 fields
   invites: [
-    { field: 'invite_code', title: 'Invite Code', minWidth: 150, fixed: 'left' },
+    { field: 'invite_code', title: 'Mã giới thiệu', minWidth: 150, fixed: 'left' },
     { field: 'id', title: 'ID', minWidth: 90 },
-    { field: 'uid', title: 'UID', minWidth: 90 },
-    { field: 'agent_id', title: 'Agent ID', minWidth: 90 },
-    { field: 'user_type', title: 'User Type', minWidth: 100 },
-    { field: 'group_id', title: 'Group', minWidth: 80 },
-    { field: 'reg_count', title: 'Reg Count', minWidth: 100, sort: true },
-    { field: 'scope_reg_count', title: 'Scope Reg', minWidth: 100 },
-    { field: 'recharge_count', title: 'Recharge#', minWidth: 100, sort: true },
-    { field: 'first_recharge_count', title: 'First Recharge#', minWidth: 130 },
-    { field: 'register_recharge_count', title: 'Reg Recharge#', minWidth: 130 },
-    { field: 'rebate_arr', title: 'Rebate Array', minWidth: 200 },
-    { field: 'remark', title: 'Remark', minWidth: 150 },
-    { field: 'create_time', title: 'Created', minWidth: 160, sort: true },
-    { field: 'update_time', title: 'Updated', minWidth: 160 }
+    { field: 'user_type', title: 'Loại hình', minWidth: 120 },
+    { field: 'reg_count', title: 'Tổng đăng ký', minWidth: 110, sort: true },
+    { field: 'scope_reg_count', title: 'Đăng ký phạm vi', minWidth: 120 },
+    { field: 'recharge_count', title: 'Số người nạp', minWidth: 110, sort: true },
+    { field: 'first_recharge_count', title: 'Nạp đầu/ngày', minWidth: 110 },
+    { field: 'register_recharge_count', title: 'Nạp đầu/đăng ký', minWidth: 130 },
+    { field: 'remark', title: 'Ghi chú', minWidth: 150 },
+    { field: 'create_time', title: 'Thời gian tạo', minWidth: 160, sort: true }
   ],
-  // Model: BetLottery (sync/bet/model.py) — 35 columns
+  // BetLottery — upstream trả 12 fields
   bets: [
-    { field: 'serial_no', title: 'Serial No', minWidth: 200, fixed: 'left' },
-    { field: 'id', title: 'ID', minWidth: 90 },
-    { field: 'uid', title: 'UID', minWidth: 90 },
-    { field: 'username', title: 'Username', minWidth: 140 },
-    { field: 'agent_id', title: 'Agent ID', minWidth: 90 },
-    { field: 'user_parent', title: 'Parent ID', minWidth: 100 },
-    { field: 'user_tree', title: 'User Tree', minWidth: 200 },
-    { field: 'lottery_name', title: 'Lottery', minWidth: 140 },
-    { field: 'lottery_id', title: 'Lottery ID', minWidth: 90 },
-    { field: 'issue', title: 'Issue', minWidth: 130 },
-    { field: 'issue_id', title: 'Issue ID', minWidth: 90 },
-    { field: 'play_id', title: 'Play ID', minWidth: 90 },
-    { field: 'play_type_id', title: 'Play Type ID', minWidth: 100 },
-    { field: 'odds_id', title: 'Odds ID', minWidth: 90 },
-    { field: 'odds', title: 'Odds', minWidth: 90 },
-    { field: 'content', title: 'Bet Content', minWidth: 150 },
-    { field: 'count', title: 'Count', minWidth: 80 },
-    { field: 'real_count', title: 'Real Count', minWidth: 90 },
-    { field: 'price', title: 'Price', minWidth: 120, sort: true },
-    { field: 'money', title: 'Bet Money', minWidth: 120, sort: true },
-    { field: 'rebate', title: 'Rebate', minWidth: 100 },
-    { field: 'rebate_amount', title: 'Rebate Amt', minWidth: 120, sort: true },
-    { field: 'result', title: 'Result', minWidth: 120, sort: true },
-    { field: 'prize', title: 'Prize', minWidth: 120, sort: true },
-    { field: 'win_count', title: 'Win#', minWidth: 80 },
-    { field: 'real_win_count', title: 'Real Win#', minWidth: 90 },
-    { field: 'status', title: 'Status', minWidth: 80 },
-    { field: 'commission_status', title: 'Commission', minWidth: 100 },
-    { field: 'source', title: 'Source', minWidth: 80 },
-    { field: 'is_tester', title: 'Tester', minWidth: 80 },
-    { field: 'bet_data_set', title: 'Bet Data', minWidth: 200 },
-    { field: 'ip', title: 'IP', minWidth: 140 },
-    { field: 'create_time', title: 'Created', minWidth: 160, sort: true },
-    { field: 'update_time', title: 'Updated', minWidth: 160 },
-    { field: 'prize_time', title: 'Prize Time', minWidth: 160 }
+    { field: 'serial_no', title: 'Mã giao dịch', minWidth: 200, fixed: 'left' },
+    { field: 'username', title: 'Người dùng', minWidth: 140 },
+    { field: 'create_time', title: 'Thời gian cược', minWidth: 160, sort: true },
+    { field: 'lottery_name', title: 'Trò chơi', minWidth: 150 },
+    { field: 'play_type_name', title: 'Loại trò chơi', minWidth: 150 },
+    { field: 'play_name', title: 'Cách chơi', minWidth: 150 },
+    { field: 'issue', title: 'Kỳ', minWidth: 150 },
+    { field: 'content', title: 'Thông tin cược', minWidth: 150 },
+    { field: 'money', title: 'Tiền cược', minWidth: 140, sort: true },
+    { field: 'rebate_amount', title: 'Hoàn trả', minWidth: 140, sort: true },
+    { field: 'result', title: 'Thắng thua', minWidth: 140, sort: true },
+    { field: 'status_text', title: 'Trạng thái', minWidth: 100, fixed: 'right' }
   ],
-  // Model: BetOrder (sync/bet/model.py) — 22 columns
+  // Cược bên thứ 3 — upstream 12 fields
   'bet-orders': [
-    { field: 'serial_no', title: 'Serial No', minWidth: 200, fixed: 'left' },
-    { field: 'id', title: 'ID', minWidth: 90 },
-    { field: 'uid', title: 'UID', minWidth: 90 },
-    { field: 'agent_id', title: 'Agent ID', minWidth: 90 },
-    { field: 'platform_username', title: 'Username', minWidth: 140 },
-    { field: 'platform_id', title: 'Platform ID', minWidth: 100 },
-    { field: 'platform_id_name', title: 'Provider', minWidth: 120 },
-    { field: 'cid', title: 'CID', minWidth: 80 },
-    { field: 'c_name', title: 'Game Category', minWidth: 120 },
-    { field: 'game_name', title: 'Game', minWidth: 160 },
-    { field: 'game_code', title: 'Game Code', minWidth: 100 },
-    { field: 'bet_amount', title: 'Bet', minWidth: 120, sort: true },
-    { field: 'turnover', title: 'Turnover', minWidth: 120, sort: true },
-    { field: 'prize', title: 'Prize', minWidth: 120, sort: true },
-    { field: 'win_lose', title: 'Win/Lose', minWidth: 120, sort: true },
-    { field: 'extra', title: 'Extra', minWidth: 120 },
-    { field: 'origin', title: 'Origin', minWidth: 100 },
-    { field: 'delete_time', title: 'Delete Time', minWidth: 100 },
-    { field: 'bet_time', title: 'Bet Time', minWidth: 160, sort: true },
-    { field: 'prizetime', title: 'Prize Time', minWidth: 160 },
-    { field: 'create_time', title: 'Created', minWidth: 160 },
-    { field: 'update_time', title: 'Updated', minWidth: 160 }
+    { field: 'serial_no', title: 'Mã giao dịch', minWidth: 200, fixed: 'left' },
+    { field: 'platform_id_name', title: 'Nhà cung cấp game', minWidth: 160 },
+    { field: 'platform_username', title: 'Tài khoản nhà cái', minWidth: 150 },
+    { field: 'c_name', title: 'Loại hình trò chơi', minWidth: 140 },
+    { field: 'game_code', title: 'Mã trò chơi', minWidth: 120 },
+    { field: 'game_name', title: 'Tên trò chơi', minWidth: 160 },
+    { field: 'bet_amount', title: 'Tiền cược', minWidth: 130, sort: true },
+    { field: 'turnover', title: 'Cược hợp lệ', minWidth: 130, sort: true },
+    { field: 'prize', title: 'Tiền thưởng', minWidth: 130, sort: true },
+    { field: 'win_lose', title: 'Thắng thua', minWidth: 130, sort: true },
+    { field: 'create_time', title: 'Thời gian tạo', minWidth: 160, sort: true },
+    { field: 'bet_time', title: 'Thời gian cược', minWidth: 160, sort: true }
   ],
-  // Model: ReportLottery (sync/report/model.py) — 14 columns
+  // Báo cáo xổ số — upstream 11 fields (+ total_data)
   'report-lottery': [
-    { field: 'username', title: 'Username', minWidth: 140, fixed: 'left' },
-    { field: 'uid', title: 'UID', minWidth: 90 },
-    { field: 'agent_id', title: 'Agent ID', minWidth: 90 },
-    { field: 'lottery_name', title: 'Lottery', minWidth: 140 },
-    { field: 'lottery_id', title: 'Lottery ID', minWidth: 90 },
-    { field: 'report_date', title: 'Date', minWidth: 110, sort: true },
-    { field: 'bet_count', title: 'Bets', minWidth: 80, sort: true },
-    { field: 'bet_amount', title: 'Bet Amount', minWidth: 120, sort: true },
-    { field: 'valid_amount', title: 'Valid Amount', minWidth: 120, sort: true },
-    { field: 'rebate_amount', title: 'Rebate', minWidth: 120, sort: true },
-    { field: 'result', title: 'Result', minWidth: 120, sort: true },
-    { field: 'win_lose', title: 'Win/Lose', minWidth: 120, sort: true },
-    { field: 'prize', title: 'Prize', minWidth: 120, sort: true },
-    { field: 'synced_at', title: 'Synced At', minWidth: 160 }
+    { field: 'username', title: 'Tên tài khoản', minWidth: 140, fixed: 'left' },
+    { field: 'user_parent_format', title: 'Thuộc đại lý', minWidth: 120 },
+    { field: 'lottery_name', title: 'Tên loại xổ', minWidth: 150 },
+    { field: 'bet_count', title: 'Số lần cược', minWidth: 100, sort: true },
+    { field: 'bet_amount', title: 'Tiền cược', minWidth: 130, sort: true },
+    { field: 'valid_amount', title: 'Cược hợp lệ (trừ hoà)', minWidth: 170, sort: true },
+    { field: 'rebate_amount', title: 'Hoàn trả', minWidth: 130, sort: true },
+    { field: 'result', title: 'Thắng thua', minWidth: 130, sort: true },
+    { field: 'win_lose', title: 'Kết quả (không gồm hoàn trả)', minWidth: 200, sort: true },
+    { field: 'prize', title: 'Tiền trúng', minWidth: 130, sort: true },
+    { field: 'report_date', title: 'Thời gian', minWidth: 120, sort: true }
   ],
-  // Model: ReportFunds (sync/report/model.py) — 16 columns
+  // Báo cáo tài chính — upstream 12 fields (+ total_data)
   'report-funds': [
-    { field: 'username', title: 'Username', minWidth: 140, fixed: 'left' },
-    { field: 'id', title: 'ID', minWidth: 90 },
-    { field: 'uid', title: 'UID', minWidth: 90 },
-    { field: 'agent_id', title: 'Agent ID', minWidth: 90 },
-    { field: 'user_parent', title: 'Parent ID', minWidth: 100 },
-    { field: 'report_date', title: 'Date', minWidth: 110, sort: true },
-    { field: 'deposit_count', title: 'Dep#', minWidth: 80, sort: true },
-    { field: 'deposit_amount', title: 'Deposit', minWidth: 120, sort: true },
-    { field: 'withdrawal_count', title: 'Wd#', minWidth: 80, sort: true },
-    { field: 'withdrawal_amount', title: 'Withdrawal', minWidth: 120, sort: true },
-    { field: 'charge_fee', title: 'Charge Fee', minWidth: 110, sort: true },
-    { field: 'agent_commission', title: 'Commission', minWidth: 120, sort: true },
-    { field: 'promotion', title: 'Promotion', minWidth: 110, sort: true },
-    { field: 'third_rebate', title: '3rd Rebate', minWidth: 110, sort: true },
-    { field: 'third_activity_amount', title: '3rd Activity', minWidth: 120, sort: true },
-    { field: 'synced_at', title: 'Synced At', minWidth: 160 }
+    { field: 'username', title: 'Tên tài khoản', minWidth: 140, fixed: 'left' },
+    { field: 'user_parent_format', title: 'Thuộc đại lý', minWidth: 120 },
+    { field: 'deposit_count', title: 'Số lần nạp', minWidth: 100, sort: true },
+    { field: 'deposit_amount', title: 'Số tiền nạp', minWidth: 130, sort: true },
+    { field: 'withdrawal_count', title: 'Số lần rút', minWidth: 100, sort: true },
+    { field: 'withdrawal_amount', title: 'Số tiền rút', minWidth: 130, sort: true },
+    { field: 'charge_fee', title: 'Phí dịch vụ', minWidth: 120, sort: true },
+    { field: 'agent_commission', title: 'Hoa hồng đại lý', minWidth: 140, sort: true },
+    { field: 'promotion', title: 'Ưu đãi', minWidth: 110, sort: true },
+    { field: 'third_rebate', title: 'Hoàn trả bên thứ 3', minWidth: 150, sort: true },
+    { field: 'third_activity_amount', title: 'Thưởng bên thứ 3', minWidth: 150, sort: true },
+    { field: 'report_date', title: 'Thời gian', minWidth: 120, sort: true }
   ],
-  // Model: ReportThirdGame (sync/report/model.py) — 12 columns
+  // Báo cáo nhà cung cấp — upstream 7 fields
   'report-third': [
-    { field: 'username', title: 'Username', minWidth: 140, fixed: 'left' },
-    { field: 'uid', title: 'UID', minWidth: 90 },
-    { field: 'agent_id', title: 'Agent ID', minWidth: 90 },
-    { field: 'platform_id', title: 'Platform ID', minWidth: 100 },
-    { field: 'platform_id_name', title: 'Platform', minWidth: 140 },
-    { field: 'report_date', title: 'Date', minWidth: 110, sort: true },
-    { field: 't_bet_times', title: 'Bet Times', minWidth: 90, sort: true },
-    { field: 't_bet_amount', title: 'Bet Amount', minWidth: 120, sort: true },
-    { field: 't_turnover', title: 'Valid Bet', minWidth: 120, sort: true },
-    { field: 't_prize', title: 'Prize', minWidth: 120, sort: true },
-    { field: 't_win_lose', title: 'Win/Lose', minWidth: 120, sort: true },
-    { field: 'synced_at', title: 'Synced At', minWidth: 160 }
+    { field: 'username', title: 'Tên tài khoản', minWidth: 140, fixed: 'left' },
+    { field: 'platform_id_name', title: 'Nhà cung cấp game', minWidth: 160 },
+    { field: 't_bet_times', title: 'Số lần cược', minWidth: 100, sort: true },
+    { field: 't_bet_amount', title: 'Tiền cược', minWidth: 130, sort: true },
+    { field: 't_turnover', title: 'Cược hợp lệ', minWidth: 130, sort: true },
+    { field: 't_prize', title: 'Tiền thưởng', minWidth: 130, sort: true },
+    { field: 't_win_lose', title: 'Thắng thua', minWidth: 130, sort: true }
   ],
-  // Model: DepositWithdrawal (sync/finance/model.py) — 37 columns — type filter for deposits
+  // Nạp tiền — upstream 6 fields
   deposits: [
-    { field: 'serial_no', title: 'Serial No', minWidth: 200, fixed: 'left' },
-    { field: 'id', title: 'ID', minWidth: 90 },
-    { field: 'uid', title: 'UID', minWidth: 90 },
-    { field: 'username', title: 'Username', minWidth: 140 },
-    { field: 'agent_id', title: 'Agent ID', minWidth: 90 },
-    { field: 'user_parent', title: 'Parent ID', minWidth: 100 },
-    { field: 'user_tree', title: 'User Tree', minWidth: 200 },
-    { field: 'group_id', title: 'Group', minWidth: 80 },
-    { field: 'type', title: 'Type', minWidth: 100 },
-    { field: 'category_id', title: 'Category', minWidth: 90 },
-    { field: 'amount', title: 'Amount', minWidth: 120, sort: true },
-    { field: 'true_amount', title: 'True Amount', minWidth: 120, sort: true },
-    { field: 'status', title: 'Status', minWidth: 100 },
-    { field: 'prostatus', title: 'Pro Status', minWidth: 90 },
-    { field: 'pay_type', title: 'Pay Type', minWidth: 90 },
-    { field: 'name', title: 'Account Holder', minWidth: 130 },
-    { field: 'bank_id', title: 'Bank ID', minWidth: 80 },
-    { field: 'branch', title: 'Branch', minWidth: 150 },
-    { field: 'account', title: 'Account No', minWidth: 160 },
-    { field: 'trade_id', title: 'Trade ID', minWidth: 160 },
-    { field: 'merchant_id', title: 'Merchant', minWidth: 90 },
-    { field: 'firm_fee', title: 'Firm Fee', minWidth: 110, sort: true },
-    { field: 'user_fee', title: 'User Fee', minWidth: 110, sort: true },
-    { field: 'rebate', title: 'Rebate', minWidth: 110, sort: true },
-    { field: 'prize_amount', title: 'Prize Amount', minWidth: 120, sort: true },
-    { field: 'activity_id', title: 'Activity', minWidth: 90 },
-    { field: 'operator', title: 'Operator', minWidth: 90 },
-    { field: 'is_tester', title: 'Tester', minWidth: 80 },
-    { field: 'currency', title: 'Currency', minWidth: 80 },
-    { field: 'extra', title: 'Extra', minWidth: 200 },
-    { field: 'remark', title: 'Remark', minWidth: 150 },
-    { field: 'user_remark', title: 'User Remark', minWidth: 150 },
-    { field: 'transfer_record', title: 'Transfer Record', minWidth: 200 },
-    { field: 'create_time', title: 'Created', minWidth: 160, sort: true },
-    { field: 'update_time', title: 'Updated', minWidth: 160 },
-    { field: 'success_time', title: 'Success Time', minWidth: 160 },
-    { field: 'transfer_time', title: 'Transfer Time', minWidth: 160 },
-    { field: 'review_time', title: 'Review Time', minWidth: 160 }
+    { field: 'username', title: 'Tên tài khoản', minWidth: 140, fixed: 'left' },
+    { field: 'user_parent_format', title: 'Thuộc đại lý', minWidth: 120 },
+    { field: 'amount', title: 'Số tiền', minWidth: 130, sort: true },
+    { field: 'type', title: 'Loại hình giao dịch', minWidth: 140 },
+    { field: 'status', title: 'Trạng thái giao dịch', minWidth: 140 },
+    { field: 'create_time', title: 'Thời gian tạo đơn', minWidth: 160, sort: true }
   ],
-  // Model: DepositWithdrawal — 37 columns — type filter for withdrawals
+  // Rút tiền — upstream 8 fields
   withdrawals: [
-    { field: 'serial_no', title: 'Serial No', minWidth: 200, fixed: 'left' },
-    { field: 'id', title: 'ID', minWidth: 90 },
-    { field: 'uid', title: 'UID', minWidth: 90 },
-    { field: 'username', title: 'Username', minWidth: 140 },
-    { field: 'agent_id', title: 'Agent ID', minWidth: 90 },
-    { field: 'user_parent', title: 'Parent ID', minWidth: 100 },
-    { field: 'user_tree', title: 'User Tree', minWidth: 200 },
-    { field: 'group_id', title: 'Group', minWidth: 80 },
-    { field: 'type', title: 'Type', minWidth: 100 },
-    { field: 'category_id', title: 'Category', minWidth: 90 },
-    { field: 'amount', title: 'Amount', minWidth: 120, sort: true },
-    { field: 'true_amount', title: 'True Amount', minWidth: 120, sort: true },
-    { field: 'status', title: 'Status', minWidth: 100 },
-    { field: 'prostatus', title: 'Pro Status', minWidth: 90 },
-    { field: 'pay_type', title: 'Pay Type', minWidth: 90 },
-    { field: 'name', title: 'Account Holder', minWidth: 130 },
-    { field: 'bank_id', title: 'Bank ID', minWidth: 80 },
-    { field: 'branch', title: 'Branch', minWidth: 150 },
-    { field: 'account', title: 'Account No', minWidth: 160 },
-    { field: 'trade_id', title: 'Trade ID', minWidth: 160 },
-    { field: 'merchant_id', title: 'Merchant', minWidth: 90 },
-    { field: 'firm_fee', title: 'Firm Fee', minWidth: 110, sort: true },
-    { field: 'user_fee', title: 'User Fee', minWidth: 110, sort: true },
-    { field: 'rebate', title: 'Rebate', minWidth: 110, sort: true },
-    { field: 'prize_amount', title: 'Prize Amount', minWidth: 120, sort: true },
-    { field: 'activity_id', title: 'Activity', minWidth: 90 },
-    { field: 'operator', title: 'Operator', minWidth: 90 },
-    { field: 'is_tester', title: 'Tester', minWidth: 80 },
-    { field: 'currency', title: 'Currency', minWidth: 80 },
-    { field: 'extra', title: 'Extra', minWidth: 200 },
-    { field: 'remark', title: 'Remark', minWidth: 150 },
-    { field: 'user_remark', title: 'User Remark', minWidth: 150 },
-    { field: 'transfer_record', title: 'Transfer Record', minWidth: 200 },
-    { field: 'create_time', title: 'Created', minWidth: 160, sort: true },
-    { field: 'update_time', title: 'Updated', minWidth: 160 },
-    { field: 'success_time', title: 'Success Time', minWidth: 160 },
-    { field: 'transfer_time', title: 'Transfer Time', minWidth: 160 },
-    { field: 'review_time', title: 'Review Time', minWidth: 160 }
+    { field: 'serial_no', title: 'Mã giao dịch', minWidth: 200, fixed: 'left' },
+    { field: 'create_time', title: 'Thời gian tạo đơn', minWidth: 160, sort: true },
+    { field: 'username', title: 'Tên tài khoản', minWidth: 140 },
+    { field: 'user_parent_format', title: 'Thuộc đại lý', minWidth: 120 },
+    { field: 'amount', title: 'Số tiền', minWidth: 130, sort: true },
+    { field: 'user_fee', title: 'Phí hội viên', minWidth: 120, sort: true },
+    { field: 'true_amount', title: 'Số tiền thực tế', minWidth: 140, sort: true },
+    { field: 'status_format', title: 'Trạng thái giao dịch', minWidth: 140 }
   ],
-  // Model: BankList (sync/config/model.py) — 7 columns
+  // Ngân hàng — upstream 6 fields
   banks: [
-    { field: 'card_number', title: 'Card No', minWidth: 200, fixed: 'left' },
-    { field: 'id', title: 'ID', minWidth: 90 },
-    { field: 'agent_id', title: 'Agent ID', minWidth: 90 },
-    { field: 'bank', title: 'Bank', minWidth: 160 },
-    { field: 'branch', title: 'Branch', minWidth: 150 },
-    { field: 'is_default', title: 'Default', minWidth: 80 },
-    { field: 'create_time', title: 'Created', minWidth: 160 }
+    { field: 'id', title: 'Mã số', minWidth: 90 },
+    { field: 'is_default', title: 'Mặc định', minWidth: 100 },
+    { field: 'bank', title: 'Tên ngân hàng', minWidth: 180 },
+    { field: 'branch', title: 'Chi nhánh', minWidth: 180 },
+    { field: 'card_number', title: 'Số tài khoản', minWidth: 200 },
+    { field: 'create_time', title: 'Thời gian thêm', minWidth: 160 }
   ],
-  // Rebate odds (upstream data, no local model)
+  // Tỷ lệ hoàn trả (upstream data, no local model)
   rebate: [
     { field: 'odds_11', title: 'Play Type', minWidth: 160, fixed: 'left' },
     { field: 'odds_10', title: 'Rebate 10', minWidth: 100 },
@@ -300,17 +203,17 @@ export const ENDPOINT_COLS = {
 }
 
 export const ENDPOINT_NAMES = {
-  members: 'Members',
-  invites: 'Invite List',
-  bets: 'Lottery Bets',
-  'bet-orders': '3rd Party Bets',
-  'report-lottery': 'Lottery Report',
-  'report-funds': 'Funds Statement',
-  'report-third': 'Provider Report',
-  deposits: 'Deposits',
-  withdrawals: 'Withdrawals',
-  banks: 'Bank List',
-  rebate: 'Rebate Odds'
+  members: 'Quản lí hội viên',
+  invites: 'Mã giới thiệu',
+  bets: 'Cược xổ số',
+  'bet-orders': 'Cược bên thứ 3',
+  'report-lottery': 'Báo cáo xổ số',
+  'report-funds': 'Báo cáo tài chính',
+  'report-third': 'Báo cáo nhà cung cấp',
+  deposits: 'Nạp tiền',
+  withdrawals: 'Rút tiền',
+  banks: 'Danh sách ngân hàng',
+  rebate: 'Tỷ lệ hoàn trả'
 }
 
 export const ENDPOINT_HAS_DATE = {
@@ -319,77 +222,85 @@ export const ENDPOINT_HAS_DATE = {
   deposits: true, withdrawals: true
 }
 
+/** Upstream date param name per endpoint (default = 'date') */
+export const DATE_PARAM_NAME = {
+  bets: 'create_time',
+  'bet-orders': 'bet_time',
+  deposits: 'create_time',
+  withdrawals: 'create_time'
+  // reports use 'date' — no rename needed
+}
+
 export const ENDPOINT_SEARCH = {
   members: [
-    { name: 'username', type: 'text', label: 'Username' },
-    { name: 'status', type: 'select', label: 'Status', options: [
+    { name: 'username', type: 'text', label: 'Tên tài khoản' },
+    { name: 'status', type: 'select', label: 'Trạng thái', options: [
       { value: '', text: '--' }, { value: '0', text: 'Chưa đánh giá' },
       { value: '1', text: 'Bình thường' }, { value: '2', text: 'Đóng băng' }, { value: '3', text: 'Khoá' }
     ]},
-    { name: 'sort_field', type: 'select', label: 'Sort by', options: [
-      { value: '', text: '--' }, { value: 'money', text: 'Balance' },
-      { value: 'login_time', text: 'Last Login' }, { value: 'register_time', text: 'Register' },
-      { value: 'deposit_money', text: 'Total Dep' }, { value: 'withdrawal_money', text: 'Total Wd' }
+    { name: 'sort_field', type: 'select', label: 'Sắp xếp', options: [
+      { value: '', text: '--' }, { value: 'money', text: 'Số dư' },
+      { value: 'login_time', text: 'Đăng nhập cuối' }, { value: 'register_time', text: 'Đăng ký' },
+      { value: 'deposit_money', text: 'Tổng nạp' }, { value: 'withdrawal_money', text: 'Tổng rút' }
+    ]},
+    { name: 'sort_direction', type: 'select', label: 'Hướng', options: [
+      { value: 'desc', text: 'Lớn → Bé' }, { value: 'asc', text: 'Bé → Lớn' }
     ]}
   ],
   invites: [
-    { name: 'invite_code', type: 'text', label: 'Invite Code' },
-    { name: 'user_type', type: 'select', label: 'User Type', options: [
+    { name: 'invite_code', type: 'text', label: 'Mã giới thiệu' },
+    { name: 'user_type', type: 'select', label: 'Loại hình', options: [
       { value: '', text: '--' }, { value: '1', text: 'Hội viên thường' }, { value: '3', text: 'Gửi lời mời' }
     ]}
   ],
   bets: [
-    { name: 'username', type: 'text', label: 'Username' },
-    { name: 'serial_no', type: 'text', label: 'Serial No' },
-    { name: 'lottery_id', type: 'select', label: 'Lottery', options: LOTTERY_OPTIONS },
-    { name: 'status', type: 'select', label: 'Status', options: [
+    { name: 'username', type: 'text', label: 'Tên tài khoản' },
+    { name: 'serial_no', type: 'text', label: 'Mã giao dịch' },
+    { name: 'lottery_id', type: 'select', label: 'Trò chơi', options: LOTTERY_OPTIONS },
+    { name: 'status', type: 'select', label: 'Trạng thái', options: [
       { value: '', text: '--' }, { value: '-9', text: 'Chưa thanh toán' },
       { value: '1', text: 'Trúng' }, { value: '-1', text: 'Không trúng' },
-      { value: '2', text: 'Hoà' }, { value: '3', text: 'Khách huỷ' },
-      { value: '4', text: 'Hệ thống huỷ' }
+      { value: '2', text: 'Hoà' }, { value: '3', text: 'Khách huỷ đơn' },
+      { value: '4', text: 'Hệ thống huỷ đơn' }, { value: '5', text: 'Đơn cược bất thường' },
+      { value: '6', text: 'Chưa thanh toán (khôi phục)' }
     ]}
   ],
   'bet-orders': [
-    { name: 'platform_username', type: 'text', label: 'Username' },
-    { name: 'serial_no', type: 'text', label: 'Serial No' }
+    { name: 'username', type: 'text', label: 'Tên tài khoản' },
+    { name: 'serial_no', type: 'text', label: 'Mã giao dịch' },
+    { name: 'platform_username', type: 'text', label: 'Tài khoản nhà cái' }
   ],
   'report-lottery': [
-    { name: 'username', type: 'text', label: 'Username' },
-    { name: 'lottery_id', type: 'select', label: 'Lottery', options: LOTTERY_OPTIONS }
+    { name: 'username', type: 'text', label: 'Tên tài khoản' },
+    { name: 'lottery_id', type: 'select', label: 'Loại xổ', options: LOTTERY_OPTIONS }
   ],
   'report-funds': [
-    { name: 'username', type: 'text', label: 'Username' }
+    { name: 'username', type: 'text', label: 'Tên tài khoản' }
   ],
   'report-third': [
-    { name: 'username', type: 'text', label: 'Username' },
-    { name: 'platform_id', type: 'select', label: 'Platform', options: [
-      { value: '', text: '--' },
-      { value: '8', text: 'PA' }, { value: '9', text: 'BBIN' }, { value: '10', text: 'WM' },
-      { value: '20', text: 'KY' }, { value: '28', text: 'PGSOFT' },
-      { value: '29', text: 'LUCKYWIN' }, { value: '30', text: 'SABA' },
-      { value: '38', text: 'RICH88' }, { value: '46', text: 'JILI' },
-      { value: '47', text: 'KA' }, { value: '48', text: 'MW' },
-      { value: '50', text: 'SBO' }, { value: '51', text: 'NEXTSPIN' }
-    ]}
+    { name: 'username', type: 'text', label: 'Tên tài khoản' },
+    { name: 'platform_id', type: 'select', label: 'Nhà cung cấp', options: PLATFORM_OPTIONS }
   ],
   deposits: [
-    { name: 'username', type: 'text', label: 'Username' },
-    { name: 'serial_no', type: 'text', label: 'Serial No' },
-    { name: 'status', type: 'select', label: 'Status', options: [
+    { name: 'username', type: 'text', label: 'Tên tài khoản' },
+    { name: 'type', type: 'select', label: 'Loại hình', options: [
+      { value: '', text: '--' }, { value: '1', text: 'Nạp tiền' }, { value: '2', text: 'Rút tiền' }
+    ]},
+    { name: 'status', type: 'select', label: 'Trạng thái', options: [
       { value: '', text: '--' }, { value: '0', text: 'Chờ xử lí' },
       { value: '1', text: 'Hoàn tất' }, { value: '2', text: 'Đang xử lí' }, { value: '3', text: 'Không thành công' }
     ]}
   ],
   withdrawals: [
-    { name: 'username', type: 'text', label: 'Username' },
-    { name: 'serial_no', type: 'text', label: 'Serial No' },
-    { name: 'status', type: 'select', label: 'Status', options: [
+    { name: 'username', type: 'text', label: 'Tên tài khoản' },
+    { name: 'serial_no', type: 'text', label: 'Mã giao dịch' },
+    { name: 'status', type: 'select', label: 'Trạng thái', options: [
       { value: '', text: '--' }, { value: '0', text: 'Chờ xử lí' },
       { value: '1', text: 'Hoàn tất' }, { value: '2', text: 'Đang xử lí' }, { value: '3', text: 'Không thành công' }
     ]}
   ],
   banks: [
-    { name: 'card_number', type: 'text', label: 'Card Number' }
+    { name: 'card_number', type: 'text', label: 'Số tài khoản' }
   ],
   rebate: []
 }

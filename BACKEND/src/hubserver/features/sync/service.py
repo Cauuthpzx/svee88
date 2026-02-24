@@ -80,18 +80,67 @@ async def update_sync_meta(
     return last_data_date
 
 
-# --- Sensitive field stripping for members ---
+# --- Member field cleaning & mapping ---
 
 _SENSITIVE_FIELDS = {"password", "fund_password", "salt"}
-_SKIP_FIELDS = {
-    "type_format", "parent_user", "deposit_count", "deposit_amount",
-    "withdrawal_count", "withdrawal_amount", "status_format", "user_parent_format",
+
+# Upstream returns formatted fields → map to model columns
+_STATUS_MAP = {
+    "Chưa đánh giá": 0, "Bình thường": 1, "Đóng băng": 2, "Khoá": 3,
+}
+_TYPE_MAP = {
+    "Hội viên chính thức": 1, "Hội viên dùng thử": 0, "Đại lý": 2, "Tổng đại lý": 3,
 }
 
 
 def clean_member(record: dict) -> dict:
-    """Remove sensitive and redundant fields from member records."""
-    return {k: v for k, v in record.items() if k not in _SENSITIVE_FIELDS and k not in _SKIP_FIELDS}
+    """Map upstream formatted fields to model columns, strip sensitive data."""
+    r = {k: v for k, v in record.items() if k not in _SENSITIVE_FIELDS}
+
+    # deposit_count/amount → deposit_times/money
+    if "deposit_count" in r and "deposit_times" not in r:
+        r["deposit_times"] = r.pop("deposit_count")
+    else:
+        r.pop("deposit_count", None)
+    if "deposit_amount" in r and "deposit_money" not in r:
+        r["deposit_money"] = r.pop("deposit_amount")
+    else:
+        r.pop("deposit_amount", None)
+
+    # withdrawal_count/amount → withdrawal_times/money
+    if "withdrawal_count" in r and "withdrawal_times" not in r:
+        r["withdrawal_times"] = r.pop("withdrawal_count")
+    else:
+        r.pop("withdrawal_count", None)
+    if "withdrawal_amount" in r and "withdrawal_money" not in r:
+        r["withdrawal_money"] = r.pop("withdrawal_amount")
+    else:
+        r.pop("withdrawal_amount", None)
+
+    # parent_user (username string) → user_parent (int)
+    if "parent_user" in r and "user_parent" not in r:
+        try:
+            r["user_parent"] = int(r.pop("parent_user"))
+        except (ValueError, TypeError):
+            r.pop("parent_user")
+    else:
+        r.pop("parent_user", None)
+
+    # status_format → status
+    if "status_format" in r and "status" not in r:
+        r["status"] = _STATUS_MAP.get(r.pop("status_format"), 1)
+    else:
+        r.pop("status_format", None)
+
+    # type_format → type
+    if "type_format" in r and "type" not in r:
+        r["type"] = _TYPE_MAP.get(r.pop("type_format"), 1)
+    else:
+        r.pop("type_format", None)
+
+    # Remove remaining non-model fields
+    r.pop("user_parent_format", None)
+    return r
 
 
 def rename_report_funds(record: dict) -> dict:

@@ -2,7 +2,7 @@ import { ROUTE_TITLES } from '../../constants/index.js'
 import { escapeHtml } from '../../utils/index.js'
 import {
   ENDPOINT_COLS, ENDPOINT_NAMES, ENDPOINT_HAS_DATE,
-  ENDPOINT_SEARCH, HASH_TO_ENDPOINT
+  ENDPOINT_SEARCH, HASH_TO_ENDPOINT, DATE_PARAM_NAME
 } from './config.js'
 import './index.css'
 
@@ -38,14 +38,14 @@ const template = (title, endpoint) => {
       ${hasSearch ? `
       <div class="layui-form data-toolbar">
         <fieldset class="layui-elem-field">
-          <legend>Search</legend>
+          <legend>Tìm kiếm</legend>
           <div class="layui-field-box">
             <form class="layui-form" lay-filter="dataSearchForm">
               ${hasDate ? `
               <div class="layui-inline" id="data-date-wrap">
-                <label>Date</label>:
+                <label>Thời gian</label>:
                 <div style="width:220px" class="layui-input-inline">
-                  <input type="text" name="date" id="dataDateRange" placeholder="Start - End" class="layui-input" readonly autocomplete="off">
+                  <input type="text" name="date" id="dataDateRange" placeholder="Bắt đầu - Kết thúc" class="layui-input" readonly autocomplete="off">
                 </div>
                 <div style="width:130px" class="layui-input-inline">
                   <select id="quickDateSelect" lay-filter="quickDateSelect">
@@ -62,12 +62,12 @@ const template = (title, endpoint) => {
               <div class="layui-inline" id="data-search-wrap">${searchInputs}</div>
               <div class="layui-inline">
                 <button type="button" class="layui-btn" lay-submit lay-filter="doDataSearch">
-                  <i class="layui-icon layui-icon-search"></i> Search
+                  <i class="layui-icon layui-icon-search"></i> Tìm kiếm
                 </button>
               </div>
               <div class="layui-inline">
                 <button type="button" class="layui-btn layui-btn-primary" id="dataResetBtn">
-                  <i class="layui-icon layui-icon-refresh"></i> Reset
+                  <i class="layui-icon layui-icon-refresh"></i> Đặt lại
                 </button>
               </div>
             </form>
@@ -80,7 +80,7 @@ const template = (title, endpoint) => {
 
       <div id="data-total-wrap" style="display:none; margin-top:10px">
         <blockquote class="layui-elem-quote total-summary-quote" id="data-total-body">
-          <i class="layui-icon layui-icon-chart"></i> <b>Total Summary</b>
+          <i class="layui-icon layui-icon-chart"></i> <b>Tổng kết</b>
         </blockquote>
       </div>
     </div>
@@ -169,7 +169,7 @@ const loadTable = (endpoint) => {
     table.render({
       elem: '#dataTable',
       id: 'dataTable',
-      url: `/api/data/${endpoint}`,
+      url: `/api/v1/data/${endpoint}`,
       method: 'get',
       cols: [cols],
       page: { limit: 10, limits: [10, 50, 100, 200] },
@@ -186,12 +186,19 @@ const loadTable = (endpoint) => {
       skin: 'grid',
       even: true,
       size: 'sm',
-      text: { none: 'No data found' }
+      text: { none: 'Không có dữ liệu' }
     })
 
-    // Search submit
+    // Search submit — rename 'date' to upstream param name
     form.on('submit(doDataSearch)', (data) => {
       const where = { ...data.field }
+      if (where.date) {
+        const paramName = DATE_PARAM_NAME[endpoint] || 'date'
+        if (paramName !== 'date') {
+          where[paramName] = where.date
+          delete where.date
+        }
+      }
       table.reload('dataTable', { where, page: { curr: 1 } })
       return false
     })

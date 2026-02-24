@@ -10,6 +10,7 @@ def create_api_router() -> APIRouter:
     from .task.router import router as task_router
     from .tier.router import router as tier_router
     from .sync.router import router as sync_router
+    from .data.router import router as data_router
 
     api_router = APIRouter(prefix="/api/v1")
     api_router.include_router(health_router)
@@ -19,4 +20,5 @@ def create_api_router() -> APIRouter:
     api_router.include_router(task_router)
     api_router.include_router(tier_router)
     api_router.include_router(sync_router)
+    api_router.include_router(data_router)
     return api_router
