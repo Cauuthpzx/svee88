@@ -35,11 +35,6 @@ const template = (title, endpoint) => {
 
   return `
     <div class="data-panel">
-      <blockquote class="layui-elem-quote data-panel-title">
-        <i class="layui-icon layui-icon-table"></i>
-        <span>${escapeHtml(title)}</span>
-      </blockquote>
-
       ${hasSearch ? `
       <div class="layui-form data-toolbar">
         <fieldset class="layui-elem-field">
@@ -106,15 +101,16 @@ const initDatePicker = () => {
     const today = getDateStr(new Date())
     const el = document.getElementById('dataDateRange')
     if (!el) return
-    el.value = `${today}|${today}`
+    el.value = `${today} | ${today}`
     const qs = document.getElementById('quickDateSelect')
     if (qs) qs.value = 'today'
+
     laydate.render({
       elem: '#dataDateRange',
       type: 'date',
       range: '|',
       rangeLinked: true,
-      value: `${today}|${today}`
+      value: `${today} | ${today}`
     })
   })
 }
@@ -154,7 +150,7 @@ const initQuickDate = (form) => {
       default: return
     }
     const el = document.getElementById('dataDateRange')
-    if (el) el.value = `${start}|${end}`
+    if (el) el.value = `${start} | ${end}`
   })
 }
 

@@ -242,6 +242,7 @@
 
 /* ── Body ── */
 .layui-layout-admin .layui-body {
+  top: 50px;
   background-color: #e8e4dc;
   background-image:
     repeating-linear-gradient(

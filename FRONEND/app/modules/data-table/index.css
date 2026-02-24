@@ -23,6 +23,10 @@
   font-size: 13px;
   color: #666;
 }
+.data-toolbar .layui-inline {
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
 
 /* ── Layui Table overrides ── */
 .data-panel .layui-table-tool {
