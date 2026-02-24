@@ -31,7 +31,10 @@ export const ROUTES = {
   BET_THIRD_PARTY: '#/bet-third-party',
   CHANGE_LOGIN_PW: '#/change-login-pw',
   CHANGE_TRADE_PW: '#/change-trade-pw',
-  REBATE_LIST: '#/rebate-list'
+  REBATE_LIST: '#/rebate-list',
+  SETTINGS_SYSTEM: '#/settings-system',
+  SETTINGS_SYNC: '#/settings-sync',
+  SETTINGS_ACCOUNTS: '#/settings-accounts'
 }
 
 export const ROUTE_TITLES = {
@@ -51,7 +54,10 @@ export const ROUTE_TITLES = {
   [ROUTES.REBATE_LIST]: 'Rebate List',
   [ROUTES.POSTS]: 'Quản lý bài viết',
   [ROUTES.TIERS]: 'Quản lý cấp bậc',
-  [ROUTES.TASKS]: 'Quản lý tác vụ'
+  [ROUTES.TASKS]: 'Quản lý tác vụ',
+  [ROUTES.SETTINGS_SYSTEM]: 'System',
+  [ROUTES.SETTINGS_SYNC]: 'Đồng bộ',
+  [ROUTES.SETTINGS_ACCOUNTS]: 'Tài khoản & phân quyền'
 }
 
 export const API = {
@@ -121,7 +127,10 @@ export const ROUTE_SECTIONS = {
   [ROUTES.REBATE_LIST]: 'rebate',
   [ROUTES.POSTS]: 'content',
   [ROUTES.TIERS]: 'system',
-  [ROUTES.TASKS]: 'system'
+  [ROUTES.TASKS]: 'system',
+  [ROUTES.SETTINGS_SYSTEM]: 'settings',
+  [ROUTES.SETTINGS_SYNC]: 'settings',
+  [ROUTES.SETTINGS_ACCOUNTS]: 'settings'
 }
 
 /** Must match longest CSS transition duration */

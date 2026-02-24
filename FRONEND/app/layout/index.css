@@ -7,9 +7,12 @@
 /* ── Page wrapper — mỗi route render vào 1 .page div ── */
 .page {
   position: absolute;
-  inset: 0;
+  inset: 15px;
   overflow-y: auto;
   padding: 15px;
+  background: #fff;
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
   will-change: transform, opacity;
   backface-visibility: hidden;
 }
@@ -368,6 +371,10 @@
 .dark .layui-layout-admin .layui-body {
   background-color: var(--lay-color-bg-1);
   background-image: none;
+}
+.dark .page {
+  background: var(--lay-color-bg-2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 /* ── 404 Not Found ── */
