@@ -47,5 +47,5 @@ FRONEND/icons8-liquid/
 # Crudadmin data
 crudadmin_data/
 
-# Old src/ remnants (locked runtime files)
-src/
+# Old src/ remnants (root level only)
+/src/

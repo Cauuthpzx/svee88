@@ -18,7 +18,8 @@ const loginTemplate = () => `
   <div class="auth-wrapper">
     <div class="auth-card">
       <div class="auth-header">
-        <h2>Đăng nhập</h2>
+        <img src="/logo.png" alt="HuB" class="auth-logo">
+        <h2>HuB - Login</h2>
         <p>Chào mừng bạn quay trở lại</p>
       </div>
       <div class="auth-body">

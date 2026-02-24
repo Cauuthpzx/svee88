@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Hubserver Setup Script
+HubServer Setup Script
 
-Automates copying the correct configuration files for different deployment scenarios.
+Tu dong sao chep file cau hinh cho cac moi truong trien khai khac nhau.
 """
 
 import shutil
@@ -11,45 +11,48 @@ from pathlib import Path
 
 DEPLOYMENTS = {
     "local": {
-        "name": "Local development with Uvicorn",
-        "description": "Auto-reload enabled, development-friendly",
+        "name": "Phat trien cuc bo (Uvicorn)",
+        "description": "Tu dong reload, phu hop cho lap trinh vien",
         "path": "scripts/local_with_uvicorn",
     },
     "staging": {
-        "name": "Staging with Gunicorn managing Uvicorn workers",
-        "description": "Production-like setup for testing",
+        "name": "Staging (Gunicorn + Uvicorn Workers)",
+        "description": "Moi truong kiem thu giong production",
         "path": "scripts/gunicorn_managing_uvicorn_workers",
     },
     "production": {
-        "name": "Production with NGINX",
-        "description": "Full production setup with reverse proxy",
+        "name": "Production (NGINX + Gunicorn)",
+        "description": "Trien khai chinh thuc voi reverse proxy",
         "path": "scripts/production_with_nginx",
     },
 }
 
 
 def show_help():
-    """Display help information"""
-    print("Hubserver Setup")
-    print("=" * 25)
+    """Hien thi huong dan su dung"""
     print()
-    print("Usage: python setup.py <deployment-type>")
+    print("  +======================================+")
+    print("  |        HubServer -- Thiet lap         |")
+    print("  +======================================+")
     print()
-    print("Available deployment types:")
+    print("  Cach dung: python setup.py <kieu-trien-khai>")
+    print()
+    print("  Cac kieu trien khai:")
     for key, config in DEPLOYMENTS.items():
-        print(f"  {key:12} - {config['name']}")
-        print(f"  {' ' * 12}   {config['description']}")
+        print(f"    {key:12} -- {config['name']}")
+        print(f"    {' ' * 12}    {config['description']}")
         print()
-    print("Examples:")
-    print("  python setup.py local       # Set up for local development")
-    print("  python setup.py staging     # Set up for staging environment")
-    print("  python setup.py production  # Set up for production deployment")
+    print("  Vi du:")
+    print("    python setup.py local       # Thiet lap cho phat trien cuc bo")
+    print("    python setup.py staging     # Thiet lap cho moi truong staging")
+    print("    python setup.py production  # Thiet lap cho trien khai chinh thuc")
+    print()
 
 
 def copy_files(deployment_type: str):
-    """Copy configuration files for the specified deployment type"""
+    """Sao chep file cau hinh cho kieu trien khai da chon"""
     if deployment_type not in DEPLOYMENTS:
-        print(f"❌ Unknown deployment type: {deployment_type}")
+        print(f"  [X] Kieu trien khai khong hop le: {deployment_type}")
         print()
         show_help()
         return False
@@ -58,11 +61,12 @@ def copy_files(deployment_type: str):
     source_path = Path(config["path"])
 
     if not source_path.exists():
-        print(f"❌ Configuration path not found: {source_path}")
+        print(f"  [X] Khong tim thay thu muc cau hinh: {source_path}")
         return False
 
-    print(f"🚀 Setting up {config['name']}...")
-    print(f"   {config['description']}")
+    print()
+    print(f"  >>> Dang thiet lap: {config['name']}...")
+    print(f"      {config['description']}")
     print()
 
     files_to_copy = [
@@ -77,61 +81,66 @@ def copy_files(deployment_type: str):
         dest = Path(dest_file)
 
         if not source.exists():
-            print(f"⚠️  Warning: {source} not found, skipping...")
+            print(f"  [!] Canh bao: Khong tim thay {source}, bo qua...")
             continue
 
         try:
             dest.parent.mkdir(parents=True, exist_ok=True)
 
             shutil.copy2(source, dest)
-            print(f"✅ Copied {source} → {dest}")
+            print(f"  [+] Da sao chep  {source}  -->  {dest}")
 
         except Exception as e:
-            print(f"❌ Failed to copy {source} → {dest}: {e}")
+            print(f"  [X] Loi sao chep {source} --> {dest}: {e}")
             success = False
 
     if success:
         print()
-        print("🎉 Setup complete!")
+        print("  ======================================")
+        print("   Thiet lap hoan tat!")
+        print("  ======================================")
         print()
 
         if deployment_type in ["staging", "production"]:
-            print("⚠️  IMPORTANT: Update the .env file with your production values:")
-            print("   - Generate a new SECRET_KEY: openssl rand -hex 32")
-            print("   - Change all passwords and sensitive values")
+            print("  [!] QUAN TRONG: Cap nhat file .env voi gia tri thuc te:")
+            print("      - Tao SECRET_KEY moi:  openssl rand -hex 32")
+            print("      - Doi tat ca mat khau va gia tri nhay cam")
             print()
 
-        print("Next steps:")
-        print("   docker compose up")
+        print("  Buoc tiep theo:")
+        print("      docker compose up")
 
         if deployment_type == "local":
-            print("   open http://127.0.0.1:8000/docs")
+            print("      Mo  http://127.0.0.1:8000/docs")
         elif deployment_type == "production":
-            print("   open http://localhost")
+            print("      Mo  http://localhost")
 
+        print()
         return True
 
     return False
 
 
 def interactive_setup():
-    """Interactive setup when no arguments provided"""
-    print("Hubserver Setup")
-    print("=" * 25)
+    """Thiet lap tuong tac khi khong co tham so"""
     print()
-    print("Choose your deployment type:")
+    print("  +======================================+")
+    print("  |        HubServer -- Thiet lap         |")
+    print("  +======================================+")
+    print()
+    print("  Chon kieu trien khai:")
     print()
 
     options = list(DEPLOYMENTS.keys())
     for i, key in enumerate(options, 1):
         config = DEPLOYMENTS[key]
-        print(f"  {i}. {config['name']}")
-        print(f"     {config['description']}")
+        print(f"    {i}. {config['name']}")
+        print(f"       {config['description']}")
         print()
 
     while True:
         try:
-            choice = input(f"Enter your choice (1-{len(options)}): ").strip()
+            choice = input(f"  Lua chon cua ban (1-{len(options)}): ").strip()
 
             if choice.isdigit():
                 choice_num = int(choice)
@@ -141,18 +150,18 @@ def interactive_setup():
             if choice.lower() in DEPLOYMENTS:
                 return choice.lower()
 
-            print(f"❌ Invalid choice. Please enter 1-{len(options)} or the deployment name.")
+            print(f"  [X] Khong hop le. Vui long nhap 1-{len(options)} hoac ten kieu trien khai.")
 
         except KeyboardInterrupt:
-            print("\n\n👋 Setup cancelled.")
+            print("\n\n  Da huy thiet lap.")
             return None
         except EOFError:
-            print("\n\n👋 Setup cancelled.")
+            print("\n\n  Da huy thiet lap.")
             return None
 
 
 def main():
-    """Main entry point"""
+    """Diem khoi chay chinh"""
     if len(sys.argv) > 1 and sys.argv[1] in ["-h", "--help", "help"]:
         show_help()
         return
