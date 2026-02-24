@@ -80,7 +80,9 @@ const renderMenuItem = (item) => {
 const template = () => `
   <div class="layui-layout layui-layout-admin" id="${LAYOUT_ID}">
     <header class="layui-header" role="banner">
-      <div class="layui-logo layui-hide-xs">Hệ thống quản lý</div>
+      <div class="layui-logo layui-hide-xs">
+        <img src="/logo.png" alt="HuB" class="header-logo"> HUB SYSTEM
+      </div>
       <div id="header-clock" role="timer" aria-label="Current time">
         <span id="clock-display" aria-live="off"></span>
         <span id="clock-date"></span>

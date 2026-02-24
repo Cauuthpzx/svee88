@@ -51,6 +51,9 @@
 }
 
 .auth-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
   padding: 28px 28px 4px;
 }
@@ -67,6 +70,24 @@
   font-weight: 600;
   color: #333;
   margin: 0 0 4px;
+}
+
+.auth-title {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  padding-left: 3px;
+  background:
+    radial-gradient(ellipse 60% 50% at 15% 40%, #4a6741 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 70% 20%, #5c4033 0%, transparent 65%),
+    radial-gradient(ellipse 55% 45% at 40% 75%, #2d5a27 0%, transparent 70%),
+    radial-gradient(ellipse 45% 55% at 85% 60%, #3b2a1a 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 50% 50%, #6b8c42 0%, transparent 75%),
+    linear-gradient(135deg, #8a9a5b, #c2b280, #6b8c42, #5c4033, #8a9a5b);
+  background-size: 100% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .auth-header p {

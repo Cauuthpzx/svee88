@@ -42,6 +42,13 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
   z-index: 1010;
 }
+.header-logo {
+  width: 28px;
+  height: 28px;
+  vertical-align: middle;
+  margin-right: 6px;
+  border-radius: 6px;
+}
 .layui-layout-admin .layui-header .layui-nav {
   background: transparent;
 }
