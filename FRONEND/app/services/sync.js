@@ -10,41 +10,28 @@ import {
   bankApi, inviteApi, rebateApi
 } from '../api/upstream.js'
 import { fetchAllPages, fetchDateChunked } from '../api/upstream-sync.js'
-
-// --------------- Constants ---------------
-
-const BATCH_SIZE = 5000         // Max records per POST to backend
-const VERIFY_SAMPLE_SIZE = 5    // Random records to verify per sync
-const DEFAULT_AGENT_ID = 1
-
-// --------------- Date helpers ---------------
-
-const today = () => new Date().toISOString().slice(0, 10)
-
-const daysAgo = (n) => {
-  const d = new Date()
-  d.setDate(d.getDate() - n)
-  return d.toISOString().slice(0, 10)
-}
+import {
+  DEFAULT_AGENT_ID, today, daysAgo,
+  getStatus, getLastDataDate, isStatusCached,
+  postBatched, verifyRandom
+} from './sync-helpers.js'
 
 // --------------- Endpoint configs ---------------
 
 /**
- * Configuration for each syncable endpoint.
  * @typedef {Object} EndpointConfig
- * @property {string} name          - Backend endpoint name (matches sync_metadata)
- * @property {Function} listFn      - Upstream API list function
- * @property {string} syncUrl       - Backend sync endpoint URL
- * @property {string} [dateParam]   - Upstream date param name (null = no date filter)
- * @property {string} [dateField]   - Date field in response data (for tracking)
- * @property {boolean} [datetime]   - Use datetime format for date param
- * @property {string} [defaultStart]- Default start date for first sync
- * @property {boolean} [sensitive]  - Strip sensitive fields (members only)
- * @property {string} [renameDate]  - Rename this field to 'report_date'
- * @property {boolean} [dayByDay]   - Fetch day by day (reports without date in data)
+ * @property {string} name
+ * @property {Function} listFn
+ * @property {string} syncUrl
+ * @property {string} [dateParam]
+ * @property {string} [dateField]
+ * @property {boolean} [datetime]
+ * @property {string} [defaultStart]
+ * @property {boolean} [sensitive]
+ * @property {string} [renameDate]
+ * @property {boolean} [dayByDay]
  */
 const ENDPOINTS = {
-  // --- Non-date endpoints (full sync) ---
   members: {
     name: 'members',
     listFn: memberApi.list,
@@ -52,8 +39,6 @@ const ENDPOINTS = {
     dateField: 'update_time',
     sensitive: true,
   },
-
-  // --- Date-chunked endpoints (7-day max per request) ---
   bet_order: {
     name: 'bet_order',
     listFn: betOrderApi.list,
@@ -81,8 +66,6 @@ const ENDPOINTS = {
     datetime: false,
     defaultStart: daysAgo(30),
   },
-
-  // --- Report endpoints (day-by-day, tag with report_date) ---
   report_lottery: {
     name: 'report_lottery',
     listFn: reportLotteryApi.list,
@@ -98,7 +81,7 @@ const ENDPOINTS = {
     syncUrl: SYNC_API.REPORT_FUNDS,
     dateParam: 'date',
     dateField: 'report_date',
-    renameDate: 'date',         // upstream 'date' → our 'report_date'
+    renameDate: 'date',
     dayByDay: true,
     defaultStart: daysAgo(30),
   },
@@ -113,91 +96,8 @@ const ENDPOINTS = {
   },
 }
 
-// --------------- Sync status ---------------
-
-let _statusCache = null
-
-async function getStatus() {
-  const res = await http.get(SYNC_API.STATUS)
-  _statusCache = {}
-  for (const ep of (res.endpoints || [])) {
-    _statusCache[ep.endpoint] = ep
-  }
-  return _statusCache
-}
-
-function getEndpointStatus(name) {
-  return _statusCache?.[name] || null
-}
-
-/**
- * Get last synced data date for an endpoint.
- * This is the ACTUAL date of the most recent data record, not the sync timestamp.
- */
-function getLastDataDate(name) {
-  const st = getEndpointStatus(name)
-  return st?.sync_params?.last_data_date || null
-}
-
-// --------------- Batch upload ---------------
-
-async function postBatched(url, records, agentId = DEFAULT_AGENT_ID, onProgress) {
-  let totalProcessed = 0
-  const batches = Math.ceil(records.length / BATCH_SIZE)
-
-  for (let i = 0; i < records.length; i += BATCH_SIZE) {
-    const batch = records.slice(i, i + BATCH_SIZE)
-    const batchNum = Math.floor(i / BATCH_SIZE) + 1
-    onProgress?.({
-      step: 'upload',
-      message: `Batch ${batchNum}/${batches} (${batch.length} records)`,
-    })
-    const res = await http.post(url, { data: batch, agent_id: agentId })
-    totalProcessed += res.processed || 0
-  }
-
-  return totalProcessed
-}
-
-// --------------- Verification ---------------
-
-/**
- * Pick N random records from fetched data, query them from DB, compare IDs.
- * Returns { ok, checked, found, missing }
- */
-async function verifyRandom(endpoint, fetchedRecords, n = VERIFY_SAMPLE_SIZE) {
-  if (fetchedRecords.length === 0) return { ok: true, checked: 0 }
-
-  // Pick N random unique records
-  const shuffled = [...fetchedRecords].sort(() => Math.random() - 0.5)
-  const samples = shuffled.slice(0, Math.min(n, fetchedRecords.length))
-
-  // Get IDs (all our tables have 'id' or 'uid')
-  const ids = samples.map(r => r.id).filter(id => id != null)
-  if (ids.length === 0) return { ok: true, checked: 0, reason: 'no IDs in data' }
-
-  try {
-    const res = await http.post(SYNC_API.VERIFY(endpoint), { ids })
-    const dbIds = new Set((res.records || []).map(r => r.id))
-    const missing = ids.filter(id => !dbIds.has(id))
-
-    return {
-      ok: missing.length === 0,
-      checked: ids.length,
-      found: dbIds.size,
-      missing,
-    }
-  } catch {
-    return { ok: false, checked: ids.length, error: 'verify request failed' }
-  }
-}
-
 // --------------- Core sync functions ---------------
 
-/**
- * Sync members — no date filter, full upsert.
- * Members API has no date range filter, so we fetch all and let DB handle dedup.
- */
 async function syncMembers(onProgress) {
   onProgress?.({ endpoint: 'members', step: 'fetch', message: 'Fetching all members...' })
 
@@ -215,10 +115,6 @@ async function syncMembers(onProgress) {
   return { endpoint: 'members', fetched: data.length, processed, verify }
 }
 
-/**
- * Sync date-based endpoint (bet_order, bet_lottery, deposit_withdrawal).
- * Uses fetchDateChunked with 7-day windows. Incremental from last_data_date.
- */
 async function syncDateBased(config, onProgress) {
   const lastDate = getLastDataDate(config.name)
   const startDate = lastDate || config.defaultStart || daysAgo(7)
@@ -253,13 +149,6 @@ async function syncDateBased(config, onProgress) {
   return { endpoint: config.name, fetched: data.length, processed, verify, startDate, endDate }
 }
 
-/**
- * Sync report endpoint — fetch day by day, tag records with report_date.
- *
- * Reports are daily aggregations. Some (report_lottery, report_third_game) don't
- * include the date in individual records, so we must add it from the query param.
- * report_funds has 'date' field which we rename to 'report_date'.
- */
 async function syncReport(config, onProgress) {
   const lastDate = getLastDataDate(config.name)
   const startDate = lastDate || config.defaultStart || daysAgo(30)
@@ -290,14 +179,11 @@ async function syncReport(config, onProgress) {
       { pageSize: 50 },
     )
 
-    // Tag each record with report_date
     for (const record of data) {
       if (config.renameDate && record[config.renameDate] != null) {
-        // report_funds: rename 'date' → 'report_date'
         record.report_date = record[config.renameDate]
         delete record[config.renameDate]
       } else if (!record.report_date) {
-        // report_lottery, report_third_game: add report_date from query
         record.report_date = dateStr
       }
     }
@@ -323,16 +209,11 @@ async function syncReport(config, onProgress) {
   return { endpoint: config.name, fetched: allData.length, processed, startDate, endDate }
 }
 
-/**
- * Sync config data — always full sync (small static data).
- * Includes: lottery_series, lottery_games, invite_list, bank_list
- */
 async function syncConfig(onProgress) {
   onProgress?.({ endpoint: 'config', step: 'fetch', message: 'Fetching config data...' })
 
   const body = { agent_id: DEFAULT_AGENT_ID }
 
-  // Lottery series + games from rebate API
   try {
     const lotteryInit = await rebateApi.getLotteryInit()
     if (lotteryInit.code === 1 && lotteryInit.data) {
@@ -340,14 +221,12 @@ async function syncConfig(onProgress) {
       body.lottery_games = lotteryInit.data.lotteryData || []
     }
   } catch (_) {
-    /* lottery config fetch failed — non-critical, continue */
+    /* lottery config fetch failed — non-critical */
   }
 
-  // Invite list
   const { data: invites } = await fetchAllPages(inviteApi.list, {}, { pageSize: 50 })
   if (invites.length) body.invite_list = invites
 
-  // Bank list
   const { data: banks } = await fetchAllPages(bankApi.list, {}, { pageSize: 50 })
   if (banks.length) body.bank_list = banks
 
@@ -359,14 +238,8 @@ async function syncConfig(onProgress) {
 
 // --------------- Orchestrator ---------------
 
-/**
- * Sync a single endpoint by name.
- * @param {string} name - Endpoint name (e.g., 'bet_order', 'members', 'report_funds')
- * @param {Function} [onProgress] - Progress callback
- * @returns {Promise<Object>} Sync result
- */
 export async function syncEndpoint(name, onProgress) {
-  if (!_statusCache) await getStatus()
+  if (!isStatusCached()) await getStatus()
 
   if (name === 'config') return syncConfig(onProgress)
   if (name === 'members') return syncMembers(onProgress)
@@ -380,37 +253,15 @@ export async function syncEndpoint(name, onProgress) {
   throw new Error(`Endpoint ${name} has no sync strategy`)
 }
 
-/**
- * Sync ALL endpoints in optimal order.
- *
- * Order:
- *   1. Config (small, reference data)
- *   2. Members (needed for FKs)
- *   3. Bet orders (highest volume, 224K/day)
- *   4. Bet lottery (52K/day)
- *   5. Deposits (18K/week)
- *   6. Reports (daily aggregates)
- *
- * @param {Function} [onProgress] - Progress callback: ({ endpoint, step, message })
- * @returns {Promise<Object[]>} Array of sync results
- */
 export async function syncAll(onProgress) {
   const results = []
   const startTime = Date.now()
 
-  // 1. Refresh sync status from backend
   await getStatus()
 
-  // 2. Sync in order
   const order = [
-    'config',
-    'members',
-    'bet_order',
-    'bet_lottery',
-    'deposit_withdrawal',
-    'report_lottery',
-    'report_funds',
-    'report_third_game',
+    'config', 'members', 'bet_order', 'bet_lottery',
+    'deposit_withdrawal', 'report_lottery', 'report_funds', 'report_third_game',
   ]
 
   for (const name of order) {
@@ -430,8 +281,6 @@ export async function syncAll(onProgress) {
 
   return results
 }
-
-// --------------- Exports ---------------
 
 export {
   getStatus,

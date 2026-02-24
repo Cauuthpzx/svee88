@@ -1,4 +1,4 @@
-import { getToken } from '../utils/index.js'
+import { getToken, escapeHtml } from '../utils/index.js'
 import { ROUTES, INTENDED_ROUTE_KEY } from '../constants/index.js'
 
 const placeholder = () => import('../modules/placeholder/index.js')
@@ -119,7 +119,7 @@ const renderError = (err) => {
   container.innerHTML = `
     <div class="error-boundary">
       <p class="error-boundary-title">Đã xảy ra lỗi</p>
-      <p class="error-boundary-text">${err?.message || 'Không thể tải trang'}</p>
+      <p class="error-boundary-text">${escapeHtml(err?.message) || 'Không thể tải trang'}</p>
       <a href="${ROUTES.DASHBOARD}" class="layui-btn layui-btn-sm">Về trang chủ</a>
     </div>`
   layoutModule?.hideLoading?.()

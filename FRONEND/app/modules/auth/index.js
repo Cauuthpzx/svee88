@@ -231,3 +231,5 @@ export const render = (hash) => {
     initLoginForm()
   }
 }
+
+export const destroy = () => {}

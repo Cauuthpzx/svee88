@@ -1,6 +1,5 @@
-import http from '../../api/http.js'
 import { API } from '../../constants/index.js'
-import { escapeHtml } from '../../utils/index.js'
+import { escapeHtml, getToken } from '../../utils/index.js'
 
 const template = () => `
   <div class="layui-card">
@@ -23,7 +22,7 @@ const loadUsers = () => {
     table.render({
       elem: '#userTable',
       url: API.USERS,
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      headers: { Authorization: `Bearer ${getToken()}` },
       parseData: (res) => ({
         code: 0,
         count: Array.isArray(res.data || res) ? (res.data || res).length : 0,

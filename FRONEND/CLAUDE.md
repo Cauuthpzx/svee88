@@ -52,6 +52,9 @@ Mỗi lần viết code xong, **tự kiểm tra lại toàn bộ** theo checklis
 - [ ] Public route render trực tiếp `#app`, private route render trong layout
 - [ ] Không có logic/state duplicate giữa layout và module
 - [ ] Event listener cleanup khi unmount module
+- [ ] **Mỗi module PHẢI export `destroy()`** — dù rỗng, router gọi `currentModule?.destroy()`
+- [ ] Mọi user data trong `innerHTML` PHẢI qua `escapeHtml()` — kể cả `error.message`
+- [ ] File không vượt 300 dòng — split nếu cần
 
 ### Axios 1.x
 - [ ] 1 instance duy nhất (`http.js`), không tạo thêm
@@ -72,6 +75,9 @@ Mỗi lần viết code xong, **tự kiểm tra lại toàn bộ** theo checklis
 - [ ] `const`/`let` only, zero `var`
 - [ ] Zero: inline style, console.log, magic number/string, dead code
 - [ ] Named constants từ `constants/index.js`
+- [ ] **Token chỉ đọc qua `getToken()`** — KHÔNG `localStorage.getItem('token')` trực tiếp
+- [ ] Layui `table.render({ headers })` dùng `getToken()`, không `localStorage.getItem`
+- [ ] Không import module mà không sử dụng (unused imports)
 
 ---
 
