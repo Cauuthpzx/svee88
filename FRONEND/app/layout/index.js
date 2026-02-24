@@ -81,7 +81,22 @@ const template = () => `
   <div class="layui-layout layui-layout-admin" id="${LAYOUT_ID}">
     <header class="layui-header" role="banner">
       <div class="layui-logo layui-hide-xs">
-        <img src="/logo.png" alt="HuB" class="header-logo"> HUB SYSTEM
+        <svg class="header-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 42" role="img" aria-label="HUB SYSTEM">
+          <defs>
+            <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#ff4060"/>
+              <stop offset="50%" stop-color="#ff8020"/>
+              <stop offset="100%" stop-color="#ffcc00"/>
+            </linearGradient>
+          </defs>
+          <text class="logo-outline" x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
+            font-family="'Arial Black','Impact',sans-serif" font-size="23" font-weight="900"
+            letter-spacing="1" fill="none" stroke-width="3" stroke-linejoin="round">HUB SYSTEM</text>
+          <text class="logo-fill" x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
+            font-family="'Arial Black','Impact',sans-serif" font-size="23" font-weight="900"
+            letter-spacing="1" fill="url(#logoGrad)" stroke-width="0.4"
+            paint-order="stroke fill">HUB SYSTEM</text>
+        </svg>
       </div>
       <div id="header-clock" role="timer" aria-label="Current time">
         <span id="clock-display" aria-live="off"></span>

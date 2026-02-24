@@ -42,12 +42,29 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
   z-index: 1010;
 }
+.layui-layout-admin .layui-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+}
 .header-logo {
-  width: 28px;
-  height: 28px;
-  vertical-align: middle;
-  margin-right: 6px;
-  border-radius: 6px;
+  max-width: 100%;
+  height: auto;
+}
+.logo-outline {
+  stroke: rgba(0, 0, 0, .25);
+}
+.logo-fill {
+  stroke: #cc1833;
+  filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, .35));
+}
+.dark .logo-outline {
+  stroke: rgba(0, 0, 0, .6);
+}
+.dark .logo-fill {
+  stroke: #ff4060;
+  filter: drop-shadow(1px 2px 3px rgba(0, 0, 0, .7));
 }
 .layui-layout-admin .layui-header .layui-nav {
   background: transparent;

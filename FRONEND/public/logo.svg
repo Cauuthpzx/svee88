@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 42">
+  <defs>
+    <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff4060"/>
+      <stop offset="50%" stop-color="#ff8020"/>
+      <stop offset="100%" stop-color="#ffcc00"/>
+    </linearGradient>
+  </defs>
+  <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
+    font-family="'Arial Black','Impact',sans-serif" font-size="23" font-weight="900"
+    letter-spacing="1" fill="none" stroke="#ffffff" stroke-width="3" stroke-linejoin="round">HUB SYSTEM</text>
+  <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
+    font-family="'Arial Black','Impact',sans-serif" font-size="23" font-weight="900"
+    letter-spacing="1" fill="url(#logoGrad)" stroke="#ff2040" stroke-width="0.4"
+    paint-order="stroke fill">HUB SYSTEM</text>
+</svg>
