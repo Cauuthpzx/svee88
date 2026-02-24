@@ -19,7 +19,22 @@ const loginTemplate = () => `
     <div class="auth-card">
       <div class="auth-header">
         <img src="/logo.png" alt="HuB" class="auth-logo">
-        <h2 class="auth-title">HUB LOGIN</h2>
+        <svg class="auth-logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 42" role="img" aria-label="HUB LOGIN">
+          <defs>
+            <linearGradient id="authLogoGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#ff4060"/>
+              <stop offset="50%" stop-color="#ff8020"/>
+              <stop offset="100%" stop-color="#ffcc00"/>
+            </linearGradient>
+          </defs>
+          <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
+            font-family="'Arial Black','Impact',sans-serif" font-size="28" font-weight="900"
+            letter-spacing="1" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="3.5" stroke-linejoin="round">HUB LOGIN</text>
+          <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
+            font-family="'Arial Black','Impact',sans-serif" font-size="28" font-weight="900"
+            letter-spacing="1" fill="url(#authLogoGrad)" stroke="#cc1833" stroke-width="0.4"
+            paint-order="stroke fill" style="filter:drop-shadow(1px 2px 2px rgba(0,0,0,.35))">HUB LOGIN</text>
+        </svg>
         <p>Chào mừng bạn quay trở lại</p>
       </div>
       <div class="auth-body">
