@@ -1,9 +1,9 @@
 # CLAUDE.md — Layui 2.13.3 SPA Frontend
 
-
 Commit all tiếng việt offline
 
-
+> **BẮT BUỘC:** Luôn đọc `CODING_STANDARDS.md` (root project) — coi như CLAUDE.md thứ 2.
+> File đó chứa quy tắc chung FE + BE: API contracts, error handling, auth, validation, security, performance, naming...
 
 ## STACK
 Layui 2.13.3 | Axios 1.x | Vite 5.x | Vanilla JS ES2022
@@ -15,6 +15,27 @@ Layui 2.13.3 | Axios 1.x | Vite 5.x | Vanilla JS ES2022
 - NPM: https://www.npmjs.com/package/layui
 - Axios: https://axios-http.com/docs/intro
 - Vite: https://vitejs.dev/guide/
+- Tài liệu offline: `FRONEND/docs/`, `FRONEND/examples/`
+
+## ICONS — LOCAL (BẮT BUỘC)
+
+**Toàn bộ icon dùng local từ `public/icons/` (1454 file PNG, style Icons8 Liquid).**
+- Nguồn gốc: `FRONEND/icons8-liquid/` → đã copy vào `public/icons/`
+- Vite serve tại: `/icons/ten-file.png`
+- KHÔNG dùng CDN icon, KHÔNG dùng icon URL bên ngoài
+- Khi cần icon, tìm file gần nghĩa nhất trong `public/icons/`
+- **Đổi tên file cho đúng nghĩa trước khi sử dụng** (ví dụ: copy `user-male-circle.png` → `avatar.png`)
+- Dùng kết hợp: layui-icon cho icon hệ thống form, PNG local cho icon trang trí/minh hoạ
+
+**Icon auth liên quan:**
+`user.png`, `password.png`, `email.png`, `lock.png`, `unlock-2.png`,
+`forgot-password.png`, `verified-account.png`, `user-shield.png`,
+`home.png`, `dashboard.png`, `test-account.png`, `keyhole-shield.png`
+
+**Cách dùng trong HTML:**
+```html
+<img src="/icons/dashboard.png" alt="Dashboard" width="24" height="24">
+```
 
 ---
 
@@ -69,10 +90,13 @@ src/
 
 ### Load Module
 ```js
-// ✅ Đúng — load 1 lần, cache lại
-layui.use(['table', 'form', 'layer'], ({ table, form, layer }) => {
+// ✅ Đúng — positional args, load 1 lần
+layui.use(['table', 'form', 'layer'], function (table, form, layer) {
   // logic ở đây
 })
+
+// ❌ Sai — destructure object (layui truyền positional, KHÔNG truyền object)
+layui.use(['form', 'layer'], ({ form, layer }) => { ... })
 
 // ❌ Sai — load lại nhiều lần
 layui.use('table', ...)
@@ -99,11 +123,49 @@ table.render({
 table.reload('tableId', { where: filters })
 ```
 
-### Form
+### Form — LƯU Ý QUAN TRỌNG
+
+**LUÔN dùng cấu trúc HTML chuẩn gốc Layui, sau đó mới cải tiến thành SPA.**
+- Tham khảo docs: https://layui.dev/docs/2/form.html
+- Tham khảo source: `FRONEND/docs/form/`, `FRONEND/examples/form.html`
+- Tham khảo CSS gốc: `FRONEND/src/css/layui.css`
+- KHÔNG tự chế HTML structure — phải đúng nesting mà Layui yêu cầu
+- Chỉ thêm CSS class bổ sung, KHÔNG override CSS gốc của Layui
+
+**Cấu trúc input chuẩn (có icon prefix/suffix):**
+```html
+<div class="layui-form-item">
+  <div class="layui-input-wrap">
+    <div class="layui-input-prefix">
+      <i class="layui-icon layui-icon-username"></i>
+    </div>
+    <input type="text" name="username" class="layui-input"
+      lay-verify="required" placeholder="Tên đăng nhập" lay-affix="clear">
+  </div>
+</div>
+```
+
+**Password với toggle eye (dùng lay-affix, KHÔNG tự code):**
+```html
+<div class="layui-input-wrap">
+  <div class="layui-input-prefix">
+    <i class="layui-icon layui-icon-password"></i>
+  </div>
+  <input type="password" name="password" class="layui-input"
+    lay-verify="required" placeholder="Mật khẩu" lay-affix="eye">
+</div>
+```
+
+**Nút submit full-width:**
+```html
+<button class="layui-btn layui-btn-fluid" lay-submit lay-filter="filterName">
+  Đăng nhập
+</button>
+```
+
 ```js
 // lay-filter bắt buộc trên mỗi form
 form.on('submit(filterName)', ({ field }) => {
-  // validate phía client trước
   if (!field.name) return layer.msg('Thiếu tên')
   submitData(field)
   return false

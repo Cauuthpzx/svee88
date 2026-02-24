@@ -38,12 +38,14 @@ htmlcov/
 
 # Node (for FRONEND)
 node_modules/
+FRONEND/icons8-liquid/
+.env.*
 
 # Claude
 .claude/
 
-# Config with secrets
-src/.env
-
 # Crudadmin data
 crudadmin_data/
+
+# Old src/ remnants (locked runtime files)
+src/

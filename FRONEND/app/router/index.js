@@ -39,13 +39,10 @@ const navigate = async (hash) => {
   container.innerHTML = ''
 
   const mod = await loader()
-  const mode = hash === ROUTES.REGISTER ? 'register' : 'login'
-  mod.render(mode)
+  mod.render(hash)
 }
 
-const initRouter = () => {
+export const initRouter = () => {
   window.addEventListener('hashchange', () => navigate())
   navigate()
 }
-
-export { navigate, initRouter }

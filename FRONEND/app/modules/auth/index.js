@@ -1,6 +1,5 @@
 import { authApi } from '../../api/auth.js'
 import { setToken, isValidEmail } from '../../utils/index.js'
-import { store } from '../../store/index.js'
 import {
   ROUTES,
   MSG,
@@ -23,26 +22,29 @@ const loginTemplate = () => `
       <div class="auth-body">
         <form class="layui-form" lay-filter="loginForm">
           <div class="layui-form-item">
-            <div class="layui-input-prefix">
-              <i class="layui-icon layui-icon-username"></i>
-              <input type="text" name="username" placeholder="Tên đăng nhập hoặc email"
-                autocomplete="username" class="layui-input" lay-verify="required"
-                lay-reqtext="Vui lòng nhập tên đăng nhập">
+            <div class="layui-input-wrap">
+              <div class="layui-input-prefix">
+                <i class="layui-icon layui-icon-username"></i>
+              </div>
+              <input type="text" name="username" class="layui-input"
+                placeholder="Tên đăng nhập hoặc email" autocomplete="username"
+                lay-verify="required" lay-reqtext="Vui lòng nhập tên đăng nhập"
+                lay-affix="clear">
             </div>
           </div>
           <div class="layui-form-item">
-            <div class="layui-input-prefix">
-              <i class="layui-icon layui-icon-password"></i>
-              <input type="password" name="password" id="loginPassword"
+            <div class="layui-input-wrap">
+              <div class="layui-input-prefix">
+                <i class="layui-icon layui-icon-password"></i>
+              </div>
+              <input type="password" name="password" class="layui-input"
                 placeholder="Mật khẩu" autocomplete="current-password"
-                class="layui-input" lay-verify="required"
-                lay-reqtext="Vui lòng nhập mật khẩu">
-              <i class="layui-icon layui-icon-show auth-password-toggle"
-                id="toggleLoginPwd"></i>
+                lay-verify="required" lay-reqtext="Vui lòng nhập mật khẩu"
+                lay-affix="eye">
             </div>
           </div>
           <div class="layui-form-item">
-            <button type="submit" class="auth-submit-btn" lay-submit
+            <button class="layui-btn layui-btn-fluid" lay-submit
               lay-filter="submitLogin">Đăng nhập</button>
           </div>
         </form>
@@ -65,58 +67,64 @@ const registerTemplate = () => `
       <div class="auth-body">
         <form class="layui-form" lay-filter="registerForm">
           <div class="layui-form-item">
-            <div class="layui-input-prefix">
-              <i class="layui-icon layui-icon-user"></i>
-              <input type="text" name="name" placeholder="Họ và tên"
-                autocomplete="name" class="layui-input"
+            <div class="layui-input-wrap">
+              <div class="layui-input-prefix">
+                <i class="layui-icon layui-icon-user"></i>
+              </div>
+              <input type="text" name="name" class="layui-input"
+                placeholder="Họ và tên" autocomplete="name"
                 lay-verify="required|nameLength"
-                lay-reqtext="Vui lòng nhập họ tên">
+                lay-reqtext="Vui lòng nhập họ tên" lay-affix="clear">
             </div>
           </div>
           <div class="layui-form-item">
-            <div class="layui-input-prefix">
-              <i class="layui-icon layui-icon-username"></i>
-              <input type="text" name="username" placeholder="Tên đăng nhập"
-                autocomplete="username" class="layui-input"
+            <div class="layui-input-wrap">
+              <div class="layui-input-prefix">
+                <i class="layui-icon layui-icon-username"></i>
+              </div>
+              <input type="text" name="username" class="layui-input"
+                placeholder="Tên đăng nhập" autocomplete="username"
                 lay-verify="required|usernameRule"
-                lay-reqtext="Vui lòng nhập tên đăng nhập">
+                lay-reqtext="Vui lòng nhập tên đăng nhập" lay-affix="clear">
             </div>
           </div>
           <div class="layui-form-item">
-            <div class="layui-input-prefix">
-              <i class="layui-icon layui-icon-email"></i>
-              <input type="text" name="email" placeholder="Email"
-                autocomplete="email" class="layui-input"
+            <div class="layui-input-wrap">
+              <div class="layui-input-prefix">
+                <i class="layui-icon layui-icon-email"></i>
+              </div>
+              <input type="text" name="email" class="layui-input"
+                placeholder="Email" autocomplete="email"
                 lay-verify="required|emailRule"
-                lay-reqtext="Vui lòng nhập email">
+                lay-reqtext="Vui lòng nhập email" lay-affix="clear">
             </div>
           </div>
           <div class="layui-form-item">
-            <div class="layui-input-prefix">
-              <i class="layui-icon layui-icon-password"></i>
+            <div class="layui-input-wrap">
+              <div class="layui-input-prefix">
+                <i class="layui-icon layui-icon-password"></i>
+              </div>
               <input type="password" name="password" id="regPassword"
-                placeholder="Mật khẩu (tối thiểu 8 ký tự)"
-                autocomplete="new-password" class="layui-input"
+                class="layui-input" placeholder="Mật khẩu (tối thiểu 8 ký tự)"
+                autocomplete="new-password"
                 lay-verify="required|passwordRule"
-                lay-reqtext="Vui lòng nhập mật khẩu">
-              <i class="layui-icon layui-icon-show auth-password-toggle"
-                id="toggleRegPwd"></i>
+                lay-reqtext="Vui lòng nhập mật khẩu" lay-affix="eye">
             </div>
           </div>
           <div class="layui-form-item">
-            <div class="layui-input-prefix">
-              <i class="layui-icon layui-icon-password"></i>
-              <input type="password" name="confirmPassword" id="regConfirmPwd"
-                placeholder="Xác nhận mật khẩu"
-                autocomplete="new-password" class="layui-input"
+            <div class="layui-input-wrap">
+              <div class="layui-input-prefix">
+                <i class="layui-icon layui-icon-password"></i>
+              </div>
+              <input type="password" name="confirmPassword"
+                class="layui-input" placeholder="Xác nhận mật khẩu"
+                autocomplete="new-password"
                 lay-verify="required|confirmPwd"
-                lay-reqtext="Vui lòng xác nhận mật khẩu">
-              <i class="layui-icon layui-icon-show auth-password-toggle"
-                id="toggleRegConfirmPwd"></i>
+                lay-reqtext="Vui lòng xác nhận mật khẩu" lay-affix="eye">
             </div>
           </div>
           <div class="layui-form-item">
-            <button type="submit" class="auth-submit-btn" lay-submit
+            <button class="layui-btn layui-btn-fluid" lay-submit
               lay-filter="submitRegister">Đăng ký</button>
           </div>
         </form>
@@ -128,18 +136,6 @@ const registerTemplate = () => `
     </div>
   </div>
 `
-
-const togglePasswordVisibility = (toggleId, inputId) => {
-  const toggle = document.getElementById(toggleId)
-  const input = document.getElementById(inputId)
-  if (!toggle || !input) return
-  toggle.addEventListener('click', () => {
-    const isHidden = input.type === 'password'
-    input.type = isHidden ? 'text' : 'password'
-    toggle.classList.toggle('layui-icon-show', !isHidden)
-    toggle.classList.toggle('layui-icon-hide', isHidden)
-  })
-}
 
 const registerCustomValidators = (form) => {
   form.verify({
@@ -184,7 +180,6 @@ const handleLogin = async (field, layer) => {
   try {
     const res = await authApi.login(field.username, field.password)
     setToken(res.access_token)
-    store.set('token', res.access_token)
     layer.msg(MSG.LOGIN_SUCCESS, { icon: 1 })
     setTimeout(() => { location.hash = ROUTES.DASHBOARD }, 600)
   } catch (error) {
@@ -213,37 +208,30 @@ const handleRegister = async (field, layer) => {
 }
 
 const initLoginForm = () => {
-  layui.use(['form', 'layer'], ({ form, layer }) => {
+  layui.use(['form', 'layer'], function (form, layer) {
     registerCustomValidators(form)
-
-    form.on('submit(submitLogin)', ({ field }) => {
-      handleLogin(field, layer)
+    form.on('submit(submitLogin)', (data) => {
+      handleLogin(data.field, layer)
       return false
     })
-
-    togglePasswordVisibility('toggleLoginPwd', 'loginPassword')
     form.render()
   })
 }
 
 const initRegisterForm = () => {
-  layui.use(['form', 'layer'], ({ form, layer }) => {
+  layui.use(['form', 'layer'], function (form, layer) {
     registerCustomValidators(form)
-
-    form.on('submit(submitRegister)', ({ field }) => {
-      handleRegister(field, layer)
+    form.on('submit(submitRegister)', (data) => {
+      handleRegister(data.field, layer)
       return false
     })
-
-    togglePasswordVisibility('toggleRegPwd', 'regPassword')
-    togglePasswordVisibility('toggleRegConfirmPwd', 'regConfirmPwd')
     form.render()
   })
 }
 
-export const render = (mode = 'login') => {
+export const render = (hash) => {
   const container = document.getElementById('app')
-  if (mode === 'register') {
+  if (hash === ROUTES.REGISTER) {
     container.innerHTML = registerTemplate()
     initRegisterForm()
   } else {

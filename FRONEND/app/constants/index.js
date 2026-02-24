@@ -1,9 +1,4 @@
 export const TOKEN_KEY = 'token'
-export const API_CODE_OK = 0
-export const PAGE_SIZE = 20
-export const DEBOUNCE_MS = 300
-export const THROTTLE_MS = 100
-export const MAX_FILE_SIZE = 5 * 1024
 
 export const PASSWORD_MIN_LENGTH = 8
 export const USERNAME_MIN_LENGTH = 2
@@ -21,7 +16,6 @@ export const ROUTES = {
 export const API = {
   LOGIN: '/api/v1/login',
   REGISTER: '/api/v1/user',
-  REFRESH: '/api/v1/refresh',
   LOGOUT: '/api/v1/logout',
   USER_ME: '/api/v1/user/me/'
 }
@@ -30,13 +24,12 @@ export const MSG = {
   LOGIN_SUCCESS: 'Đăng nhập thành công',
   REGISTER_SUCCESS: 'Đăng ký thành công, vui lòng đăng nhập',
   LOGOUT_SUCCESS: 'Đăng xuất thành công',
-  FIELD_REQUIRED: 'Vui lòng điền đầy đủ thông tin',
   INVALID_EMAIL: 'Email không hợp lệ',
-  PASSWORD_TOO_SHORT: `Mật khẩu tối thiểu ${8} ký tự`,
+  PASSWORD_TOO_SHORT: 'Mật khẩu tối thiểu 8 ký tự',
   PASSWORD_MISMATCH: 'Mật khẩu xác nhận không khớp',
   USERNAME_INVALID: 'Tên đăng nhập chỉ gồm chữ thường và số',
-  USERNAME_LENGTH: `Tên đăng nhập từ 2–20 ký tự`,
-  NAME_LENGTH: `Họ tên từ 2–30 ký tự`,
+  USERNAME_LENGTH: 'Tên đăng nhập từ 2–20 ký tự',
+  NAME_LENGTH: 'Họ tên từ 2–30 ký tự',
   NETWORK_ERROR: 'Lỗi kết nối, vui lòng thử lại',
   SERVER_ERROR: 'Lỗi hệ thống, vui lòng thử lại sau'
 }
