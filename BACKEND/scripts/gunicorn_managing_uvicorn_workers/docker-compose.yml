@@ -19,7 +19,7 @@ services:
       - db
       - redis
     volumes:
-      - ./src/app:/code/app
+      - ./src/hubserver:/code/hubserver
       - ./src/.env:/code/.env
 
   worker:
@@ -33,7 +33,7 @@ services:
       - db
       - redis
     volumes:
-      - ./src/app:/code/app
+      - ./src/hubserver:/code/hubserver
       - ./src/.env:/code/.env
 
   db:
@@ -72,7 +72,7 @@ services:
     depends_on:
       - db
       - web
-    command: python -m src.scripts.create_first_superuser
+    command: python -m hubserver.scripts.create_first_superuser
     volumes:
       - ./src:/code/src
 
@@ -102,7 +102,7 @@ services:
   #     - create_superuser
   #     - db
   #     - web
-  #   command: python -m src.scripts.create_first_tier
+  #   command: python -m hubserver.scripts.create_first_tier
   #   volumes:
   #     - ./src:/code/src
 

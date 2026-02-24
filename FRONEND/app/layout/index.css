@@ -244,13 +244,21 @@
   margin-right: 6px;
 }
 
-/* ── Header dropdown indicator ── */
+/* ── Header dropdown caret ── */
 .layui-header .layui-layout-right .layui-nav-item > a:has(+ .layui-nav-child)::after {
-  content: '\e61a';
-  font-family: 'layui-icon';
-  font-size: 12px;
-  margin-left: 5px;
+  content: '';
+  display: inline-block;
   vertical-align: middle;
+  margin-left: 6px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 5px solid currentColor;
+  opacity: .5;
+  transition: transform .25s, opacity .2s;
+}
+.layui-header .layui-layout-right .layui-nav-item:hover > a::after {
+  opacity: .9;
+  transform: rotate(90deg);
 }
 
 /* ── Theme toggle ── */

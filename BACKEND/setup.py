@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-FastAPI Boilerplate Setup Script
+Hubserver Setup Script
 
 Automates copying the correct configuration files for different deployment scenarios.
 """
@@ -30,7 +30,7 @@ DEPLOYMENTS = {
 
 def show_help():
     """Display help information"""
-    print("FastAPI Boilerplate Setup")
+    print("Hubserver Setup")
     print("=" * 25)
     print()
     print("Usage: python setup.py <deployment-type>")
@@ -116,7 +116,7 @@ def copy_files(deployment_type: str):
 
 def interactive_setup():
     """Interactive setup when no arguments provided"""
-    print("FastAPI Boilerplate Setup")
+    print("Hubserver Setup")
     print("=" * 25)
     print()
     print("Choose your deployment type:")
