@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'color-scheme'
+import { THEME_KEY } from '../constants/index.js'
 
 const getPreferred = () =>
   window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
@@ -14,11 +14,11 @@ const apply = (mode) => {
 }
 
 export const initTheme = () => {
-  apply(localStorage.getItem(STORAGE_KEY) || getPreferred())
+  apply(localStorage.getItem(THEME_KEY) || getPreferred())
 }
 
 export const toggleTheme = () => {
   const next = document.documentElement.classList.contains('dark') ? 'light' : 'dark'
-  localStorage.setItem(STORAGE_KEY, next)
+  localStorage.setItem(THEME_KEY, next)
   apply(next)
 }

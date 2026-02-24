@@ -5,7 +5,7 @@
 /* ── Header ── */
 .layui-layout-admin .layui-header {
   background-color: #fff;
-  border-bottom: 1px solid #e8e8e8;
+  border-bottom: none;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 .layui-layout-admin .layui-header .layui-nav {
@@ -129,7 +129,7 @@
 /* Sidebar — position */
 .hub-sidebar-l {
   left: 0;
-  border-right: 1px solid var(--lay-color-border-1, #2f3240);
+  border-right: none;
   box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1);
 }
 .hub-sidebar-l:hover {
@@ -138,17 +138,76 @@
 
 /* ── Body ── */
 .layui-layout-admin .layui-body {
-  background-color: #f2f2f2;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+  background-color: #e8e4dc;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1.5px,
+      rgba(255, 255, 255, .15) 1.5px,
+      rgba(255, 255, 255, .15) 2px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 1.5px,
+      rgba(0, 0, 0, .04) 1.5px,
+      rgba(0, 0, 0, .04) 2px
+    );
 }
 
-/* ── Footer ── */
-.layui-layout-admin .layui-footer {
-  background-color: #fff;
-  border-top: 1px solid #e8e8e8;
-  color: #999;
+
+/* ── Skeleton loading ── */
+.skeleton-loading { padding: 15px; }
+.skeleton-card {
+  background: #fff;
+  border-radius: 2px;
+  padding: 20px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+.skeleton-line {
+  height: 14px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  margin-bottom: 12px;
+}
+.skeleton-title { width: 40%; height: 20px; margin-bottom: 20px; }
+.skeleton-text { width: 100%; }
+.skeleton-text.short { width: 60%; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+.dark .skeleton-card { background: var(--lay-color-bg-2); }
+.dark .skeleton-line {
+  background: linear-gradient(90deg, #333 25%, #444 50%, #333 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ── Error boundary ── */
+.error-boundary {
+  padding: 40px 20px;
   text-align: center;
-  line-height: 44px;
+}
+.error-boundary-title {
+  font-size: 18px;
+  color: #ff5722;
+  margin: 0 0 8px;
+}
+.error-boundary-text {
+  font-size: 14px;
+  color: #999;
+  margin: 0 0 16px;
+}
+
+/* ── Shared utility classes ── */
+.text-success { color: #16baaa; }
+.text-muted { color: #999; }
+.task-toolbar { margin-bottom: 16px; }
+
+/* ── Avatar ── */
+.layui-nav-img {
+  margin-right: 6px;
 }
 
 /* ── Theme toggle ── */
@@ -161,7 +220,7 @@
    DARK — only rules the theme CSS doesn't cover
    ══════════════════════════════════════ */
 .dark .layui-layout-admin .layui-header {
-  border-bottom-color: var(--lay-color-border-1);
+  border-bottom: none;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 .dark .layui-layout-admin .layui-header .layui-nav .layui-nav-item a {
@@ -177,8 +236,21 @@
 }
 .dark .layui-layout-admin .layui-body {
   background-color: var(--lay-color-bg-1);
-  box-shadow: none;
+  background-image: none;
 }
-.dark .layui-layout-admin .layui-footer {
-  border-top-color: var(--lay-color-border-1);
+
+
+/* ── 404 Not Found ── */
+.not-found-title {
+  font-size: 72px;
+  font-weight: 700;
+  color: #ddd;
+  margin: 0 0 8px;
 }
+.not-found-text {
+  font-size: 15px;
+  color: #999;
+  margin: 0 0 24px;
+}
+.dark .not-found-title { color: #444; }
+.dark .not-found-text { color: var(--lay-color-text-3); }

@@ -1,5 +1,6 @@
 import http from '../../api/http.js'
 import { API } from '../../constants/index.js'
+import { escapeHtml } from '../../utils/index.js'
 
 const template = () => `
   <div class="layui-card">
@@ -10,27 +11,32 @@ const template = () => `
   </div>
 `
 
-const loadTiers = async () => {
-  try {
-    const res = await http.get(API.TIERS, { params: { page: 1, items_per_page: 20 } })
-    const data = res.data || res
-    layui.use('table', (table) => {
-      table.render({
-        elem: '#tierTable',
-        cols: [[
-          { field: 'name', title: 'Tên cấp bậc', width: 200 },
-          { field: 'created_at', title: 'Ngày tạo', width: 160 }
-        ]],
-        data: Array.isArray(data) ? data : [],
-        page: false,
-        skin: 'line',
-        even: true
-      })
+const loadTiers = () => {
+  layui.use('table', function (table) {
+    table.render({
+      elem: '#tierTable',
+      url: API.TIERS,
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      parseData: (res) => ({
+        code: 0,
+        count: Array.isArray(res.data || res) ? (res.data || res).length : 0,
+        data: Array.isArray(res.data || res) ? (res.data || res) : []
+      }),
+      request: { pageName: 'page', limitName: 'items_per_page' },
+      cols: [[
+        { field: 'name', title: 'Tên cấp bậc', width: 200, templet: (d) => escapeHtml(d.name) },
+        { field: 'created_at', title: 'Ngày tạo', width: 160 }
+      ]],
+      page: false,
+      skin: 'line',
+      even: true
     })
-  } catch (_) { /* handled by interceptor */ }
+  })
 }
 
 export const render = () => {
   document.getElementById('main-content').innerHTML = template()
   loadTiers()
 }
+
+export const destroy = () => {}

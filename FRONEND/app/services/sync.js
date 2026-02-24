@@ -1,18 +1,5 @@
 /**
  * Sync Service — Orchestrate incremental data sync from upstream to local DB.
- *
- * Features:
- *   - Incremental: tracks last_data_date per endpoint, only fetches new data
- *   - Batch upload: chunks large datasets (5000 records per POST)
- *   - Date tagging: reports without date in data get report_date from query param
- *   - Random verification: spot-check synced data against DB
- *   - Progress callback: real-time status updates
- *
- * Usage:
- *   import { syncAll, syncEndpoint } from '../services/sync.js'
- *   const results = await syncAll((progress) => console.log(progress))
- *   // or sync a single endpoint:
- *   const result = await syncEndpoint('bet_order', onProgress)
  */
 
 import http from '../api/http.js'
@@ -20,9 +7,9 @@ import { SYNC_API } from '../constants/index.js'
 import {
   memberApi, betOrderApi, betApi, depositWithdrawalApi,
   reportLotteryApi, reportFundsApi, reportThirdGameApi,
-  bankApi, inviteApi, rebateApi,
-  fetchAllPages, fetchDateChunked
+  bankApi, inviteApi, rebateApi
 } from '../api/upstream.js'
+import { fetchAllPages, fetchDateChunked } from '../api/upstream-sync.js'
 
 // --------------- Constants ---------------
 
@@ -352,8 +339,8 @@ async function syncConfig(onProgress) {
       body.lottery_series = lotteryInit.data.seriesData || []
       body.lottery_games = lotteryInit.data.lotteryData || []
     }
-  } catch (e) {
-    console.warn('[sync] Failed to fetch lottery config:', e.message)
+  } catch (_) {
+    /* lottery config fetch failed — non-critical, continue */
   }
 
   // Invite list

@@ -1,5 +1,6 @@
 import { authApi } from '../../api/auth.js'
 import { setToken, isValidEmail } from '../../utils/index.js'
+import { classifyError } from '../../utils/error.js'
 import {
   ROUTES,
   MSG,
@@ -8,7 +9,8 @@ import {
   USERNAME_MAX_LENGTH,
   NAME_MIN_LENGTH,
   NAME_MAX_LENGTH,
-  USERNAME_PATTERN
+  USERNAME_PATTERN,
+  INTENDED_ROUTE_KEY
 } from '../../constants/index.js'
 import './index.css'
 
@@ -20,7 +22,7 @@ const loginTemplate = () => `
         <p>Chào mừng bạn quay trở lại</p>
       </div>
       <div class="auth-body">
-        <form class="layui-form" lay-filter="loginForm">
+        <form class="layui-form" lay-filter="loginForm" role="form" aria-label="Đăng nhập">
           <div class="layui-form-item">
             <div class="layui-input-wrap">
               <div class="layui-input-prefix">
@@ -65,7 +67,7 @@ const registerTemplate = () => `
         <p>Tạo tài khoản mới</p>
       </div>
       <div class="auth-body">
-        <form class="layui-form" lay-filter="registerForm">
+        <form class="layui-form" lay-filter="registerForm" role="form" aria-label="Đăng ký">
           <div class="layui-form-item">
             <div class="layui-input-wrap">
               <div class="layui-input-prefix">
@@ -163,27 +165,17 @@ const registerCustomValidators = (form) => {
   })
 }
 
-const getErrorMessage = (error) => {
-  const response = error?.response
-  if (!response) return MSG.NETWORK_ERROR
-  const data = response.data
-  if (data?.detail) {
-    if (typeof data.detail === 'string') return data.detail
-    if (Array.isArray(data.detail)) return data.detail[0]?.msg || MSG.SERVER_ERROR
-  }
-  if (data?.message) return data.message
-  return MSG.SERVER_ERROR
-}
-
 const handleLogin = async (field, layer) => {
   const loadIdx = layer.load(2)
   try {
     const res = await authApi.login(field.username, field.password)
     setToken(res.access_token)
     layer.msg(MSG.LOGIN_SUCCESS, { icon: 1 })
-    setTimeout(() => { location.hash = ROUTES.DASHBOARD }, 600)
+    const intended = sessionStorage.getItem(INTENDED_ROUTE_KEY)
+    sessionStorage.removeItem(INTENDED_ROUTE_KEY)
+    setTimeout(() => { location.hash = intended || ROUTES.DASHBOARD }, 600)
   } catch (error) {
-    layer.msg(getErrorMessage(error), { icon: 2 })
+    layer.msg(classifyError(error).message, { icon: 2 })
   } finally {
     layer.close(loadIdx)
   }
@@ -201,7 +193,7 @@ const handleRegister = async (field, layer) => {
     layer.msg(MSG.REGISTER_SUCCESS, { icon: 1 })
     setTimeout(() => { location.hash = ROUTES.LOGIN }, 1000)
   } catch (error) {
-    layer.msg(getErrorMessage(error), { icon: 2 })
+    layer.msg(classifyError(error).message, { icon: 2 })
   } finally {
     layer.close(loadIdx)
   }

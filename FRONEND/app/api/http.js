@@ -1,6 +1,9 @@
 import axios from 'axios'
-import { getToken, clearToken } from '../utils/index.js'
-import { ROUTES } from '../constants/index.js'
+import { getToken, setToken, clearToken } from '../utils/index.js'
+import { ROUTES, REFRESH_API } from '../constants/index.js'
+
+const MAX_RETRIES = 3
+const RETRY_BASE_MS = 1000
 
 const http = axios.create({
   baseURL: '',
@@ -13,13 +16,56 @@ http.interceptors.request.use((config) => {
   return config
 })
 
+let refreshPromise = null
+
+const tryRefresh = async () => {
+  if (refreshPromise) return refreshPromise
+  refreshPromise = http.post(REFRESH_API, null, {
+    _skipAuthRetry: true,
+    _noRetry: true
+  }).then((res) => {
+    const newToken = res?.access_token
+    if (newToken) {
+      setToken(newToken)
+      return true
+    }
+    return false
+  }).catch(() => false).finally(() => {
+    refreshPromise = null
+  })
+  return refreshPromise
+}
+
+const isNetworkError = (error) =>
+  !error.response && (error.code === 'ECONNABORTED' || error.message === 'Network Error')
+
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
 http.interceptors.response.use(
   (response) => response.data,
-  (error) => {
-    if (error.response?.status === 401) {
+  async (error) => {
+    const config = error.config
+
+    if (isNetworkError(error) && !config?._noRetry) {
+      config._retryCount = config._retryCount || 0
+      if (config._retryCount < MAX_RETRIES) {
+        config._retryCount++
+        await wait(RETRY_BASE_MS * Math.pow(2, config._retryCount - 1))
+        return http(config)
+      }
+    }
+
+    if (error.response?.status === 401 && !config?._skipAuthRetry) {
+      config._skipAuthRetry = true
+      const refreshed = await tryRefresh()
+      if (refreshed) {
+        config.headers.Authorization = `Bearer ${getToken()}`
+        return http(config)
+      }
       clearToken()
       location.hash = ROUTES.LOGIN
     }
+
     return Promise.reject(error)
   }
 )

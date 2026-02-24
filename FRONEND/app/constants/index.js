@@ -1,4 +1,9 @@
 export const TOKEN_KEY = 'token'
+export const THEME_KEY = 'color-scheme'
+export const DEBOUNCE_MS = 300
+export const THROTTLE_MS = 100
+export const REFRESH_API = '/api/v1/refresh'
+export const INTENDED_ROUTE_KEY = 'intended_route'
 
 export const PASSWORD_MIN_LENGTH = 8
 export const USERNAME_MIN_LENGTH = 2

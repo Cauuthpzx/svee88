@@ -1,7 +1,33 @@
 import { defineConfig, loadEnv } from 'vite'
 
+const createProxyConfig = (env) => {
+  const upstreamBase = env.VITE_UPSTREAM_BASE || 'https://a2u4k.ee88dly.com'
+  return {
+    '/api': {
+      target: env.VITE_API_BASE || 'http://localhost:8000',
+      changeOrigin: true
+    },
+    '/agent': {
+      target: upstreamBase,
+      changeOrigin: true,
+      secure: true,
+      configure: (proxy) => {
+        proxy.on('proxyReq', (proxyReq, req) => {
+          const cookie = env.VITE_UPSTREAM_COOKIE
+          if (cookie) proxyReq.setHeader('Cookie', cookie)
+          proxyReq.setHeader('User-Agent',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36')
+          proxyReq.setHeader('Referer', upstreamBase + req.url)
+          proxyReq.setHeader('Origin', upstreamBase)
+        })
+      }
+    }
+  }
+}
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd())
+  const proxy = createProxyConfig(env)
   return {
     root: '.',
     publicDir: 'public',
@@ -32,53 +58,11 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3000,
       open: true,
-      proxy: {
-        '/api': {
-          target: env.VITE_API_BASE || 'http://localhost:8000',
-          changeOrigin: true
-        },
-        '/agent': {
-          target: env.VITE_UPSTREAM_BASE || 'https://a2u4k.ee88dly.com',
-          changeOrigin: true,
-          secure: true,
-          configure: (proxy) => {
-            const upstreamBase = env.VITE_UPSTREAM_BASE || 'https://a2u4k.ee88dly.com'
-            proxy.on('proxyReq', (proxyReq, req) => {
-              const cookie = env.VITE_UPSTREAM_COOKIE
-              if (cookie) proxyReq.setHeader('Cookie', cookie)
-              proxyReq.setHeader('User-Agent',
-                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36')
-              proxyReq.setHeader('Referer', upstreamBase + req.url)
-              proxyReq.setHeader('Origin', upstreamBase)
-            })
-          }
-        }
-      }
+      proxy
     },
     preview: {
       port: 4173,
-      proxy: {
-        '/api': {
-          target: env.VITE_API_BASE || 'http://localhost:8000',
-          changeOrigin: true
-        },
-        '/agent': {
-          target: env.VITE_UPSTREAM_BASE || 'https://a2u4k.ee88dly.com',
-          changeOrigin: true,
-          secure: true,
-          configure: (proxy) => {
-            const upstreamBase = env.VITE_UPSTREAM_BASE || 'https://a2u4k.ee88dly.com'
-            proxy.on('proxyReq', (proxyReq, req) => {
-              const cookie = env.VITE_UPSTREAM_COOKIE
-              if (cookie) proxyReq.setHeader('Cookie', cookie)
-              proxyReq.setHeader('User-Agent',
-                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36')
-              proxyReq.setHeader('Referer', upstreamBase + req.url)
-              proxyReq.setHeader('Origin', upstreamBase)
-            })
-          }
-        }
-      }
+      proxy
     }
   }
 })

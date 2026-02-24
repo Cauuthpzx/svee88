@@ -96,6 +96,32 @@
   color: #0a8a7d;
 }
 
+/* ── Dark mode ── */
+.dark .auth-wrapper {
+  background-color: var(--lay-color-bg-1, #1e1e1e);
+  background-image: none;
+}
+
+.dark .auth-card {
+  background: var(--lay-color-bg-2, #2d2d2d);
+  border-color: var(--lay-color-border-1, #3a3a3a);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.2),
+    0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.dark .auth-header h2 {
+  color: var(--lay-color-text-1, #e0e0e0);
+}
+
+.dark .auth-header p {
+  color: var(--lay-color-text-3, #888);
+}
+
+.dark .auth-footer {
+  color: var(--lay-color-text-3, #888);
+}
+
 @media (max-width: 480px) {
   .auth-card {
     border-radius: 4px;

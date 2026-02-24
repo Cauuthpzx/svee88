@@ -1,5 +1,5 @@
 import { getToken } from '../utils/index.js'
-import { ROUTES } from '../constants/index.js'
+import { ROUTES, INTENDED_ROUTE_KEY } from '../constants/index.js'
 
 const ROUTE_MAP = {
   [ROUTES.LOGIN]: () => import('../modules/auth/index.js'),
@@ -21,6 +21,7 @@ const guard = (hash) => {
 }
 
 let layoutModule = null
+let currentModule = null
 
 const ensureLayout = async () => {
   if (!layoutModule) {
@@ -31,37 +32,89 @@ const ensureLayout = async () => {
   }
 }
 
+const scrollToTop = () => {
+  const body = document.getElementById('main-content')
+  if (body) body.scrollTop = 0
+  window.scrollTo(0, 0)
+}
+
+const renderNotFound = async (hash) => {
+  await ensureLayout()
+  const mod = await import('../modules/not-found/index.js')
+  currentModule = mod
+  layoutModule.getContentContainer().innerHTML = ''
+  mod.render(hash)
+  layoutModule.setActiveMenu(null)
+}
+
 const navigate = async (hash) => {
   hash = hash || getHash()
 
   if (!guard(hash)) {
+    sessionStorage.setItem(INTENDED_ROUTE_KEY, hash)
     location.hash = ROUTES.LOGIN
     return
   }
 
   if (PUBLIC_ROUTES.has(hash) && getToken()) {
-    location.hash = ROUTES.DASHBOARD
+    const intended = sessionStorage.getItem(INTENDED_ROUTE_KEY)
+    sessionStorage.removeItem(INTENDED_ROUTE_KEY)
+    location.hash = intended || ROUTES.DASHBOARD
     return
+  }
+
+  if (currentModule?.destroy) {
+    currentModule.destroy()
   }
 
   const loader = ROUTE_MAP[hash]
+
   if (!loader) {
-    location.hash = ROUTES.DASHBOARD
+    await renderNotFound(hash)
+    scrollToTop()
     return
   }
 
-  const mod = await loader()
-
-  if (PUBLIC_ROUTES.has(hash)) {
-    layoutModule = null
-    document.getElementById('app').innerHTML = ''
-    mod.render(hash)
-  } else {
-    await ensureLayout()
-    layoutModule.getContentContainer().innerHTML = ''
-    mod.render()
-    layoutModule.setActiveMenu(hash)
+  try {
+    if (PUBLIC_ROUTES.has(hash)) {
+      layoutModule = null
+      document.getElementById('app').innerHTML = ''
+      const mod = await loader()
+      currentModule = mod
+      mod.render(hash)
+    } else {
+      await ensureLayout()
+      layoutModule.showLoading()
+      const mod = await loader()
+      currentModule = mod
+      layoutModule.getContentContainer().innerHTML = ''
+      mod.render()
+      layoutModule.setActiveMenu(hash)
+      layoutModule.hideLoading()
+    }
+  } catch (err) {
+    renderError(err)
   }
+
+  scrollToTop()
+}
+
+const renderError = (err) => {
+  const container = layoutModule?.getContentContainer() || document.getElementById('app')
+  if (!container) return
+  container.innerHTML = `
+    <div class="error-boundary">
+      <p class="error-boundary-title">Đã xảy ra lỗi</p>
+      <p class="error-boundary-text">${err?.message || 'Không thể tải trang'}</p>
+      <a href="${ROUTES.DASHBOARD}" class="layui-btn layui-btn-sm">Về trang chủ</a>
+    </div>`
+  layoutModule?.hideLoading?.()
+}
+
+/** Preload a route module on hover for faster navigation */
+export const preloadRoute = (hash) => {
+  const loader = ROUTE_MAP[hash]
+  if (loader) loader()
 }
 
 export const initRouter = () => {
