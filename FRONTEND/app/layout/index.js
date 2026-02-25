@@ -11,7 +11,7 @@ import { store } from '../store/index.js'
 import { ROUTES, MSG } from '../constants/index.js'
 import { t, onLangChange, setLang, getLang, LANG_OPTIONS } from '../i18n/index.js'
 import { startClock } from './clock.js'
-import { getMenuItems, renderMenuItem, getHeaderNavItems, renderHeaderNavItem } from './menu.js'
+import { getMenuItems, renderMenuItem } from './menu.js'
 import '../icons/index.css'
 import './index.css'
 
@@ -60,10 +60,26 @@ const template = () => `
           <span id="clock-date"></span>
         </div>
       </div>
-      <ul class="layui-nav" id="headerNav" lay-filter="headerNav" role="navigation" aria-label="${t('header.tools')}">
-        ${getHeaderNavItems().map(renderHeaderNavItem).join('')}
-      </ul>
       <ul class="layui-nav layui-layout-right" role="toolbar">
+        <li class="layui-nav-item">
+          <a href="javascript:;" id="toolsNavBtn" lay-tips="${t('header.tools')}" lay-direction="3" aria-label="${t('header.tools')}" role="button">
+            <i class="hub-icon hub-icon-gear"></i>
+          </a>
+          <dl class="layui-nav-child">
+            <dd><a href="${ROUTES.CHANGE_LOGIN_PW}" data-hash="${ROUTES.CHANGE_LOGIN_PW}">${t('header.tools.change_login_pw')}</a></dd>
+            <dd><a href="${ROUTES.CHANGE_TRADE_PW}" data-hash="${ROUTES.CHANGE_TRADE_PW}">${t('header.tools.change_trade_pw')}</a></dd>
+            <dd><a href="${ROUTES.TIERS}" data-hash="${ROUTES.TIERS}">${t('header.tools.tiers')}</a></dd>
+          </dl>
+        </li>
+        <li class="layui-nav-item">
+          <a href="javascript:;" id="supportNavBtn" lay-tips="${t('header.support')}" lay-direction="3" aria-label="${t('header.support')}" role="button">
+            <i class="hub-icon hub-icon-flag"></i>
+          </a>
+          <dl class="layui-nav-child">
+            <dd><a href="${ROUTES.INVITE_LIST}" data-hash="${ROUTES.INVITE_LIST}">${t('header.support.invites')}</a></dd>
+            <dd><a href="${ROUTES.SETTINGS_SYSTEM}" data-hash="${ROUTES.SETTINGS_SYSTEM}">${t('header.support.settings')}</a></dd>
+          </dl>
+        </li>
         <li class="layui-nav-item" id="i18nDropdown">
           <a href="javascript:;" aria-label="${t('header.language')}" role="button">
             <i class="hub-icon hub-icon-globe"></i>
@@ -234,13 +250,11 @@ const updateLayoutTexts = () => {
   }
   const logoutBtn = document.getElementById('logoutBtn')
   if (logoutBtn) logoutBtn.textContent = t('header.logout')
-  // Re-render header nav items
-  const headerNav = document.getElementById('headerNav')
-  if (headerNav) {
-    headerNav.innerHTML = getHeaderNavItems().map(renderHeaderNavItem).join('')
-    layui.use('element', function (element) { element.render('nav', 'headerNav') })
-    headerNav.setAttribute('aria-label', t('header.tools'))
-  }
+  // Update header nav tooltips
+  document.getElementById('toolsNavBtn')
+    ?.setAttribute('lay-tips', t('header.tools'))
+  document.getElementById('supportNavBtn')
+    ?.setAttribute('lay-tips', t('header.support'))
 }
 
 let unsubLang = null
