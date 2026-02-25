@@ -81,3 +81,55 @@ export const renderMenuItem = (item) => {
       </a>
     </li>`
 }
+
+/**
+ * Get header top-nav items (dropdown menus shown in the header bar).
+ * @returns {Object[]} Array of nav items with label and children
+ */
+export const getHeaderNavItems = () => [
+  {
+    icon: 'hub-icon-gear',
+    label: t('header.tools'),
+    children: [
+      { hash: ROUTES.CHANGE_LOGIN_PW, label: t('header.tools.change_login_pw') },
+      { hash: ROUTES.CHANGE_TRADE_PW, label: t('header.tools.change_trade_pw') },
+      { hash: ROUTES.TIERS,           label: t('header.tools.tiers') },
+    ]
+  },
+  {
+    icon: 'hub-icon-flag',
+    label: t('header.support'),
+    children: [
+      { hash: ROUTES.INVITE_LIST,      label: t('header.support.invites') },
+      { hash: ROUTES.SETTINGS_SYSTEM,  label: t('header.support.settings') },
+    ]
+  }
+]
+
+/**
+ * Render a single header nav item to HTML (supports nested children via layui-nav-child).
+ * @param {Object} item
+ * @returns {string} HTML string
+ */
+export const renderHeaderNavItem = (item) => {
+  if (item.children) {
+    const childHtml = item.children.map((c) => {
+      const href = c.hash || 'javascript:;'
+      const dataHash = c.hash ? ` data-hash="${c.hash}"` : ''
+      return `<dd><a href="${href}"${dataHash}>${c.label}</a></dd>`
+    }).join('')
+    return `
+      <li class="layui-nav-item">
+        <a href="javascript:;">
+          <i class="hub-icon ${item.icon}"></i> <span>${item.label}</span>
+        </a>
+        <dl class="layui-nav-child">${childHtml}</dl>
+      </li>`
+  }
+  return `
+    <li class="layui-nav-item">
+      <a href="${item.hash}" data-hash="${item.hash}">
+        <i class="hub-icon ${item.icon}"></i> <span>${item.label}</span>
+      </a>
+    </li>`
+}
