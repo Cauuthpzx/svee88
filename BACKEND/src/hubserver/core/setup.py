@@ -1,3 +1,5 @@
+import asyncio
+import time
 from collections.abc import AsyncGenerator, Callable
 from contextlib import _AsyncGeneratorContextManager, asynccontextmanager
 from typing import Any
@@ -5,10 +7,13 @@ from typing import Any
 import anyio
 import fastapi
 import redis.asyncio as redis
+import structlog
 from arq import create_pool
 from arq.connections import RedisSettings
 from fastapi import APIRouter, Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+logger = structlog.get_logger()
 from fastapi.openapi.docs import get_redoc_html, get_swagger_ui_html
 from fastapi.openapi.utils import get_openapi
 
@@ -116,14 +121,36 @@ def lifespan_factory(
             yield
 
         finally:
-            if isinstance(settings, RedisCacheSettings):
-                await close_redis_cache_pool()
+            shutdown_start = time.monotonic()
+            deadline = 3.0
+            logger.info("🔻 Shutting down... (%.0fs timeout)", deadline)
 
-            if isinstance(settings, RedisQueueSettings):
-                await close_redis_queue_pool()
+            async def _close_resource(name: str, coro: Any) -> None:
+                elapsed = time.monotonic() - shutdown_start
+                remaining = deadline - elapsed
+                logger.info("  ├─ closing %s... (%.1fs left)", name, max(remaining, 0))
+                await coro
+                logger.info("  │  └─ %s closed ✓", name)
 
-            if isinstance(settings, RedisRateLimiterSettings):
-                await close_redis_rate_limit_pool()
+            try:
+                async with asyncio.timeout(deadline):
+                    if isinstance(settings, RedisCacheSettings):
+                        await _close_resource("Redis cache", close_redis_cache_pool())
+
+                    if isinstance(settings, RedisQueueSettings):
+                        await _close_resource("Redis queue", close_redis_queue_pool())
+
+                    if isinstance(settings, RedisRateLimiterSettings):
+                        await _close_resource("Redis rate-limiter", close_redis_rate_limit_pool())
+
+                    await _close_resource("Database engine", engine.dispose())
+
+            except TimeoutError:
+                elapsed = time.monotonic() - shutdown_start
+                logger.warning("  ╳ Cleanup timed out after %.1fs — forcing exit", elapsed)
+
+            total = time.monotonic() - shutdown_start
+            logger.info("🔻 Shutdown complete in %.2fs", total)
 
     return lifespan
 

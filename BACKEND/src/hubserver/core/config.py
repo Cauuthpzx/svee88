@@ -52,30 +52,6 @@ class DatabaseSettings(BaseSettings):
     pass
 
 
-class SQLiteSettings(DatabaseSettings):
-    SQLITE_URI: str = "./sql_app.db"
-    SQLITE_SYNC_PREFIX: str = "sqlite:///"
-    SQLITE_ASYNC_PREFIX: str = "sqlite+aiosqlite:///"
-
-
-class MySQLSettings(DatabaseSettings):
-    MYSQL_USER: str = "username"
-    MYSQL_PASSWORD: str = "password"
-    MYSQL_SERVER: str = "localhost"
-    MYSQL_PORT: int = 3306
-    MYSQL_DB: str = "dbname"
-    MYSQL_SYNC_PREFIX: str = "mysql://"
-    MYSQL_ASYNC_PREFIX: str = "mysql+aiomysql://"
-    MYSQL_URL: str | None = None
-
-    @computed_field  # type: ignore[prop-decorator]
-    @property
-    def MYSQL_URI(self) -> str:
-        credentials = f"{self.MYSQL_USER}:{self.MYSQL_PASSWORD}"
-        location = f"{self.MYSQL_SERVER}:{self.MYSQL_PORT}/{self.MYSQL_DB}"
-        return f"{credentials}@{location}"
-
-
 class PostgresSettings(DatabaseSettings):
     POSTGRES_USER: str = "postgres"
     POSTGRES_PASSWORD: SecretStr = SecretStr("postgres")
@@ -139,24 +115,6 @@ class DefaultRateLimitSettings(BaseSettings):
     DEFAULT_RATE_LIMIT_PERIOD: int = 3600
 
 
-class CRUDAdminSettings(BaseSettings):
-    CRUD_ADMIN_ENABLED: bool = True
-    CRUD_ADMIN_MOUNT_PATH: str = "/admin"
-    CRUD_ADMIN_ALLOWED_IPS_LIST: list[str] | None = None
-    CRUD_ADMIN_ALLOWED_NETWORKS_LIST: list[str] | None = None
-    CRUD_ADMIN_MAX_SESSIONS: int = 10
-    CRUD_ADMIN_SESSION_TIMEOUT: int = 1440
-    SESSION_SECURE_COOKIES: bool = True
-    CRUD_ADMIN_TRACK_EVENTS: bool = True
-    CRUD_ADMIN_TRACK_SESSIONS: bool = True
-    CRUD_ADMIN_REDIS_ENABLED: bool = False
-    CRUD_ADMIN_REDIS_HOST: str = "localhost"
-    CRUD_ADMIN_REDIS_PORT: int = 6379
-    CRUD_ADMIN_REDIS_DB: int = 0
-    CRUD_ADMIN_REDIS_PASSWORD: str | None = None
-    CRUD_ADMIN_REDIS_SSL: bool = False
-
-
 class EnvironmentOption(str, Enum):
     LOCAL = "local"
     STAGING = "staging"
@@ -175,7 +133,6 @@ class CORSSettings(BaseSettings):
 
 class Settings(
     AppSettings,
-    SQLiteSettings,
     PostgresSettings,
     CryptSettings,
     FirstUserSettings,
@@ -185,7 +142,6 @@ class Settings(
     RedisQueueSettings,
     RedisRateLimiterSettings,
     DefaultRateLimitSettings,
-    CRUDAdminSettings,
     EnvironmentSettings,
     CORSSettings,
     FileLoggerSettings,

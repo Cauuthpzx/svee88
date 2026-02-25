@@ -17,6 +17,14 @@ def drop_color_message_key(_, __, event_dict: EventDict) -> EventDict:
     return event_dict
 
 
+def pad_log_level(_, __, event_dict: EventDict) -> EventDict:
+    """Format level as [ INFO  ], [ WARN  ], [ ERROR ] etc."""
+    level = event_dict.get("level", "")
+    if level:
+        event_dict["level"] = f"[{level.upper():^7s}]"
+    return event_dict
+
+
 def file_log_filter_processors(_, __, event_dict: EventDict) -> EventDict:
     if not settings.FILE_LOG_INCLUDE_REQUEST_ID:
         event_dict.pop("request_id", None)
@@ -45,7 +53,7 @@ def console_log_filter_processors(_, __, event_dict: EventDict) -> EventDict:
     return event_dict
 
 
-timestamper = structlog.processors.TimeStamper(fmt="iso")
+timestamper = structlog.processors.TimeStamper(fmt="iso", utc=False)
 SHARED_PROCESSORS: list[Processor] = [
     structlog.contextvars.merge_contextvars,
     structlog.stdlib.add_logger_name,
@@ -91,7 +99,8 @@ console_handler = logging.StreamHandler()
 console_handler.setLevel(settings.CONSOLE_LOG_LEVEL)
 console_handler.setFormatter(
     build_formatter(
-        json_output=settings.CONSOLE_LOG_FORMAT_JSON, pre_chain=SHARED_PROCESSORS + [console_log_filter_processors]
+        json_output=settings.CONSOLE_LOG_FORMAT_JSON,
+        pre_chain=SHARED_PROCESSORS + [console_log_filter_processors, pad_log_level],
     )
 )
 

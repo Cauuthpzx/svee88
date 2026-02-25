@@ -2,7 +2,7 @@
 
 # ── Development (không Docker) ──────────────────────────────
 dev:
-	cd src && uvicorn hubserver.main:app --reload --host 0.0.0.0 --port 8000
+	cd src && uvicorn hubserver.main:app --reload --host 0.0.0.0 --port 8000 --timeout-graceful-shutdown 3
 
 worker:
 	cd src && arq hubserver.core.worker.settings.WorkerSettings
