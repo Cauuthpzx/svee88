@@ -51,9 +51,6 @@ logs/
 *.csv
 scripts/data/
 
-# Build output
-src/
-
 # Frontend build
 FRONTEND/build/
 FRONTEND/dist/
