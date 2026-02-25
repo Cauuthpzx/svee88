@@ -6,6 +6,7 @@ class AgentCreate(BaseModel):
     username: str
     base_url: str
     cookie: str | None = None
+    password: str | None = None
 
 
 class AgentRead(BaseModel):
@@ -22,4 +23,5 @@ class AgentUpdate(BaseModel):
     owner: str | None = None
     base_url: str | None = None
     cookie: str | None = None
+    password: str | None = None
     is_active: bool | None = None

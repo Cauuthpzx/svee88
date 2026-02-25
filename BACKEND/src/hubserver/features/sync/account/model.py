@@ -15,6 +15,7 @@ class Agent(Base):
     username: Mapped[str] = mapped_column(String(100))
     base_url: Mapped[str] = mapped_column(String(255))
     cookie: Mapped[str | None] = mapped_column(Text, default=None)
+    password_enc: Mapped[str | None] = mapped_column(Text, default=None)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
     created_at: Mapped[datetime] = mapped_column(

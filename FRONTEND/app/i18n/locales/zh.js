@@ -104,6 +104,12 @@ export default {
   // ── Column: shared ──
   'col.agent': '代理',
   'col.owner': '所有者',
+  'col.agents.username': '账号',
+  'col.agents.base_url': '网址',
+  'col.agents.cookie_set': 'Cookie',
+  'col.agents.is_active': '启用',
+  'col.agents.sync_status': '状态',
+  'col.agents.last_login_at': '最后登录',
 
   // ── Column: members ──
   'col.members.username': '会员',
@@ -402,7 +408,8 @@ export default {
   'sync.account.captcha': '验证码',
   'sync.account.captcha_required': '请输入验证码',
   'sync.account.remember': '记住密码',
-  'sync.account.success': '账户添加成功！',
+  'sync.account.success': '账户添加并登录成功！',
+  'sync.account.login_failed': '账户已添加，但登录失败：{message}',
   'sync.account.error': '错误：{message}',
   'sync.account.error_unknown': '无法添加',
 

@@ -184,13 +184,15 @@ export const runTestAll = async (layer) => {
   setSyncBtnsDisabled(false)
 }
 
+const DEFAULT_BASE_URL = 'https://a2u4k.ee88dly.com'
+
 /**
  * Open the "Add Account" dialog for registering a new sync agent.
  * @param {Object} form - Layui form instance
  * @param {Object} layer - Layui layer instance
  */
 export const openAddAccountDialog = (form, layer) => {
-  layer.open({
+  const dialogIdx = layer.open({
     type: 1,
     title: `<i class="hub-icon hub-icon-plus" style="vertical-align:middle;margin-right:6px;"></i>${t('sync.account.title')}`,
     area: '380px',
@@ -226,11 +228,8 @@ export const openAddAccountDialog = (form, layer) => {
             <div class="layui-input-prefix">
               <i class="hub-icon hub-icon-link"></i>
             </div>
-            <input type="text" name="base_url" lay-verify="required|url" placeholder="${t('sync.account.base_url')}" lay-reqtext="${t('sync.account.base_url_required')}" autocomplete="off" class="layui-input" lay-affix="clear">
+            <input type="text" name="base_url" lay-verify="url" placeholder="${DEFAULT_BASE_URL}" autocomplete="off" class="layui-input" lay-affix="clear">
           </div>
-        </div>
-        <div class="layui-form-item">
-          <input type="checkbox" name="remember" lay-skin="primary" title="${t('sync.account.remember')}">
         </div>
         <div class="layui-form-item">
           <button type="button" class="layui-btn layui-btn-fluid" lay-submit lay-filter="submitAddAccount">
@@ -242,24 +241,38 @@ export const openAddAccountDialog = (form, layer) => {
     success: () => {
       form.render(null, 'addAccountForm')
       form.on('submit(submitAddAccount)', (data) => {
-        const { owner, username, base_url } = data.field
-        fetch('/api/v1/sync/agents', {
+        const { owner, username, password } = data.field
+        const base_url = (data.field.base_url || '').trim() || DEFAULT_BASE_URL
+        const loadIdx = layer.load(2)
+        fetch('/api/v1/agents', {
           method: 'POST',
           headers: authHeaders({ 'Content-Type': 'application/json' }),
-          body: JSON.stringify({ owner, username, base_url, cookie: '' })
+          body: JSON.stringify({ owner, username, base_url, password }),
         })
           .then((r) => r.json())
           .then((res) => {
-            if (res.agent) {
-              layer.msg(t('sync.account.success'), { icon: 1 })
-              layer.closeAll()
-            } else {
-              layer.msg(t('sync.account.error', { message: res.error || t('sync.account.error_unknown') }), { icon: 2 })
-            }
+            if (res.code !== 0) throw new Error(res.message || t('sync.account.error_unknown'))
+            const agentId = res.data?.agent?.id
+            return fetch(`/api/v1/agents/${agentId}/login`, {
+              method: 'POST',
+              headers: authHeaders(),
+            }).then((r) => r.json())
           })
-          .catch((e) => layer.msg(t('sync.account.error', { message: e.message }), { icon: 2 }))
+          .then((loginRes) => {
+            layer.close(loadIdx)
+            layer.close(dialogIdx)
+            const ok = loginRes.code === 0
+            layer.msg(
+              ok ? t('sync.account.success') : t('sync.account.login_failed', { message: loginRes.message }),
+              { icon: ok ? 1 : 6 }
+            )
+          })
+          .catch((e) => {
+            layer.close(loadIdx)
+            layer.msg(t('sync.account.error', { message: e.message }), { icon: 2 })
+          })
         return false
       })
-    }
+    },
   })
 }

@@ -104,6 +104,12 @@ export default {
   // ── Column: shared ──
   'col.agent': 'Agent',
   'col.owner': 'Owner',
+  'col.agents.username': 'Username',
+  'col.agents.base_url': 'URL',
+  'col.agents.cookie_set': 'Cookie',
+  'col.agents.is_active': 'Active',
+  'col.agents.sync_status': 'Status',
+  'col.agents.last_login_at': 'Last Login',
 
   // ── Column: members ──
   'col.members.username': 'Member',
@@ -402,7 +408,8 @@ export default {
   'sync.account.captcha': 'Captcha',
   'sync.account.captcha_required': 'Please enter the captcha',
   'sync.account.remember': 'Remember password',
-  'sync.account.success': 'Account added successfully!',
+  'sync.account.success': 'Account added and logged in successfully!',
+  'sync.account.login_failed': 'Account added, but login failed: {message}',
   'sync.account.error': 'Error: {message}',
   'sync.account.error_unknown': 'Unable to add',
 

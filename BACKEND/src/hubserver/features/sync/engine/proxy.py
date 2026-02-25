@@ -7,12 +7,20 @@ Speed design:
 """
 
 import asyncio
+from datetime import datetime
 
 import httpx
 import structlog
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
+from ....core.config import APP_TZ
+from ..account.login_service import (
+    AgentLoginService,
+    cookie_dict_to_str,
+    cookie_str_to_dict,
+    decrypt_password,
+)
 from ..account.model import Agent
 
 logger = structlog.get_logger(__name__)
@@ -80,6 +88,39 @@ async def get_active_agents(db: AsyncSession, agent_id: int | None = None) -> li
     return list(result.scalars().all())
 
 
+async def _ensure_agent_cookie(agent: Agent, db: AsyncSession) -> None:
+    """Kiểm tra cookie upstream còn sống không. Nếu hết hạn → auto re-login."""
+    if not agent.password_enc:
+        return
+
+    cookies_dict = cookie_str_to_dict(agent.cookie or "")
+    svc = AgentLoginService(agent.base_url)
+
+    try:
+        is_valid, msg = await asyncio.to_thread(svc.check_cookies_live, cookies_dict)
+        if is_valid:
+            return
+
+        logger.info("Agent %s cookie expired (%s) — re-logging in", agent.id, msg)
+        plain_pw = decrypt_password(agent.password_enc)
+        ok, login_msg, new_cookies = await asyncio.to_thread(svc.login, agent.username, plain_pw)
+
+        if not ok:
+            logger.warning("Agent %s re-login failed: %s", agent.id, login_msg)
+            return
+
+        new_cookie_str = cookie_dict_to_str(new_cookies)
+        now = datetime.now(APP_TZ)
+        await db.execute(
+            update(Agent).where(Agent.id == agent.id).values(cookie=new_cookie_str, last_login_at=now)
+        )
+        await db.commit()
+        await db.refresh(agent)
+        logger.info("Agent %s re-login OK", agent.id)
+    finally:
+        svc.close()
+
+
 async def _fetch_one(
     client: httpx.AsyncClient,
     agent: Agent,
@@ -127,6 +168,11 @@ async def fetch_all_agents(
     agents = await get_active_agents(db, agent_id)
     if not agents:
         return {"code": 0, "msg": "No active agents", "data": [], "count": 0}
+
+    # Pre-check cookies — tự động re-login nếu agent có password_enc và cookie hết hạn
+    for ag in agents:
+        if ag.password_enc:
+            await _ensure_agent_cookie(ag, db)
 
     # Inject default params (e.g. es=1 for bet endpoints)
     defaults = UPSTREAM_DEFAULTS.get(endpoint, {})

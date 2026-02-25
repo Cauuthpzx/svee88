@@ -104,6 +104,12 @@ export default {
   // ── Column: shared ──
   'col.agent': 'Đại lý',
   'col.owner': 'Chủ sở hữu',
+  'col.agents.username': 'Đại lý',
+  'col.agents.base_url': 'URL',
+  'col.agents.cookie_set': 'Cookie',
+  'col.agents.is_active': 'Hoạt động',
+  'col.agents.sync_status': 'Tình trạng',
+  'col.agents.last_login_at': 'Đăng nhập cuối',
 
   // ── Column: members ──
   'col.members.username': 'Hội viên',
@@ -402,7 +408,8 @@ export default {
   'sync.account.captcha': 'Mã xác nhận',
   'sync.account.captcha_required': 'Vui lòng nhập mã xác nhận',
   'sync.account.remember': 'Ghi nhớ mật khẩu',
-  'sync.account.success': 'Thêm tài khoản thành công!',
+  'sync.account.success': 'Thêm tài khoản và đăng nhập thành công!',
+  'sync.account.login_failed': 'Tài khoản đã thêm, nhưng đăng nhập thất bại: {message}',
   'sync.account.error': 'Lỗi: {message}',
   'sync.account.error_unknown': 'Không thể thêm',
 
