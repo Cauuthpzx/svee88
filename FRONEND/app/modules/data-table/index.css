@@ -443,6 +443,12 @@
 .dark .data-toolbar label {
   color: var(--lay-color-text-3);
 }
+.dark .total-summary-quote {
+  color: var(--lay-color-text-2, #ccc);
+}
+.dark .total-summary-quote .total-sep {
+  color: var(--lay-color-border-1, #444);
+}
 .dark .total-summary-quote .total-item b {
   color: var(--lay-color-text-2);
 }

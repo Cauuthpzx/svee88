@@ -266,7 +266,8 @@ export const UPSTREAM_URL = {
   'report-funds': '/api/v1/sync/proxy/report-funds',
   'report-third': '/api/v1/sync/proxy/report-third',
   deposits: '/api/v1/sync/proxy/deposits',
-  withdrawals: '/api/v1/sync/proxy/withdrawals'
+  withdrawals: '/api/v1/sync/proxy/withdrawals',
+  rebate: '/api/v1/sync/proxy/rebate'
 }
 
 /** Hash → icon mapping (matches sidebar menu icons) */
@@ -282,6 +283,37 @@ export const HASH_TO_ICON = {
   '#/bet-third-party': 'hub-icon-monitor',
   '#/rebate-list': 'hub-icon-menu',
   '#/settings-sync': 'hub-icon-settings'
+}
+
+/** Report total summary — fields to sum for blockquote below table */
+export const REPORT_TOTAL_FIELDS = {
+  'report-lottery': [
+    { field: 'bet_count', label: 'Số lần cược' },
+    { field: 'bet_amount', label: 'Tiền cược' },
+    { field: 'valid_amount', label: 'Tiền cược hợp lệ' },
+    { field: 'rebate_amount', label: 'Hoàn trả' },
+    { field: 'result', label: 'Thắng thua', color: true },
+    { field: 'win_lose', label: 'Kết quả thắng thua', color: true },
+    { field: 'prize', label: 'Tiền trúng' }
+  ],
+  'report-funds': [
+    { field: 'deposit_count', label: 'Số lần nạp' },
+    { field: 'deposit_amount', label: 'Số tiền nạp' },
+    { field: 'withdrawal_count', label: 'Số lần rút' },
+    { field: 'withdrawal_amount', label: 'Số tiền rút' },
+    { field: 'charge_fee', label: 'Phí dịch vụ' },
+    { field: 'agent_commission', label: 'Hoa hồng đại lý' },
+    { field: 'promotion', label: 'Ưu đãi' },
+    { field: 'third_rebate', label: 'Hoàn trả bên thứ 3' },
+    { field: 'third_activity_amount', label: 'Tiền thưởng từ bên thứ 3' }
+  ],
+  'report-third': [
+    { field: 't_bet_times', label: 'Số lần cược' },
+    { field: 't_bet_amount', label: 'Tiền cược' },
+    { field: 't_turnover', label: 'Tiền cược hợp lệ' },
+    { field: 't_prize', label: 'Tiền thưởng' },
+    { field: 't_win_lose', label: 'Thắng thua', color: true }
+  ]
 }
 
 /** Hash → endpoint mapping */

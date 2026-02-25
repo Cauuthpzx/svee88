@@ -4,9 +4,66 @@ from fastapi import APIRouter, Depends, Request
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
 from ....core.db.database import async_get_db
-from .proxy import fetch_all_agents
+from .proxy import fetch_rebate_init, fetch_rebate_games, fetch_rebate_panel
+from .swr import swr_fetch, get_cache_stats
 
 router = APIRouter(prefix="/proxy", tags=["proxy"])
+
+
+def _parse_form(body: bytes) -> dict[str, str]:
+    from urllib.parse import parse_qs
+    parsed = parse_qs(body.decode("utf-8"))
+    return {k: v[0] for k, v in parsed.items()}
+
+
+def _extract_agent_id(params: dict) -> int | None:
+    raw = params.pop("agent_id", None)
+    return int(raw) if raw and raw != "0" else None
+
+
+# ── Rebate-specific routes (must be before the catch-all) ──
+
+
+@router.post("/rebate-init")
+async def proxy_rebate_init(
+    request: Request,
+    db: AsyncSession = Depends(async_get_db),
+) -> dict:
+    """Get lottery series + first series' games for rebate page dropdowns."""
+    params = _parse_form(await request.body())
+    return await fetch_rebate_init(db, _extract_agent_id(params))
+
+
+@router.post("/rebate-games")
+async def proxy_rebate_games(
+    request: Request,
+    db: AsyncSession = Depends(async_get_db),
+) -> dict:
+    """Get lottery games for a specific series."""
+    params = _parse_form(await request.body())
+    series_id = params.get("series_id", "")
+    return await fetch_rebate_games(db, series_id, _extract_agent_id(params))
+
+
+@router.post("/rebate")
+async def proxy_rebate(
+    request: Request,
+    db: AsyncSession = Depends(async_get_db),
+) -> dict:
+    """Get rebate odds panel for a specific lottery game."""
+    params = _parse_form(await request.body())
+    lottery_id = params.get("lottery_id", "")
+    series_id = params.get("series_id", "")
+    return await fetch_rebate_panel(db, lottery_id, series_id, _extract_agent_id(params))
+
+
+# ── Generic catch-all proxy ──
+
+
+@router.get("/cache-stats")
+async def cache_stats() -> dict:
+    """SWR cache statistics."""
+    return get_cache_stats()
 
 
 @router.post("/{endpoint}")
@@ -15,21 +72,12 @@ async def proxy_upstream(
     request: Request,
     db: AsyncSession = Depends(async_get_db),
 ) -> dict:
-    """Proxy request to all active upstream agents, merge results.
+    """Proxy request with 3-layer SWR cache (Memory → Redis → Upstream).
 
-    Accepts same form params as upstream (page, limit, username, date, etc.)
-    plus optional agent_id to filter to a specific agent.
+    Query params:
+      _fresh=1  → bypass cache, always fetch from upstream
     """
-    body = await request.body()
-    # Parse URL-encoded form data
-    from urllib.parse import parse_qs
-    parsed = parse_qs(body.decode("utf-8"))
-    form_params = {k: v[0] for k, v in parsed.items()}
-
-    # Extract optional agent_id filter
-    agent_id = None
-    raw = form_params.pop("agent_id", None)
-    if raw and raw != "0":
-        agent_id = int(raw)
-
-    return await fetch_all_agents(db, endpoint, form_params, agent_id)
+    params = _parse_form(await request.body())
+    agent_id = _extract_agent_id(params)
+    force_fresh = request.query_params.get("_fresh") == "1"
+    return await swr_fetch(db, endpoint, params, agent_id, force_fresh)

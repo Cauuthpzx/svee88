@@ -128,3 +128,117 @@ async def fetch_all_agents(
             total_count += result.get("count", len(result["data"]))
 
     return {"code": 0, "data": all_data, "count": total_count}
+
+
+# ── Rebate-specific helpers (JSON API, not form-encoded) ──────────
+
+
+async def _post_json(
+    client: httpx.AsyncClient,
+    agent: Agent,
+    path: str,
+    body: dict,
+) -> dict | None:
+    """POST JSON to an upstream agent path, return parsed response."""
+    headers = {
+        "Cookie": agent.cookie or "",
+        "Content-Type": "application/json;charset=UTF-8",
+        "X-Requested-With": "XMLHttpRequest",
+        "User-Agent": _UA,
+        "Referer": agent.base_url + "/agent/rebate",
+        "Origin": agent.base_url,
+    }
+    url = agent.base_url + path
+    try:
+        resp = await client.post(url, json=body, headers=headers)
+        return resp.json()
+    except Exception as e:
+        logger.warning("Agent %s JSON %s failed: %s", agent.id, path, e)
+        return None
+
+
+async def fetch_rebate_init(
+    db: AsyncSession,
+    agent_id: int | None = None,
+) -> dict:
+    """Get lottery series + first series' games from first active agent."""
+    agents = await get_active_agents(db, agent_id)
+    if not agents:
+        return {"series": [], "games": []}
+
+    agent = agents[0]
+    client = get_client()
+
+    # 1. Get all series
+    res = await _post_json(client, agent, "/agent/getLottery", {"type": "init"})
+    series: list = []
+    if res and res.get("code") == 1:
+        raw = res.get("data", [])
+        series = raw if isinstance(raw, list) else []
+
+    # 2. Get games for first series
+    games: list = []
+    if series:
+        first_id = series[0].get("id") or series[0].get("series_id")
+        if first_id:
+            res2 = await _post_json(
+                client, agent, "/agent/getLottery",
+                {"type": "getLottery", "series_id": first_id},
+            )
+            if res2 and res2.get("code") == 1:
+                raw2 = res2.get("data", [])
+                games = raw2 if isinstance(raw2, list) else []
+
+    return {"series": series, "games": games}
+
+
+async def fetch_rebate_games(
+    db: AsyncSession,
+    series_id: str | int,
+    agent_id: int | None = None,
+) -> dict:
+    """Get lottery games for a specific series."""
+    agents = await get_active_agents(db, agent_id)
+    if not agents:
+        return {"games": []}
+
+    agent = agents[0]
+    client = get_client()
+    res = await _post_json(
+        client, agent, "/agent/getLottery",
+        {"type": "getLottery", "series_id": series_id},
+    )
+    games: list = []
+    if res and res.get("code") == 1:
+        raw = res.get("data", [])
+        games = raw if isinstance(raw, list) else []
+
+    return {"games": games}
+
+
+async def fetch_rebate_panel(
+    db: AsyncSession,
+    lottery_id: str | int,
+    series_id: str | int,
+    agent_id: int | None = None,
+) -> dict:
+    """Get rebate odds panel for a specific lottery game."""
+    agents = await get_active_agents(db, agent_id)
+    if not agents:
+        return {"code": 0, "data": [], "count": 0}
+
+    agent = agents[0]
+    client = get_client()
+    res = await _post_json(
+        client, agent, "/agent/getRebateOddsPanel",
+        {"lottery_id": lottery_id, "series_id": series_id},
+    )
+
+    if res and res.get("code") == 1:
+        raw = res.get("data", {})
+        rows = raw if isinstance(raw, list) else raw.get("list", [])
+        for row in rows:
+            row["_agent_name"] = agent.owner
+        return {"code": 0, "data": rows, "count": len(rows)}
+
+    return {"code": 0, "data": [], "count": 0}

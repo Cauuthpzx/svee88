@@ -3,7 +3,7 @@ import { escapeHtml } from '../../utils/index.js'
 import {
   ENDPOINT_COLS, ENDPOINT_NAMES, ENDPOINT_HAS_DATE,
   ENDPOINT_SEARCH, HASH_TO_ENDPOINT, HASH_TO_ICON, DATE_PARAM_NAME,
-  UPSTREAM_URL
+  UPSTREAM_URL, REPORT_TOTAL_FIELDS
 } from './config.js'
 import './index.css'
 
@@ -125,7 +125,8 @@ const template = (title, endpoint, hash) => {
   const hasDate = isSync ? false : ENDPOINT_HAS_DATE[endpoint]
   const searchFields = isSync ? [] : (ENDPOINT_SEARCH[endpoint] || [])
   const showAgentFilter = !isSync && !!UPSTREAM_URL[endpoint]
-  const hasSearch = searchFields.length > 0 || hasDate || showAgentFilter
+  const isRebate = endpoint === 'rebate'
+  const hasSearch = searchFields.length > 0 || hasDate || showAgentFilter || isRebate
 
   let searchInputs = ''
   searchFields.forEach((p) => {
@@ -187,6 +188,22 @@ const template = (title, endpoint, hash) => {
                 </div>
               </div>
               ` : ''}
+              ${isRebate ? `
+              <div class="layui-inline" id="data-rebate-wrap">
+                <label>Loại xổ</label>:
+                <div class="layui-input-inline data-input-md">
+                  <select id="rebateSeriesSelect" lay-filter="rebateSeriesSelect">
+                    <option value="">Đang tải...</option>
+                  </select>
+                </div>
+                <label>Trò chơi</label>:
+                <div class="layui-input-inline data-input-md">
+                  <select id="rebateGameSelect" lay-filter="rebateGameSelect">
+                    <option value="">--</option>
+                  </select>
+                </div>
+              </div>
+              ` : ''}
               <div class="layui-inline" id="data-search-wrap">${searchInputs}</div>
               <div class="layui-inline">
                 <button type="button" class="layui-btn" lay-submit lay-filter="doDataSearch">
@@ -217,6 +234,7 @@ const template = (title, endpoint, hash) => {
 
 let currentEndpoint = null
 let syncAbort = false
+let swrReloading = false
 
 const getDateStr = (d) => {
   const y = d.getFullYear()
@@ -688,6 +706,203 @@ const openAddAccountDialog = (form, layer) => {
   })
 }
 
+/* ── Rebate page initialization ── */
+const initRebatePage = (table, form, layer, tableCols) => {
+  const rebateUrl = UPSTREAM_URL['rebate']
+
+  // Populate agent dropdown
+  const agentSelect = document.getElementById('agentFilter')
+  if (agentSelect) {
+    fetch('/api/v1/sync/agents')
+      .then((r) => r.json())
+      .then((res) => {
+        if (res.agents) {
+          for (const ag of res.agents) {
+            if (!ag.is_active) continue
+            const opt = document.createElement('option')
+            opt.value = ag.id
+            opt.textContent = ag.owner
+            agentSelect.appendChild(opt)
+          }
+          form.render('select')
+        }
+      })
+      .catch(() => {})
+  }
+
+  // Fetch lottery init data (series + games for first series)
+  fetch('/api/v1/sync/proxy/rebate-init', { method: 'POST' })
+    .then((r) => r.json())
+    .then((res) => {
+      const seriesSel = document.getElementById('rebateSeriesSelect')
+      const gameSel = document.getElementById('rebateGameSelect')
+      if (!seriesSel || !gameSel) return
+
+      // Populate series dropdown
+      seriesSel.innerHTML = ''
+      for (const s of (res.series || [])) {
+        const opt = document.createElement('option')
+        opt.value = s.id || s.series_id || ''
+        opt.textContent = s.name || s.series_name || `Series ${s.id}`
+        seriesSel.appendChild(opt)
+      }
+
+      // Populate games dropdown (first series' games)
+      gameSel.innerHTML = ''
+      for (const g of (res.games || [])) {
+        const opt = document.createElement('option')
+        opt.value = g.id || g.lottery_id || ''
+        opt.textContent = g.name || g.lottery_name || `Game ${g.id}`
+        gameSel.appendChild(opt)
+      }
+
+      form.render('select')
+
+      // Render table with first game's data
+      const firstSeries = (res.series || [])[0]
+      const firstGame = (res.games || [])[0]
+      const initWhere = {}
+      if (firstSeries) initWhere.series_id = firstSeries.id || firstSeries.series_id || ''
+      if (firstGame) initWhere.lottery_id = firstGame.id || firstGame.lottery_id || ''
+
+      table.render({
+        elem: '#dataTable',
+        id: 'dataTable',
+        url: rebateUrl,
+        method: 'post',
+        contentType: 'application/x-www-form-urlencoded',
+        where: initWhere,
+        cols: [tableCols],
+        page: false,
+        parseData: (r) => ({ code: 0, data: r.data || [], count: r.count || 0, msg: '' }),
+        toolbar: true,
+        defaultToolbar: ['filter', 'exports', 'print'],
+        skin: 'grid',
+        even: true,
+        size: 'sm',
+        text: { none: 'Không có dữ liệu' }
+      })
+    })
+    .catch(() => {
+      // If init fails, render empty table
+      table.render({
+        elem: '#dataTable',
+        id: 'dataTable',
+        data: [],
+        cols: [tableCols],
+        page: false,
+        toolbar: true,
+        defaultToolbar: ['filter', 'exports', 'print'],
+        skin: 'grid',
+        even: true,
+        size: 'sm',
+        text: { none: 'Không có dữ liệu — kiểm tra kết nối' }
+      })
+    })
+
+  // Series change → load games for that series
+  form.on('select(rebateSeriesSelect)', (data) => {
+    const seriesId = data.value
+    fetch('/api/v1/sync/proxy/rebate-games', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `series_id=${encodeURIComponent(seriesId)}`
+    })
+      .then((r) => r.json())
+      .then((res) => {
+        const gameSel = document.getElementById('rebateGameSelect')
+        if (!gameSel) return
+        gameSel.innerHTML = ''
+        for (const g of (res.games || [])) {
+          const opt = document.createElement('option')
+          opt.value = g.id || g.lottery_id || ''
+          opt.textContent = g.name || g.lottery_name || `Game ${g.id}`
+          gameSel.appendChild(opt)
+        }
+        form.render('select')
+
+        // Auto-load first game
+        const firstGame = (res.games || [])[0]
+        if (firstGame) {
+          table.reload('dataTable', {
+            where: { lottery_id: firstGame.id || firstGame.lottery_id, series_id: seriesId }
+          })
+        }
+      })
+      .catch(() => {})
+  })
+
+  // Game change → reload table
+  form.on('select(rebateGameSelect)', (data) => {
+    const seriesSel = document.getElementById('rebateSeriesSelect')
+    table.reload('dataTable', {
+      where: { lottery_id: data.value, series_id: seriesSel?.value || '' }
+    })
+  })
+
+  // Search button
+  form.on('submit(doDataSearch)', () => {
+    const seriesSel = document.getElementById('rebateSeriesSelect')
+    const gameSel = document.getElementById('rebateGameSelect')
+    table.reload('dataTable', {
+      where: { lottery_id: gameSel?.value || '', series_id: seriesSel?.value || '' }
+    })
+    return false
+  })
+
+  // Reset button
+  const resetBtn = document.getElementById('dataResetBtn')
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      const seriesSel = document.getElementById('rebateSeriesSelect')
+      const gameSel = document.getElementById('rebateGameSelect')
+      if (seriesSel && seriesSel.options.length) {
+        seriesSel.selectedIndex = 0
+        form.render('select')
+        // Trigger series change to reload games
+        const evt = new Event('change')
+        seriesSel.dispatchEvent(evt)
+      }
+    })
+  }
+}
+
+/* ── Report total summary ── */
+const fmtNum = (v, isCount) => {
+  if (isCount) return Math.round(v).toLocaleString()
+  return v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+
+const renderTotalSummary = (endpoint, data) => {
+  const fields = REPORT_TOTAL_FIELDS[endpoint]
+  const wrap = document.getElementById('data-total-wrap')
+  if (!fields || !data || !data.length) {
+    if (wrap) wrap.style.display = 'none'
+    return
+  }
+
+  const totals = {}
+  fields.forEach((f) => { totals[f.field] = 0 })
+  data.forEach((row) => {
+    fields.forEach((f) => {
+      totals[f.field] += parseFloat(row[f.field]) || 0
+    })
+  })
+
+  const items = fields.map((f) => {
+    const val = totals[f.field]
+    const isCount = /count|times/i.test(f.field)
+    const formatted = fmtNum(val, isCount)
+    let cls = ''
+    if (f.color) cls = val > 0 ? 'val-pos' : val < 0 ? 'val-neg' : ''
+    return `<span class="total-item"><b>${f.label}:</b> <span class="total-val ${cls}">${formatted}</span></span>`
+  }).join('<span class="total-sep">|</span>')
+
+  const body = document.getElementById('data-total-body')
+  if (body) body.innerHTML = `<i class="hub-icon hub-icon-chart"></i> <b>Tổng kết:</b> ${items}`
+  if (wrap) wrap.style.display = ''
+}
+
 /* ── Load table ── */
 const loadTable = (endpoint, hash) => {
   const cols = ENDPOINT_COLS[endpoint]
@@ -726,6 +941,12 @@ const loadTable = (endpoint, hash) => {
     const upstreamUrl = UPSTREAM_URL[endpoint]
     const useUpstream = !!upstreamUrl && !isSync
 
+    // Rebate page: fetch init data first, then render table
+    if (endpoint === 'rebate') {
+      initRebatePage(table, form, layer, tableCols)
+      return
+    }
+
     table.render({
       elem: '#dataTable',
       id: 'dataTable',
@@ -737,6 +958,20 @@ const loadTable = (endpoint, hash) => {
       request: { pageName: 'page', limitName: 'limit' },
       parseData: (res) => {
         if (useUpstream) {
+          const cacheStatus = res._cache_status
+
+          // SWR: nếu data stale → schedule 1 lần reload fresh
+          if (cacheStatus === 'stale' && !swrReloading) {
+            swrReloading = true
+            setTimeout(() => {
+              table.reload('dataTable', { url: upstreamUrl + '?_fresh=1' })
+            }, 200)
+          }
+          // Reset flag khi nhận fresh/miss (từ SWR reload)
+          if (swrReloading && cacheStatus !== 'stale') {
+            swrReloading = false
+          }
+
           return {
             code: 0,
             data: res.data || [],
@@ -755,7 +990,10 @@ const loadTable = (endpoint, hash) => {
       skin: 'grid',
       even: true,
       size: 'sm',
-      text: { none: 'Không có dữ liệu' }
+      text: { none: 'Không có dữ liệu' },
+      done: (res) => {
+        renderTotalSummary(endpoint, res.data)
+      }
     })
 
     // Convert toolbar native title → lay-tips
@@ -775,7 +1013,8 @@ const loadTable = (endpoint, hash) => {
           delete where.date
         }
       }
-      table.reload('dataTable', { where, page: { curr: 1 } })
+      swrReloading = false
+      table.reload('dataTable', { url: upstreamUrl, where, page: { curr: 1 } })
       return false
     })
 
@@ -787,7 +1026,8 @@ const loadTable = (endpoint, hash) => {
         if (formEl) formEl.reset()
         if (ENDPOINT_HAS_DATE[endpoint]) initDatePicker()
         form.render('select')
-        table.reload('dataTable', { where: {}, page: { curr: 1 } })
+        swrReloading = false
+        table.reload('dataTable', { url: upstreamUrl, where: {}, page: { curr: 1 } })
       })
     }
 
@@ -862,4 +1102,5 @@ export const render = (hash, container) => {
 export const destroy = () => {
   currentEndpoint = null
   syncAbort = true
+  swrReloading = false
 }
