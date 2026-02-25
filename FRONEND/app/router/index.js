@@ -1,7 +1,5 @@
 import { getToken, escapeHtml } from '../utils/index.js'
-import {
-  ROUTES, INTENDED_ROUTE_KEY, ROUTE_SECTIONS, TRANSITION_MS
-} from '../constants/index.js'
+import { ROUTES, INTENDED_ROUTE_KEY } from '../constants/index.js'
 
 /* ── Route map (lazy imports) ── */
 const placeholder = () => import('../modules/placeholder/index.js')
@@ -40,69 +38,10 @@ const guard = (hash) => {
   return !!getToken()
 }
 
-/* ── Transition state ── */
 let layoutModule = null
 let currentModule = null
 let currentPage = null
 let prevHash = null
-let isTransitioning = false
-let transitionTimer = null
-
-/* ── Transition type detection ── */
-const getTransitionType = (from, to) => {
-  if (!from || PUBLIC_ROUTES.has(from)) return 'fade'
-  const fromSection = ROUTE_SECTIONS[from]
-  const toSection = ROUTE_SECTIONS[to]
-  if (fromSection === 'dashboard' || toSection === 'dashboard') return 'slide-up'
-  if (fromSection === toSection) return 'fade'
-  return 'curtain'
-}
-
-/* ── Force-complete pending transition (for rapid clicks) ── */
-const forceComplete = () => {
-  if (!isTransitioning) return
-  clearTimeout(transitionTimer)
-  const container = layoutModule?.getContentContainer()
-  if (container) {
-    const leaving = container.querySelector('.page.is-leaving')
-    if (leaving) leaving.remove()
-  }
-  if (currentPage) {
-    currentPage.className = 'page is-active'
-    currentPage.style.willChange = 'auto'
-  }
-  isTransitioning = false
-}
-
-/* ── Dual-page transition engine ── */
-const transitionTo = (container, nextPage, trType) => {
-  const trClass = `tr-${trType}`
-  nextPage.classList.add(trClass)
-
-  const oldPage = currentPage
-  if (oldPage) {
-    oldPage.classList.remove('is-active')
-    oldPage.classList.add('is-leaving', trClass)
-  }
-
-  isTransitioning = true
-
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      nextPage.classList.remove('is-entering')
-      nextPage.classList.add('is-active')
-    })
-  })
-
-  transitionTimer = setTimeout(() => {
-    if (oldPage) oldPage.remove()
-    removeSkeleton()
-    nextPage.style.willChange = 'auto'
-    isTransitioning = false
-  }, TRANSITION_MS)
-
-  currentPage = nextPage
-}
 
 /* ── Layout helpers ── */
 const ensureLayout = async () => {
@@ -119,23 +58,24 @@ const removeSkeleton = () => {
   if (el) el.remove()
 }
 
-/* ── Create a .page wrapper, mount to container, render module into it ── */
-const createPage = (container, trType) => {
+/* ── Create a .page wrapper ── */
+const createPage = (container) => {
+  if (currentPage) currentPage.remove()
+  removeSkeleton()
   const page = document.createElement('div')
-  page.className = `page is-entering tr-${trType}`
+  page.className = 'page layui-anim layui-anim-down'
   container.appendChild(page)
   return page
 }
 
 /* ── Error rendering ── */
 const renderError = (err) => {
-  forceComplete()
   const container = layoutModule?.getContentContainer()
     || document.getElementById('app')
   if (!container) return
   container.querySelectorAll('.page').forEach((p) => p.remove())
   const page = document.createElement('div')
-  page.className = 'page is-active'
+  page.className = 'page'
   page.innerHTML = `
     <div class="error-boundary">
       <p class="error-boundary-title">Đã xảy ra lỗi</p>
@@ -144,7 +84,6 @@ const renderError = (err) => {
     </div>`
   container.appendChild(page)
   currentPage = page
-  isTransitioning = false
   layoutModule?.hideLoading?.()
 }
 
@@ -167,8 +106,6 @@ const navigate = async (hash) => {
     return
   }
 
-  forceComplete()
-
   if (currentModule?.destroy) {
     currentModule.destroy()
   }
@@ -177,14 +114,12 @@ const navigate = async (hash) => {
 
   if (!loader) {
     await ensureLayout()
-    /* skeleton removed in transitionTo cleanup */
     const container = layoutModule.getContentContainer()
-    const trType = getTransitionType(prevHash, hash)
     const mod = await import('../modules/not-found/index.js')
     currentModule = mod
-    const nextPage = createPage(container, trType)
+    const nextPage = createPage(container)
     mod.render(hash, nextPage)
-    transitionTo(container, nextPage, trType)
+    currentPage = nextPage
     layoutModule.setActiveMenu(null)
     prevHash = hash
     return
@@ -201,14 +136,12 @@ const navigate = async (hash) => {
       mod.render(hash)
     } else {
       await ensureLayout()
-      /* skeleton removed in transitionTo cleanup */
       const container = layoutModule.getContentContainer()
-      const trType = getTransitionType(prevHash, hash)
       const mod = await loader()
       currentModule = mod
-      const nextPage = createPage(container, trType)
+      const nextPage = createPage(container)
       mod.render(hash, nextPage)
-      transitionTo(container, nextPage, trType)
+      currentPage = nextPage
       layoutModule.setActiveMenu(hash)
     }
   } catch (err) {

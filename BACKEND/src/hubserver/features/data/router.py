@@ -124,7 +124,7 @@ async def get_data(
     """Generic paginated data retrieval for all synced endpoints."""
     model = _MODELS.get(endpoint)
     if not model:
-        return {"code": 1, "msg": f"Unknown endpoint: {endpoint}"}
+        return {"code": 1, "message": f"Unknown endpoint: {endpoint}", "data": None, "errors": []}
 
     table = model.__table__
     allowed = _ALLOWED_FILTERS.get(endpoint, set())
@@ -210,4 +210,4 @@ async def get_data(
     result = await db.execute(stmt)
     rows = [_serialize(r) for r in result.mappings().all()]
 
-    return {"code": 0, "data": {"rows": rows, "count": total}}
+    return {"code": 0, "message": "success", "data": {"rows": rows, "count": total}, "errors": []}

@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_redoc_html, get_swagger_ui_html
 from fastapi.openapi.utils import get_openapi
 
+from .exceptions import register_exception_handlers
 from .utils.rate_limit import rate_limiter
 from ..middleware.client_cache import ClientCacheMiddleware
 from ..middleware.logger import LoggerMiddleware
@@ -159,6 +160,7 @@ def create_application(
         lifespan = lifespan_factory(settings, create_tables_on_start=create_tables_on_start)
 
     application = FastAPI(lifespan=lifespan, **kwargs)
+    register_exception_handlers(application)
     application.include_router(router)
 
     if isinstance(settings, ClientSideCacheSettings):

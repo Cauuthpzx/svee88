@@ -1,8 +1,10 @@
 """Sync service helpers — shared logic for sync endpoints."""
 
 from datetime import datetime
+from decimal import Decimal
 from typing import Any
 
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
 from ...core.config import APP_TZ
@@ -78,6 +80,27 @@ async def update_sync_meta(
             },
         )
     return last_data_date
+
+
+async def fetch_records_by_ids(db: AsyncSession, model: type, ids: list[int]) -> list[dict]:
+    """Fetch DB records by IDs and serialize to JSON-safe dicts."""
+    table = model.__table__
+    stmt = select(table).where(table.c.id.in_(ids))
+    result = await db.execute(stmt)
+    rows = result.mappings().all()
+
+    records = []
+    for row in rows:
+        r: dict[str, Any] = {}
+        for k, v in row.items():
+            if isinstance(v, datetime):
+                r[k] = v.isoformat()
+            elif isinstance(v, Decimal):
+                r[k] = str(v)
+            else:
+                r[k] = v
+        records.append(r)
+    return records
 
 
 # --- Member field cleaning & mapping ---

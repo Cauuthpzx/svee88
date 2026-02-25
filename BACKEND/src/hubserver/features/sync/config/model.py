@@ -29,6 +29,9 @@ class LotteryGame(Base):
 
 class BankList(Base):
     __tablename__ = "bank_list"
+    __table_args__ = (
+        Index("idx_bank_list_agent", "agent_id"),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     bank: Mapped[str] = mapped_column(String(100))

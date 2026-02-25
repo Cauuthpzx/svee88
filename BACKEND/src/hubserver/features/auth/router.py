@@ -3,7 +3,6 @@ from typing import Annotated
 
 from fastapi import APIRouter, Cookie, Depends, Request, Response
 from fastapi.security import OAuth2PasswordRequestForm
-from jose import JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ...core.config import settings
@@ -68,14 +67,10 @@ async def logout(
     refresh_token: str | None = Cookie(None, alias="refresh_token"),
     db: AsyncSession = Depends(async_get_db),
 ) -> dict[str, str]:
-    try:
-        if not refresh_token:
-            raise UnauthorizedException("Refresh token not found.")
+    if not refresh_token:
+        raise UnauthorizedException("Refresh token not found.")
 
-        await blacklist_tokens(access_token=access_token, refresh_token=refresh_token, db=db)
-        response.delete_cookie(key="refresh_token")
+    await blacklist_tokens(access_token=access_token, refresh_token=refresh_token, db=db)
+    response.delete_cookie(key="refresh_token")
 
-        return {"message": "Logged out successfully."}
-
-    except JWTError:
-        raise UnauthorizedException("Invalid token.")
+    return {"message": "Logged out successfully."}

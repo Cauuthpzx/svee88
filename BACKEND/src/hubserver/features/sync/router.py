@@ -1,18 +1,16 @@
 """Sync router — status, verify, config endpoints + sub-router aggregation."""
 
-from datetime import datetime
-from decimal import Decimal
 from typing import Any
 
 from fastapi import APIRouter, Depends
 from fastcrud.exceptions.http_exceptions import NotFoundException
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
 from ...core.db.database import async_get_db
 from ...core.utils.upsert import bulk_upsert
 from .crud import crud_sync_metadata
 from .schema import SyncResponse, SyncStatusResponse, VerifyRequest
+from .service import fetch_records_by_ids
 
 from .member.model import Member
 from .bet.model import BetOrder, BetLottery
@@ -76,24 +74,7 @@ async def verify_records(
     if not model:
         raise NotFoundException(f"Endpoint '{endpoint}' not found")
 
-    table = model.__table__
-
-    stmt = select(table).where(table.c.id.in_(body.ids))
-    result = await db.execute(stmt)
-    rows = result.mappings().all()
-
-    records = []
-    for row in rows:
-        r = {}
-        for k, v in row.items():
-            if isinstance(v, datetime):
-                r[k] = v.isoformat()
-            elif isinstance(v, Decimal):
-                r[k] = str(v)
-            else:
-                r[k] = v
-        records.append(r)
-
+    records = await fetch_records_by_ids(db, model, body.ids)
     return {"records": records, "count": len(records), "requested": len(body.ids)}
 
 

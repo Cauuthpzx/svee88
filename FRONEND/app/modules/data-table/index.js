@@ -17,17 +17,17 @@ const template = (title, endpoint) => {
       const opts = p.options.map((o) =>
         `<option value="${o.value}">${escapeHtml(o.text)}</option>`
       ).join('')
-      const w = p.options.length > 10 ? '180px' : '130px'
+      const wClass = p.options.length > 10 ? 'data-input-lg' : 'data-input-sm'
       const searchAttr = p.options.length > 10 ? ' lay-search' : ''
       searchInputs += `
         <label>${escapeHtml(p.label)}</label>:
-        <div style="width:${w}" class="layui-input-inline">
+        <div class="layui-input-inline ${wClass}">
           <select name="${p.name}" lay-filter="search_${p.name}"${searchAttr}>${opts}</select>
         </div> `
     } else {
       searchInputs += `
         <label>${escapeHtml(p.label)}</label>:
-        <div style="width:150px" class="layui-input-inline">
+        <div class="layui-input-inline data-input-md">
           <input type="text" name="${p.name}" placeholder="${escapeHtml(p.label)}" class="layui-input" autocomplete="off">
         </div> `
     }
@@ -44,10 +44,10 @@ const template = (title, endpoint) => {
               ${hasDate ? `
               <div class="layui-inline" id="data-date-wrap">
                 <label>Thời gian</label>:
-                <div style="width:220px" class="layui-input-inline">
+                <div class="layui-input-inline data-date-input">
                   <input type="text" name="date" id="dataDateRange" placeholder="Bắt đầu - Kết thúc" class="layui-input" readonly autocomplete="off">
                 </div>
-                <div style="width:130px" class="layui-input-inline">
+                <div class="layui-input-inline data-quick-select">
                   <select id="quickDateSelect" lay-filter="quickDateSelect">
                     <option value="">Chọn nhanh</option>
                     <option value="yesterday">Hôm qua</option>
@@ -78,7 +78,7 @@ const template = (title, endpoint) => {
 
       <table id="dataTable" lay-filter="dataTable"></table>
 
-      <div id="data-total-wrap" style="display:none; margin-top:10px">
+      <div id="data-total-wrap" class="data-total-wrap">
         <blockquote class="layui-elem-quote total-summary-quote" id="data-total-body">
           <i class="layui-icon layui-icon-chart"></i> <b>Tổng kết</b>
         </blockquote>

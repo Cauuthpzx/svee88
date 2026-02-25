@@ -182,9 +182,7 @@ const loadUserInfo = async () => {
     const user = await authApi.getMe()
     store.set('user', user)
     setHeaderName(user)
-  } catch (err) {
-    console.warn('[layout] loadUserInfo failed:', err?.message || err)
-  }
+  } catch (_) { /* handled by global error handler */ }
 }
 
 let clockTimer = null

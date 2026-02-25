@@ -28,6 +28,14 @@
   margin-top: 5px;
 }
 
+/* ── Search input widths ── */
+.data-input-sm { width: 130px; }
+.data-input-md { width: 150px; }
+.data-input-lg { width: 180px; }
+.data-date-input { width: 220px; }
+.data-quick-select { width: 130px; }
+.data-total-wrap { display: none; margin-top: 10px; }
+
 /* ── Layui Table overrides ── */
 .data-panel .layui-table-tool {
   background: #f2f2f2;
