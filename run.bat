@@ -13,7 +13,7 @@ echo ═════════════════════════
 echo   Starting Backend + Frontend
 echo ══════════════════════════════════════════
 start "Backend" cmd /k "cd /d %~dp0BACKEND\src && uvicorn hubserver.main:app --reload --host 0.0.0.0 --port 8000 --timeout-graceful-shutdown 3"
-start "Frontend" cmd /k "cd /d %~dp0FRONEND && npm run dev"
+start "Frontend" cmd /k "cd /d %~dp0FRONTEND && npm run dev"
 echo.
 echo   Backend  : http://localhost:8000
 echo   Frontend : http://localhost:3000
@@ -26,7 +26,7 @@ uvicorn hubserver.main:app --reload --host 0.0.0.0 --port 8000 --timeout-gracefu
 goto end
 
 :fe
-cd /d %~dp0FRONEND
+cd /d %~dp0FRONTEND
 npm run dev
 goto end
 

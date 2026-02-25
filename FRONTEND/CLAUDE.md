@@ -15,7 +15,7 @@ Layui 2.13.3 | Axios 1.x | Vite 5.x | Vanilla JS ES2022
 - NPM: https://www.npmjs.com/package/layui
 - Axios: https://axios-http.com/docs/intro
 - Vite: https://vitejs.dev/guide/
-- Tài liệu offline: `FRONEND/docs/`, `FRONEND/examples/`
+- Tài liệu offline: `FRONTEND/docs/`, `FRONTEND/examples/`
 
 ## ICONS — LOCAL (BẮT BUỘC)
 
@@ -188,8 +188,8 @@ table.reload('tableId', { where: filters })
 
 **LUÔN dùng cấu trúc HTML chuẩn gốc Layui, sau đó mới cải tiến thành SPA.**
 - Tham khảo docs: https://layui.dev/docs/2/form.html
-- Tham khảo source: `FRONEND/docs/form/`, `FRONEND/examples/form.html`
-- Tham khảo CSS gốc: `FRONEND/src/css/layui.css`
+- Tham khảo source: `FRONTEND/docs/form/`, `FRONTEND/examples/form.html`
+- Tham khảo CSS gốc: `FRONTEND/src/css/layui.css`
 - KHÔNG tự chế HTML structure — phải đúng nesting mà Layui yêu cầu
 - Chỉ thêm CSS class bổ sung, KHÔNG override CSS gốc của Layui
 

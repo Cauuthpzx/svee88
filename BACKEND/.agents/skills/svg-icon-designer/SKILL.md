@@ -31,9 +31,9 @@ SVG file (public/icons/name.svg)
 
 | File | Purpose |
 |------|---------|
-| `FRONEND/public/icons/*.svg` | SVG icon source files |
-| `FRONEND/app/icons/index.css` | CSS icon class definitions |
-| `FRONEND/app/layout/index.css` | Icon size overrides per context |
+| `FRONTEND/public/icons/*.svg` | SVG icon source files |
+| `FRONTEND/app/icons/index.css` | CSS icon class definitions |
+| `FRONTEND/app/layout/index.css` | Icon size overrides per context |
 
 ### Display Sizes
 
@@ -145,7 +145,7 @@ Think about:
 
 ### Step 3: Save the File
 
-Save to: `FRONEND/public/icons/{name}.svg`
+Save to: `FRONTEND/public/icons/{name}.svg`
 
 Naming rules:
 - Lowercase, kebab-case: `my-icon.svg`
@@ -153,7 +153,7 @@ Naming rules:
 
 ### Step 4: Register in CSS
 
-Add to `FRONEND/app/icons/index.css`:
+Add to `FRONTEND/app/icons/index.css`:
 
 ```css
 .hub-icon-{name} {
