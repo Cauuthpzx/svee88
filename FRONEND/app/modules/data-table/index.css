@@ -90,6 +90,24 @@
   color: #ff5722;
 }
 
+/* ── Add Account dialog ── */
+.layui-layer [lay-filter="addAccountForm"] {
+  font-family: -apple-system, Roboto, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+}
+.layui-layer [lay-filter="addAccountForm"] .layui-input {
+  color: #000;
+  font-weight: 500;
+}
+.layui-layer [lay-filter="addAccountForm"] .layui-form-checkbox span,
+.layui-layer [lay-filter="addAccountForm"] label,
+.layui-layer [lay-filter="addAccountForm"] .layui-input-prefix .layui-icon {
+  color: #000;
+  font-weight: 500;
+}
+.layui-layer [lay-filter="addAccountForm"] .layui-btn {
+  font-weight: 600;
+}
+
 /* ── Dark mode ── */
 .dark .data-panel .layui-table-tool {
   background: var(--lay-color-bg-2);

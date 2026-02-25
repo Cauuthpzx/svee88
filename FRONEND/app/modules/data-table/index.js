@@ -6,10 +6,11 @@ import {
 } from './config.js'
 import './index.css'
 
-const template = (title, endpoint) => {
-  const hasDate = ENDPOINT_HAS_DATE[endpoint]
-  const searchFields = ENDPOINT_SEARCH[endpoint] || []
-  const hasSearch = searchFields.length > 0 || hasDate
+const template = (title, endpoint, hash) => {
+  const isSync = hash === '#/settings-sync'
+  const hasDate = isSync ? false : ENDPOINT_HAS_DATE[endpoint]
+  const searchFields = isSync ? [] : (ENDPOINT_SEARCH[endpoint] || [])
+  const hasSearch = searchFields.length > 0 || hasDate || isSync
 
   let searchInputs = ''
   searchFields.forEach((p) => {
@@ -38,7 +39,7 @@ const template = (title, endpoint) => {
       ${hasSearch ? `
       <div class="layui-form data-toolbar">
         <fieldset class="layui-elem-field">
-          <legend>Tìm kiếm</legend>
+          <legend>${escapeHtml(title)}</legend>
           <div class="layui-field-box">
             <form class="layui-form" lay-filter="dataSearchForm">
               ${hasDate ? `
@@ -59,6 +60,13 @@ const template = (title, endpoint) => {
                 </div>
               </div>
               ` : ''}
+              ${isSync ? `
+              <div class="layui-inline">
+                <button type="button" class="layui-btn" id="addAccountBtn">
+                  <i class="layui-icon layui-icon-add-1"></i> Thêm Tài Khoản
+                </button>
+              </div>
+              ` : `
               <div class="layui-inline" id="data-search-wrap">${searchInputs}</div>
               <div class="layui-inline">
                 <button type="button" class="layui-btn" lay-submit lay-filter="doDataSearch">
@@ -70,6 +78,24 @@ const template = (title, endpoint) => {
                   <i class="layui-icon layui-icon-refresh"></i> Đặt lại
                 </button>
               </div>
+              `}
+              ${isSync ? `
+              <div class="layui-inline">
+                <button type="button" class="layui-btn layui-btn-normal" id="syncAllBtn">
+                  <i class="layui-icon layui-icon-transfer"></i> Sync All
+                </button>
+              </div>
+              <div class="layui-inline">
+                <button type="button" class="layui-btn layui-btn-warm" id="hardSyncAllBtn">
+                  <i class="layui-icon layui-icon-download-circle"></i> Hard Sync All
+                </button>
+              </div>
+              <div class="layui-inline">
+                <button type="button" class="layui-btn layui-btn-primary" id="testAllBtn">
+                  <i class="layui-icon layui-icon-flag"></i> Test All
+                </button>
+              </div>
+              ` : ''}
             </form>
           </div>
         </fieldset>
@@ -154,11 +180,13 @@ const initQuickDate = (form) => {
   })
 }
 
-const loadTable = (endpoint) => {
+const loadTable = (endpoint, hash) => {
   const cols = ENDPOINT_COLS[endpoint]
   if (!cols) return
+  const isSync = hash === '#/settings-sync'
+  const tableCols = isSync ? [{ type: 'checkbox', fixed: 'left' }, ...cols] : cols
 
-  layui.use(['table', 'form', 'laydate'], function (table, form) {
+  layui.use(['table', 'form', 'laydate', 'layer'], function (table, form, laydate, layer) {
     form.render('select')
 
     if (ENDPOINT_HAS_DATE[endpoint]) {
@@ -171,7 +199,7 @@ const loadTable = (endpoint) => {
       id: 'dataTable',
       url: `/api/v1/data/${endpoint}`,
       method: 'get',
-      cols: [cols],
+      cols: [tableCols],
       page: { limit: 10, limits: [10, 50, 100, 200] },
       request: { pageName: 'page', limitName: 'limit' },
       parseData: (res) => {
@@ -221,6 +249,77 @@ const loadTable = (endpoint) => {
         table.reload('dataTable', { where: {}, page: { curr: 1 } })
       })
     }
+
+    // Add Account popup (Sync & Account page only)
+    const addAccountBtn = document.getElementById('addAccountBtn')
+    if (addAccountBtn) {
+      addAccountBtn.addEventListener('click', () => {
+        layer.open({
+          type: 1,
+          title: 'Thêm Tài Khoản',
+          area: '380px',
+          maxHeight: 500,
+          content: `
+            <form class="layui-form" lay-filter="addAccountForm" style="padding: 15px 25px 5px;">
+              <div class="layui-form-item">
+                <div class="layui-input-wrap">
+                  <div class="layui-input-prefix">
+                    <i class="layui-icon layui-icon-user"></i>
+                  </div>
+                  <input type="text" name="owner" lay-verify="required" placeholder="Tên người sở hữu" lay-reqtext="Vui lòng nhập tên người sở hữu" autocomplete="off" class="layui-input" lay-affix="clear">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <div class="layui-input-wrap">
+                  <div class="layui-input-prefix">
+                    <i class="layui-icon layui-icon-username"></i>
+                  </div>
+                  <input type="text" name="username" lay-verify="required" placeholder="Tài khoản ee88" lay-reqtext="Vui lòng nhập tài khoản" autocomplete="off" class="layui-input" lay-affix="clear">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <div class="layui-input-wrap">
+                  <div class="layui-input-prefix">
+                    <i class="layui-icon layui-icon-password"></i>
+                  </div>
+                  <input type="password" name="password" lay-verify="required" placeholder="Mật khẩu ee88" lay-reqtext="Vui lòng nhập mật khẩu" autocomplete="off" class="layui-input" lay-affix="eye">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <div class="layui-row">
+                  <div class="layui-col-xs7">
+                    <div class="layui-input-wrap">
+                      <div class="layui-input-prefix">
+                        <i class="layui-icon layui-icon-vercode"></i>
+                      </div>
+                      <input type="text" name="captcha" lay-verify="required" placeholder="Mã xác nhận" lay-reqtext="Vui lòng nhập mã xác nhận" autocomplete="off" class="layui-input" lay-affix="clear">
+                    </div>
+                  </div>
+                  <div class="layui-col-xs5">
+                    <div style="margin-left: 10px;">
+                      <img src="https://www.oschina.net/action/user/captcha" onclick="this.src='https://www.oschina.net/action/user/captcha?t='+ new Date().getTime();" style="cursor:pointer; height:38px;">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <input type="checkbox" name="remember" lay-skin="primary" title="Ghi nhớ mật khẩu">
+              </div>
+              <div class="layui-form-item">
+                <button type="button" class="layui-btn layui-btn-fluid" lay-submit lay-filter="submitAddAccount">Đăng nhập</button>
+              </div>
+            </form>
+          `,
+          success: () => {
+            form.render(null, 'addAccountForm')
+            form.on('submit(submitAddAccount)', (data) => {
+              layer.msg('Đang xử lý: ' + JSON.stringify(data.field), { icon: 1 })
+              return false
+            })
+          }
+        })
+      })
+    }
   })
 }
 
@@ -230,8 +329,8 @@ export const render = (hash, container) => {
   currentEndpoint = endpoint
   const el = container || document.getElementById('main-content')
   const title = ROUTE_TITLES[hash] || ENDPOINT_NAMES[endpoint] || endpoint
-  el.innerHTML = template(title, endpoint)
-  loadTable(endpoint)
+  el.innerHTML = template(title, endpoint, hash)
+  loadTable(endpoint, hash)
 }
 
 export const destroy = () => {
