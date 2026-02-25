@@ -10,10 +10,26 @@
 import vi from './locales/vi.js'
 import en from './locales/en.js'
 import zh from './locales/zh.js'
+import { vi as layuiVi, en as layuiEn } from './layui-locales.js'
 
 const LOCALES = { vi, en, zh }
 const STORAGE_KEY = 'hub-lang'
 const DEFAULT_LANG = 'vi'
+
+/* Layui i18n locale mapping: our code → Layui locale code */
+const LAYUI_LOCALE_MAP = { vi: 'vi', en: 'en', zh: 'zh-CN' }
+
+function syncLayuiLocale(code) {
+  if (typeof layui === 'undefined') return
+  layui.use('i18n', function (i18n) {
+    // Register vi/en locales once (zh-CN is built-in)
+    if (!i18n.config.messages.vi) {
+      i18n.config.messages.vi = layuiVi
+      i18n.config.messages.en = layuiEn
+    }
+    i18n.set({ locale: LAYUI_LOCALE_MAP[code] || code })
+  })
+}
 
 let currentLang = DEFAULT_LANG
 const listeners = new Set()
@@ -44,6 +60,7 @@ export function setLang(code) {
   currentLang = code
   localStorage.setItem(STORAGE_KEY, code)
   document.documentElement.lang = code
+  syncLayuiLocale(code)
   listeners.forEach((fn) => fn(code))
 }
 
@@ -58,4 +75,5 @@ export function initI18n() {
     currentLang = saved
   }
   document.documentElement.lang = currentLang
+  syncLayuiLocale(currentLang)
 }
