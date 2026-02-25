@@ -80,4 +80,32 @@ async def proxy_upstream(
     params = _parse_form(await request.body())
     agent_id = _extract_agent_id(params)
     force_fresh = request.query_params.get("_fresh") == "1"
-    return await swr_fetch(db, endpoint, params, agent_id, force_fresh)
+    result = await swr_fetch(db, endpoint, params, agent_id, force_fresh)
+
+    # Report endpoints: compute column totals across ALL pages
+    if endpoint.startswith("report-") and result.get("code") == 0:
+        totals_params = {k: v for k, v in params.items() if k not in ("page", "limit")}
+        totals_params["page"] = "1"
+        totals_params["limit"] = "99999"
+        totals_res = await swr_fetch(
+            db, endpoint, totals_params, agent_id, force_fresh=False,
+        )
+        if totals_res.get("code") == 0 and totals_res.get("data"):
+            _totals: dict[str, float] = {}
+            _uniques: dict[str, set] = {}
+            for row in totals_res["data"]:
+                for key, val in row.items():
+                    if key.startswith("_"):
+                        continue
+                    try:
+                        _totals[key] = _totals.get(key, 0) + float(val)
+                    except (ValueError, TypeError):
+                        if key not in _uniques:
+                            _uniques[key] = set()
+                        if val:
+                            _uniques[key].add(str(val))
+            for key, vals in _uniques.items():
+                _totals[key] = len(vals)
+            result["_totals"] = _totals
+
+    return result
