@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill-rule="evenodd">
+  <path d="M12 7.5 C14.49 7.5 16.5 9.51 16.5 12 C16.5 14.49 14.49 16.5 12 16.5 C9.51 16.5 7.5 14.49 7.5 12 C7.5 9.51 9.51 7.5 12 7.5 Z
+            M12 9 C10.34 9 9 10.34 9 12 C9 13.66 10.34 15 12 15 C13.66 15 15 13.66 15 12 C15 10.34 13.66 9 12 9 Z" fill="#000"/>
+  <rect x="11.25" y="2" width="1.5" height="3" rx="0.75" fill="#000"/>
+  <rect x="11.25" y="19" width="1.5" height="3" rx="0.75" fill="#000"/>
+  <rect x="2" y="11.25" width="3" height="1.5" rx="0.75" fill="#000"/>
+  <rect x="19" y="11.25" width="3" height="1.5" rx="0.75" fill="#000"/>
+  <rect x="16.96" y="5.095" width="2.59" height="1.5" rx="0.75" fill="#000" transform="rotate(-45 18.155 5.845)"/>
+  <rect x="16.96" y="17.405" width="2.59" height="1.5" rx="0.75" fill="#000" transform="rotate(45 18.155 18.155)"/>
+  <rect x="4.55" y="17.405" width="2.59" height="1.5" rx="0.75" fill="#000" transform="rotate(-45 5.845 18.155)"/>
+  <rect x="4.55" y="5.095" width="2.59" height="1.5" rx="0.75" fill="#000" transform="rotate(45 5.845 5.845)"/>
+</svg>

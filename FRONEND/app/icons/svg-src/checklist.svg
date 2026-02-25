@@ -1,11 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill-rule="evenodd">
-  <!-- Row 1 at y~5.5: checkmark + line -->
   <path d="M4.2 5.5 L5.5 7.2 L9 3.5 L10.1 4.5 L5.5 9.3 L3 6.5 Z" fill="#000"/>
-  <rect x="12" y="4.75" width="10" height="1.5" rx="0.75" fill="#000"/>
-  <!-- Row 2 at y~12: checkmark + line -->
+  <rect x="12" y="4.9" width="10" height="1.2" rx="0.6" fill="#000"/>
   <path d="M4.2 11.5 L5.5 13.2 L9 9.5 L10.1 10.5 L5.5 15.3 L3 12.5 Z" fill="#000"/>
-  <rect x="12" y="11.25" width="10" height="1.5" rx="0.75" fill="#000"/>
-  <!-- Row 3 at y~18: checkmark + line -->
+  <rect x="12" y="11.4" width="10" height="1.2" rx="0.6" fill="#000"/>
   <path d="M4.2 17.5 L5.5 19.2 L9 15.5 L10.1 16.5 L5.5 21.3 L3 18.5 Z" fill="#000"/>
-  <rect x="12" y="17.25" width="10" height="1.5" rx="0.75" fill="#000"/>
+  <rect x="12" y="17.4" width="10" height="1.2" rx="0.6" fill="#000"/>
 </svg>

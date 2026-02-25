@@ -1,8 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill-rule="evenodd">
-  <!-- Document body with folded corner: outer shape minus inner cutout -->
-  <path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8.41a1 1 0 0 0-.29-.7l-5.42-5.42a1 1 0 0 0-.7-.29H6zm0 1.5h5.25V8a1.5 1.5 0 0 0 1.5 1.5H18.5V20a.5.5 0 0 1-.5.5H6a.5.5 0 0 1-.5-.5V4a.5.5 0 0 1 .5-.5zm6.75.31L17.69 8h-3.94a.5.5 0 0 1-.5-.5V3.81z" fill="#000"/>
-  <!-- Text line 1 -->
-  <rect x="8" y="12.25" width="8" height="1.5" rx="0.75" fill="#000"/>
-  <!-- Text line 2 -->
-  <rect x="8" y="16.25" width="5" height="1.5" rx="0.75" fill="#000"/>
+  <path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8.41a1 1 0 0 0-.29-.7l-5.42-5.42a1 1 0 0 0-.7-.29H6zm0 1.2h5.25V8a1.5 1.5 0 0 0 1.5 1.5H18.8V20a.8.8 0 0 1-.8.8H6a.8.8 0 0 1-.8-.8V4a.8.8 0 0 1 .8-.8zm6.75.31L17.69 8h-3.34a.8.8 0 0 1-.8-.8V3.51z" fill="#000"/>
+  <rect x="8" y="12.4" width="8" height="1.2" rx="0.6" fill="#000"/>
+  <rect x="8" y="16.4" width="5" height="1.2" rx="0.6" fill="#000"/>
 </svg>

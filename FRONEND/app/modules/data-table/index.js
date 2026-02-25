@@ -2,7 +2,8 @@ import { ROUTE_TITLES } from '../../constants/index.js'
 import { escapeHtml } from '../../utils/index.js'
 import {
   ENDPOINT_COLS, ENDPOINT_NAMES, ENDPOINT_HAS_DATE,
-  ENDPOINT_SEARCH, HASH_TO_ENDPOINT, HASH_TO_ICON, DATE_PARAM_NAME
+  ENDPOINT_SEARCH, HASH_TO_ENDPOINT, HASH_TO_ICON, DATE_PARAM_NAME,
+  UPSTREAM_URL
 } from './config.js'
 import './index.css'
 
@@ -123,7 +124,8 @@ const template = (title, endpoint, hash) => {
   const isSync = hash === '#/settings-sync'
   const hasDate = isSync ? false : ENDPOINT_HAS_DATE[endpoint]
   const searchFields = isSync ? [] : (ENDPOINT_SEARCH[endpoint] || [])
-  const hasSearch = searchFields.length > 0 || hasDate
+  const showAgentFilter = !isSync && !!UPSTREAM_URL[endpoint]
+  const hasSearch = searchFields.length > 0 || hasDate || showAgentFilter
 
   let searchInputs = ''
   searchFields.forEach((p) => {
@@ -171,6 +173,16 @@ const template = (title, endpoint, hash) => {
                     <option value="thisWeek">Tuần này</option>
                     <option value="thisMonth">Tháng này</option>
                     <option value="lastMonth">Tháng trước</option>
+                  </select>
+                </div>
+              </div>
+              ` : ''}
+              ${showAgentFilter ? `
+              <div class="layui-inline" id="data-agent-wrap">
+                <label>Đại lý</label>:
+                <div class="layui-input-inline data-input-sm">
+                  <select name="agent_id" id="agentFilter" lay-filter="search_agent_id">
+                    <option value="0">-- Tất cả --</option>
                   </select>
                 </div>
               </div>
@@ -654,7 +666,22 @@ const openAddAccountDialog = (form, layer) => {
     success: () => {
       form.render(null, 'addAccountForm')
       form.on('submit(submitAddAccount)', (data) => {
-        layer.msg('Đang xử lý: ' + JSON.stringify(data.field), { icon: 1 })
+        const { owner, username, base_url, password } = data.field
+        fetch('/api/v1/sync/agents', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ owner, username, base_url, cookie: '' })
+        })
+          .then((r) => r.json())
+          .then((res) => {
+            if (res.agent) {
+              layer.msg('Thêm tài khoản thành công!', { icon: 1 })
+              layer.closeAll()
+            } else {
+              layer.msg('Lỗi: ' + (res.error || 'Không thể thêm'), { icon: 2 })
+            }
+          })
+          .catch((e) => layer.msg('Lỗi: ' + e.message, { icon: 2 }))
         return false
       })
     }
@@ -676,15 +703,47 @@ const loadTable = (endpoint, hash) => {
       initQuickDate(form)
     }
 
+    // Populate agent dropdown
+    const agentSelect = document.getElementById('agentFilter')
+    if (agentSelect) {
+      fetch('/api/v1/sync/agents')
+        .then((r) => r.json())
+        .then((res) => {
+          if (res.agents) {
+            for (const ag of res.agents) {
+              if (!ag.is_active) continue
+              const opt = document.createElement('option')
+              opt.value = ag.id
+              opt.textContent = ag.owner
+              agentSelect.appendChild(opt)
+            }
+            form.render('select')
+          }
+        })
+        .catch(() => {})
+    }
+
+    const upstreamUrl = UPSTREAM_URL[endpoint]
+    const useUpstream = !!upstreamUrl && !isSync
+
     table.render({
       elem: '#dataTable',
       id: 'dataTable',
-      url: `/api/v1/data/${endpoint}`,
-      method: 'get',
+      url: useUpstream ? upstreamUrl : `/api/v1/data/${endpoint}`,
+      method: useUpstream ? 'post' : 'get',
+      contentType: useUpstream ? 'application/x-www-form-urlencoded' : undefined,
       cols: [tableCols],
       page: { limit: 10, limits: [10, 50, 100, 200] },
       request: { pageName: 'page', limitName: 'limit' },
       parseData: (res) => {
+        if (useUpstream) {
+          return {
+            code: 0,
+            data: res.data || [],
+            count: res.count || 0,
+            msg: res.msg || ''
+          }
+        }
         if (res.code === 0) {
           const data = res.data || {}
           return { code: 0, data: data.rows || [], count: data.count || 0, msg: '' }
@@ -730,6 +789,57 @@ const loadTable = (endpoint, hash) => {
         form.render('select')
         table.reload('dataTable', { where: {}, page: { curr: 1 } })
       })
+    }
+
+    // Invite action buttons (Copy đường link, Xem cài đặt, Mã QR)
+    if (endpoint === 'invites') {
+      document.querySelector('#dataTable')?.closest('.layui-table-view')
+        ?.addEventListener('click', (e) => {
+          const copyBtn = e.target.closest('.invite-copy-btn')
+          const settingBtn = e.target.closest('.invite-setting-btn')
+          const qrBtn = e.target.closest('.invite-qr-btn')
+
+          if (copyBtn) {
+            const code = copyBtn.dataset.code
+            // Upstream dùng domain cố định: https://dly8828.com/?inviteCode=CODE
+            const link = `https://dly8828.com/?inviteCode=${code}`
+            navigator.clipboard.writeText(link).then(() => {
+              layer.msg('Đã copy đường link!', { icon: 1, time: 1500 })
+            }).catch(() => {
+              const ta = document.createElement('textarea')
+              ta.value = link
+              document.body.appendChild(ta)
+              ta.select()
+              document.execCommand('copy')
+              ta.remove()
+              layer.msg('Đã copy đường link!', { icon: 1, time: 1500 })
+            })
+          }
+
+          if (settingBtn) {
+            const id = settingBtn.dataset.id
+            const base = settingBtn.dataset.base
+            if (!base || !id) return
+            layer.open({
+              type: 2,
+              title: 'Cài đặt hoàn trả',
+              area: ['650px', '500px'],
+              content: `${base}/agent/inviteDetail?id=${id}`
+            })
+          }
+
+          if (qrBtn) {
+            const id = qrBtn.dataset.id
+            const base = qrBtn.dataset.base
+            if (!base || !id) return
+            layer.open({
+              type: 2,
+              title: 'Mã QR',
+              area: ['350px', '385px'],
+              content: `${base}/agent/inviteQrcode?id=${id}`
+            })
+          }
+        })
     }
 
     // Init sync tool for sync page

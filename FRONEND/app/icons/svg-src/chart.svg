@@ -1,8 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill-rule="evenodd">
-  <!-- Bar 1: short (left) - outlined -->
-  <path d="M4 13.5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6.5zm1.5.5v5.5h1V14h-1z" fill="#000"/>
-  <!-- Bar 2: medium (center) - outlined -->
-  <path d="M10 8.5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V8.5zm1.5.5v11h1V9h-1z" fill="#000"/>
-  <!-- Bar 3: tall (right) - outlined -->
-  <path d="M16 3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v17a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V3zm1.5.5v16h1v-16h-1z" fill="#000"/>
+  <path d="M4 13.5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6.5zm1.2.2v6.1h1.6V13.7h-1.6z" fill="#000"/>
+  <path d="M10 8.5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V8.5zm1.2.2v11.1h1.6V8.7h-1.6z" fill="#000"/>
+  <path d="M16 3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v17a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V3zm1.2.2v16.6h1.6V3.2h-1.6z" fill="#000"/>
 </svg>

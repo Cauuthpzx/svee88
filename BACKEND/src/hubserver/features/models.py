@@ -15,3 +15,4 @@ from .sync.bet.model import BetOrder, BetLottery  # noqa: F401
 from .sync.finance.model import DepositWithdrawal  # noqa: F401
 from .sync.report.model import ReportLottery, ReportFunds, ReportThirdGame  # noqa: F401
 from .sync.config.model import LotterySeries, LotteryGame, BankList, InviteList  # noqa: F401
+from .sync.account.model import Agent  # noqa: F401

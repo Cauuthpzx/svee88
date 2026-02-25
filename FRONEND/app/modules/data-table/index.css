@@ -1,3 +1,18 @@
+/* ── Invite Action Buttons ── */
+.invite-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+.invite-actions .layui-btn {
+  margin: 0;
+  padding: 0 8px;
+  height: 24px;
+  line-height: 24px;
+  font-size: 12px;
+}
+
 /* ── Data Panel ── */
 .data-panel {
   padding: 0;
@@ -7,6 +22,9 @@
 }
 .data-panel-title .hub-icon {
   margin-right: 6px;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
 }
 
 /* ── Toolbar / Search ── */
@@ -18,6 +36,9 @@
 }
 .data-panel .layui-elem-field legend .hub-icon {
   margin-right: 4px;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
 }
 .data-panel .layui-elem-field {
   margin-left: 0;
@@ -27,7 +48,8 @@
     repeating-linear-gradient(90deg, transparent, transparent 1px, rgba(200, 190, 170, 0.05) 1px, rgba(200, 190, 170, 0.05) 3px),
     repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(180, 170, 150, 0.03) 10px, rgba(180, 170, 150, 0.03) 12px),
     linear-gradient(180deg, #fcfbf9 0%, #f9f8f5 50%, #f7f6f2 100%);
-  border-color: #e6e2da;
+  border: none;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04);
 }
 .data-toolbar .layui-elem-field {
   margin-bottom: 0;
@@ -60,7 +82,7 @@
     repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(180, 170, 150, 0.03) 10px, rgba(180, 170, 150, 0.03) 12px),
     linear-gradient(180deg, #fcfbf9 0%, #f9f8f5 50%, #f7f6f2 100%);
   border: none;
-  border-bottom: 1px solid #e6e2da;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.06);
 }
 .data-panel .layui-table-header {
   border: none;
@@ -80,7 +102,8 @@
   border-right: none;
 }
 .data-panel .layui-table-view {
-  border: 1px solid #e6e6e6;
+  border: none;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.05);
 }
 .data-panel .layui-table td,
 .data-panel .layui-table th {
@@ -204,7 +227,8 @@
 .sync-overall {
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px dashed #e6e6e6;
+  border-top: none;
+  box-shadow: 0 -1px 0 rgba(0,0,0,0.06);
 }
 .sync-overall-info {
   display: flex;
@@ -241,13 +265,14 @@
 }
 .sync-card {
   background: #fafafa;
-  border: 1px solid #e6e6e6;
+  border: none;
   border-radius: 6px;
   padding: 12px;
-  transition: border-color 0.3s, background 0.3s, box-shadow 0.3s;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+  transition: background 0.3s, box-shadow 0.3s;
 }
 .sync-card:hover {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.1);
 }
 .sync-card-header {
   display: flex;
@@ -307,28 +332,28 @@
   background: #16baaa;
 }
 
-/* Card states */
-.sync-card-syncing { border-color: #1e9fff; }
+/* Card states — colored shadow glow */
+.sync-card-syncing { box-shadow: 0 0 0 1px rgba(30,159,255,0.3), 0 1px 6px rgba(30,159,255,0.12); }
 .sync-card-syncing .sync-progress-bar { background: #1e9fff; }
 .sync-card-syncing .sync-card-header .hub-icon { color: #1e9fff; }
 
-.sync-card-uploading { border-color: #1e9fff; background: #f8fcff; }
+.sync-card-uploading { box-shadow: 0 0 0 1px rgba(30,159,255,0.3), 0 1px 6px rgba(30,159,255,0.12); background: #f8fcff; }
 .sync-card-uploading .sync-progress-bar { background: #1e9fff; }
 .sync-card-uploading .sync-card-header .hub-icon { color: #1e9fff; }
 
-.sync-card-verifying { border-color: #ffb800; background: #fffef8; }
+.sync-card-verifying { box-shadow: 0 0 0 1px rgba(255,184,0,0.3), 0 1px 6px rgba(255,184,0,0.12); background: #fffef8; }
 .sync-card-verifying .sync-progress-bar { background: #ffb800; }
 .sync-card-verifying .sync-card-header .hub-icon { color: #ffb800; }
 
-.sync-card-done { border-color: #16baaa; background: #f4fffe; }
+.sync-card-done { box-shadow: 0 0 0 1px rgba(22,186,170,0.3), 0 1px 6px rgba(22,186,170,0.12); background: #f4fffe; }
 .sync-card-done .sync-progress-bar { background: #16baaa; }
 .sync-card-done .sync-card-header .hub-icon { color: #16baaa; }
 
-.sync-card-error { border-color: #ff5722; background: #fffaf8; }
+.sync-card-error { box-shadow: 0 0 0 1px rgba(255,87,34,0.3), 0 1px 6px rgba(255,87,34,0.12); background: #fffaf8; }
 .sync-card-error .sync-progress-bar { background: #ff5722; }
 .sync-card-error .sync-card-header .hub-icon { color: #ff5722; }
 
-.sync-card-skipped { border-color: #ffb800; background: #fffef8; }
+.sync-card-skipped { box-shadow: 0 0 0 1px rgba(255,184,0,0.3), 0 1px 6px rgba(255,184,0,0.12); background: #fffef8; }
 .sync-card-skipped .sync-progress-bar { background: #ffb800; }
 .sync-card-skipped .sync-card-header .hub-icon { color: #ffb800; }
 
@@ -359,7 +384,8 @@
   display: flex;
   align-items: flex-start;
   gap: 6px;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: none;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.04);
 }
 .sync-log-item:hover {
   background: #fafafa;
@@ -396,7 +422,7 @@
 
 .dark .data-panel .layui-table-tool {
   background: var(--lay-color-bg-2);
-  border-bottom-color: var(--lay-color-border-1);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.06);
 }
 .dark .data-panel .layui-table-header th,
 .dark .data-panel .layui-table thead th {
@@ -405,10 +431,10 @@
 }
 .dark .data-panel .layui-elem-field {
   background: var(--lay-color-bg-2);
-  border-color: var(--lay-color-border-1);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 1px 3px rgba(0,0,0,0.15);
 }
 .dark .data-panel .layui-table-view {
-  border-color: var(--lay-color-border-1);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 1px 4px rgba(0,0,0,0.2);
 }
 .dark .data-panel .layui-table td,
 .dark .data-panel .layui-table th {
@@ -424,10 +450,10 @@
 /* Dark — Sync tool */
 .dark .sync-card {
   background: var(--lay-color-bg-2);
-  border-color: var(--lay-color-border-1);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 1px 3px rgba(0,0,0,0.15);
 }
 .dark .sync-card:hover {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 2px 8px rgba(0,0,0,0.3);
 }
 .dark .sync-card-progress {
   background: var(--lay-color-bg-3, #333);
@@ -445,13 +471,13 @@
   color: var(--lay-color-text-3);
 }
 .dark .sync-overall {
-  border-top-color: var(--lay-color-border-1);
+  box-shadow: 0 -1px 0 rgba(255,255,255,0.06);
 }
 .dark .sync-overall-progress {
   background: var(--lay-color-bg-3, #333);
 }
 .dark .sync-log-item {
-  border-bottom-color: var(--lay-color-border-1);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.04);
 }
 .dark .sync-log-item:hover {
   background: var(--lay-color-bg-2);
@@ -463,13 +489,13 @@
   color: var(--lay-color-text-3);
 }
 
-/* Dark card states */
-.dark .sync-card-syncing { border-color: #1e9fff; background: rgba(30,159,255,0.08); }
-.dark .sync-card-uploading { border-color: #1e9fff; background: rgba(30,159,255,0.06); }
-.dark .sync-card-verifying { border-color: #ffb800; background: rgba(255,184,0,0.06); }
-.dark .sync-card-done { border-color: #16baaa; background: rgba(22,186,170,0.08); }
-.dark .sync-card-error { border-color: #ff5722; background: rgba(255,87,34,0.08); }
-.dark .sync-card-skipped { border-color: #ffb800; background: rgba(255,184,0,0.06); }
+/* Dark card states — colored shadow glow */
+.dark .sync-card-syncing { box-shadow: 0 0 0 1px rgba(30,159,255,0.4), 0 1px 8px rgba(30,159,255,0.2); background: rgba(30,159,255,0.08); }
+.dark .sync-card-uploading { box-shadow: 0 0 0 1px rgba(30,159,255,0.4), 0 1px 8px rgba(30,159,255,0.2); background: rgba(30,159,255,0.06); }
+.dark .sync-card-verifying { box-shadow: 0 0 0 1px rgba(255,184,0,0.4), 0 1px 8px rgba(255,184,0,0.2); background: rgba(255,184,0,0.06); }
+.dark .sync-card-done { box-shadow: 0 0 0 1px rgba(22,186,170,0.4), 0 1px 8px rgba(22,186,170,0.2); background: rgba(22,186,170,0.08); }
+.dark .sync-card-error { box-shadow: 0 0 0 1px rgba(255,87,34,0.4), 0 1px 8px rgba(255,87,34,0.2); background: rgba(255,87,34,0.08); }
+.dark .sync-card-skipped { box-shadow: 0 0 0 1px rgba(255,184,0,0.4), 0 1px 8px rgba(255,184,0,0.2); background: rgba(255,184,0,0.06); }
 
 .dark .badge-syncing, .dark .badge-uploading {
   background: rgba(30,159,255,0.15);

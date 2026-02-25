@@ -1,7 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill-rule="evenodd">
-  <!-- Outer rounded rectangle frame (progress bar track) -->
   <path d="M5 7 Q2 7 2 10 L2 14 Q2 17 5 17 L19 17 Q22 17 22 14 L22 10 Q22 7 19 7 Z
-            M5 8.5 L19 8.5 Q20.5 8.5 20.5 10 L20.5 14 Q20.5 15.5 19 15.5 L5 15.5 Q3.5 15.5 3.5 14 L3.5 10 Q3.5 8.5 5 8.5 Z" fill="#000"/>
-  <!-- Inner filled portion (~60% progress) -->
+            M5 8.2 L19 8.2 Q20.8 8.2 20.8 10 L20.8 14 Q20.8 15.8 19 15.8 L5 15.8 Q3.2 15.8 3.2 14 L3.2 10 Q3.2 8.2 5 8.2 Z" fill="#000"/>
   <rect x="4" y="9.5" width="11" height="5" rx="1.5" fill="#000"/>
 </svg>

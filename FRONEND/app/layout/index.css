@@ -6,7 +6,7 @@
   padding: 15px;
   background: #fff;
   border-radius: 2px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04);
 }
 
 /* ── Header ── */
@@ -247,10 +247,15 @@
   transform: rotate(90deg);
 }
 
+/* ── Header toolbar icons ── */
+.layui-layout-right .hub-icon {
+  display: inline-block;
+  font-size: 22px;
+  vertical-align: middle;
+}
+
 /* ── Theme toggle ── */
 #themeToggle .hub-icon {
-  display: inline-block;
-  font-size: 20px;
   animation: none;
 }
 .layui-header .layui-nav #themeToggle:hover .hub-icon {
@@ -286,7 +291,7 @@
 }
 .dark .page {
   background: var(--lay-color-bg-2);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 
 /* ── 404 Not Found ── */

@@ -13,51 +13,43 @@ const CONTENT_ID = 'main-content'
 const MENU_ITEMS = [
   { hash: ROUTES.DASHBOARD, icon: 'hub-icon-home', label: 'Trang chủ' },
   {
-    icon: 'hub-icon-user', label: 'Sub-member Management',
+    icon: 'hub-icon-user', label: 'Quản lý hạ cấp',
     children: [
-      { hash: ROUTES.USERS, label: 'Member List' },
-      { hash: ROUTES.INVITE_LIST, label: 'Invite List' }
+      { hash: ROUTES.USERS, label: 'Danh sách hội viên' },
+      { hash: ROUTES.INVITE_LIST, label: 'Mã giới thiệu' }
     ]
   },
   {
-    icon: 'hub-icon-document', label: 'Reports',
+    icon: 'hub-icon-document', label: 'Báo cáo',
     children: [
-      { hash: ROUTES.REPORT_LOTTERY, label: 'Lottery Report' },
-      { hash: ROUTES.REPORT_FUNDS, label: 'Transaction Statement' },
-      { hash: ROUTES.REPORT_PROVIDER, label: 'Provider Report' }
+      { hash: ROUTES.REPORT_LOTTERY, label: 'Báo cáo xổ số' },
+      { hash: ROUTES.REPORT_FUNDS, label: 'Báo cáo tài chính' },
+      { hash: ROUTES.REPORT_PROVIDER, label: 'Báo cáo nhà cung cấp' }
     ]
   },
   {
-    icon: 'hub-icon-money', label: 'Commission Withdraw',
+    icon: 'hub-icon-money', label: 'Rút hoa hồng',
     children: [
-      { hash: ROUTES.BANK_LIST, label: 'Bank List' },
-      { hash: ROUTES.DEPOSIT_LIST, label: 'Deposit List' },
-      { hash: ROUTES.WITHDRAWAL_HISTORY, label: 'Withdrawal History' }
+      { hash: ROUTES.DEPOSIT_LIST, label: 'Nạp / Rút tiền' },
+      { hash: ROUTES.WITHDRAWAL_HISTORY, label: 'Lịch sử rút tiền' }
     ]
   },
   {
-    icon: 'hub-icon-monitor', label: 'Bet Management',
+    icon: 'hub-icon-monitor', label: 'Quản lý cược',
     children: [
-      { hash: ROUTES.BET_LIST, label: 'Bet List' },
-      { hash: ROUTES.BET_THIRD_PARTY, label: '3rd Party Bets' }
+      { hash: ROUTES.BET_LIST, label: 'Cược xổ số' },
+      { hash: ROUTES.BET_THIRD_PARTY, label: 'Cược bên thứ 3' }
     ]
   },
   {
-    icon: 'hub-icon-survey', label: 'Customer Info',
-    children: [
-      { hash: ROUTES.CHANGE_LOGIN_PW, label: 'Change Login PW' },
-      { hash: ROUTES.CHANGE_TRADE_PW, label: 'Change Trade PW' }
-    ]
+    icon: 'hub-icon-menu', label: 'Quản lý hoàn trả',
+    children: [{ hash: ROUTES.REBATE_LIST, label: 'Tỷ lệ hoàn trả' }]
   },
   {
-    icon: 'hub-icon-menu', label: 'Rebate Management',
-    children: [{ hash: ROUTES.REBATE_LIST, label: 'Rebate List' }]
-  },
-  {
-    icon: 'hub-icon-settings', label: 'Settings',
+    icon: 'hub-icon-settings', label: 'Cài đặt',
     children: [
-      { hash: ROUTES.SETTINGS_SYSTEM, label: 'System' },
-      { hash: ROUTES.SETTINGS_SYNC, label: 'Sync & Account' }
+      { hash: ROUTES.SETTINGS_SYSTEM, label: 'Hệ thống' },
+      { hash: ROUTES.SETTINGS_SYNC, label: 'Đồng bộ & Tài khoản' }
     ]
   }
 ]

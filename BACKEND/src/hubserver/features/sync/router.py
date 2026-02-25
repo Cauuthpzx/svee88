@@ -103,8 +103,12 @@ from .member.router import router as member_router
 from .bet.router import router as bet_router
 from .finance.router import router as finance_router
 from .report.router import router as report_router
+from .account.router import router as account_router
+from .engine.router import router as engine_router
 
 router.include_router(member_router)
 router.include_router(bet_router)
 router.include_router(finance_router)
 router.include_router(report_router)
+router.include_router(account_router)
+router.include_router(engine_router)
