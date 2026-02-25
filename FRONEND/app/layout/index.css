@@ -10,10 +10,15 @@
 }
 
 /* ── Header ── */
+.layui-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 .header-logo {
-  max-width: 100%;
-  height: auto;
-  margin-bottom: -6px;
+  width: 100%;
+  max-height: 32px;
 }
 .logo-outline {
   stroke: rgba(0, 0, 0, .25);
@@ -33,16 +38,18 @@
 #header-clock {
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 1px;
   pointer-events: none;
   white-space: nowrap;
   font-family: 'Arial Black', 'Impact', sans-serif;
 }
 #clock-display,
 #clock-date {
-  font-size: 9px;
+  font-size: 7px;
   font-weight: 900;
-  letter-spacing: 1.5px;
+  letter-spacing: 1px;
   line-height: 1;
   color: #333;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, .2);
@@ -89,16 +96,16 @@
   background: var(--lay-color-fill-2, rgba(255, 255, 255, .08));
   color: var(--lay-color-text-1, #fff);
 }
-.hub-sidebar a .layui-icon {
+.hub-sidebar a .hub-icon {
   display: inline-block;
   width: 50px;
   text-align: center;
-  font-size: 17px;
+  font-size: 20px;
   vertical-align: middle;
   color: var(--lay-color-text-3, #c2c2c2);
   transition: color 0.15s;
 }
-.hub-sidebar a:hover .layui-icon {
+.hub-sidebar a:hover .hub-icon {
   color: var(--lay-color-text-1, #fff);
 }
 .hub-sidebar a span {
@@ -118,18 +125,18 @@
   white-space: nowrap;
   color: var(--lay-color-text-1, #fff);
 }
-.hub-sidebar .layui-nav-item > a .layui-icon {
+.hub-sidebar .layui-nav-item > a .hub-icon {
   display: inline-block;
   width: 50px;
   text-align: center;
-  font-size: 17px;
+  font-size: 20px;
   vertical-align: middle;
 }
 .hub-sidebar:hover .layui-nav-item > a {
   padding: 0 30px;
 }
-.hub-sidebar:hover .layui-nav-item > a .layui-icon {
-  width: auto;
+.hub-sidebar:hover .layui-nav-item > a .hub-icon {
+  width: 20px;
   margin-right: 5px;
 }
 
@@ -241,12 +248,12 @@
 }
 
 /* ── Theme toggle ── */
-#themeToggle .layui-icon {
+#themeToggle .hub-icon {
   display: inline-block;
   font-size: 20px;
   animation: none;
 }
-.layui-header .layui-nav #themeToggle:hover .layui-icon {
+.layui-header .layui-nav #themeToggle:hover .hub-icon {
   animation: toggle-wobble 0.6s ease;
 }
 @keyframes toggle-wobble {

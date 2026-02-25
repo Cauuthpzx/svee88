@@ -4,22 +4,23 @@ import { initTheme, toggleTheme } from '../utils/theme.js'
 import { preloadRoute } from '../router/index.js'
 import { store } from '../store/index.js'
 import { ROUTES, MSG } from '../constants/index.js'
+import '../icons/index.css'
 import './index.css'
 
 const LAYOUT_ID = 'admin-layout'
 const CONTENT_ID = 'main-content'
 
 const MENU_ITEMS = [
-  { hash: ROUTES.DASHBOARD, icon: 'layui-icon-home', label: 'Trang chủ' },
+  { hash: ROUTES.DASHBOARD, icon: 'hub-icon-home', label: 'Trang chủ' },
   {
-    icon: 'layui-icon-username', label: 'Sub-member Management',
+    icon: 'hub-icon-user', label: 'Sub-member Management',
     children: [
       { hash: ROUTES.USERS, label: 'Member List' },
       { hash: ROUTES.INVITE_LIST, label: 'Invite List' }
     ]
   },
   {
-    icon: 'layui-icon-tabs', label: 'Reports',
+    icon: 'hub-icon-document', label: 'Reports',
     children: [
       { hash: ROUTES.REPORT_LOTTERY, label: 'Lottery Report' },
       { hash: ROUTES.REPORT_FUNDS, label: 'Transaction Statement' },
@@ -27,7 +28,7 @@ const MENU_ITEMS = [
     ]
   },
   {
-    icon: 'layui-icon-dollar', label: 'Commission Withdraw',
+    icon: 'hub-icon-money', label: 'Commission Withdraw',
     children: [
       { hash: ROUTES.BANK_LIST, label: 'Bank List' },
       { hash: ROUTES.DEPOSIT_LIST, label: 'Deposit List' },
@@ -35,25 +36,25 @@ const MENU_ITEMS = [
     ]
   },
   {
-    icon: 'layui-icon-chart-screen', label: 'Bet Management',
+    icon: 'hub-icon-monitor', label: 'Bet Management',
     children: [
       { hash: ROUTES.BET_LIST, label: 'Bet List' },
       { hash: ROUTES.BET_THIRD_PARTY, label: '3rd Party Bets' }
     ]
   },
   {
-    icon: 'layui-icon-survey', label: 'Customer Info',
+    icon: 'hub-icon-survey', label: 'Customer Info',
     children: [
       { hash: ROUTES.CHANGE_LOGIN_PW, label: 'Change Login PW' },
       { hash: ROUTES.CHANGE_TRADE_PW, label: 'Change Trade PW' }
     ]
   },
   {
-    icon: 'layui-icon-list', label: 'Rebate Management',
+    icon: 'hub-icon-menu', label: 'Rebate Management',
     children: [{ hash: ROUTES.REBATE_LIST, label: 'Rebate List' }]
   },
   {
-    icon: 'layui-icon-set', label: 'Settings',
+    icon: 'hub-icon-settings', label: 'Settings',
     children: [
       { hash: ROUTES.SETTINGS_SYSTEM, label: 'System' },
       { hash: ROUTES.SETTINGS_SYNC, label: 'Sync & Account' }
@@ -71,7 +72,7 @@ const renderMenuItem = (item) => {
     return `
       <li class="layui-nav-item">
         <a href="javascript:;">
-          <i class="layui-icon ${item.icon}"></i> <span>${item.label}</span>
+          <i class="hub-icon ${item.icon}"></i> <span>${item.label}</span>
         </a>
         <dl class="layui-nav-child">${childHtml}</dl>
       </li>`
@@ -79,7 +80,7 @@ const renderMenuItem = (item) => {
   return `
     <li class="layui-nav-item">
       <a href="${item.hash}" data-hash="${item.hash}">
-        <i class="layui-icon ${item.icon}"></i> <span>${item.label}</span>
+        <i class="hub-icon ${item.icon}"></i> <span>${item.label}</span>
       </a>
     </li>`
 }
@@ -96,12 +97,29 @@ const template = () => `
               <stop offset="100%" stop-color="#ffcc00"/>
             </linearGradient>
           </defs>
-          <text class="logo-outline" x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
-            font-family="'Arial Black','Impact',sans-serif" font-size="23" font-weight="900"
-            letter-spacing="1" fill="none" stroke-width="3" stroke-linejoin="round">HUB SYSTEM</text>
-          <text class="logo-fill" x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
-            font-family="'Arial Black','Impact',sans-serif" font-size="23" font-weight="900"
-            letter-spacing="1" fill="url(#logoGrad)" stroke-width="0.4"
+          <g stroke="url(#logoGrad)" stroke-width="1.6" stroke-linecap="round" fill="none">
+            <line x1="18" y1="21" x2="30" y2="21"/><line x1="18" y1="21" x2="24" y2="10.6"/>
+            <line x1="18" y1="21" x2="12" y2="10.6"/><line x1="18" y1="21" x2="6" y2="21"/>
+            <line x1="18" y1="21" x2="12" y2="31.4"/><line x1="18" y1="21" x2="24" y2="31.4"/>
+          </g>
+          <g stroke="url(#logoGrad)" stroke-width="0.6" stroke-linecap="round" fill="none" opacity="0.35">
+            <line x1="30" y1="21" x2="24" y2="10.6"/><line x1="24" y1="10.6" x2="12" y2="10.6"/>
+            <line x1="12" y1="10.6" x2="6" y2="21"/><line x1="6" y1="21" x2="12" y2="31.4"/>
+            <line x1="12" y1="31.4" x2="24" y2="31.4"/><line x1="24" y1="31.4" x2="30" y2="21"/>
+          </g>
+          <g fill="url(#logoGrad)">
+            <circle cx="30" cy="21" r="2.4"/><circle cx="24" cy="10.6" r="2.4"/>
+            <circle cx="12" cy="10.6" r="2.4"/><circle cx="6" cy="21" r="2.4"/>
+            <circle cx="12" cy="31.4" r="2.4"/><circle cx="24" cy="31.4" r="2.4"/>
+          </g>
+          <circle cx="18" cy="21" r="4.2" fill="url(#logoGrad)"/>
+          <circle cx="18" cy="21" r="1.6" fill="#fff" opacity="0.92"/>
+          <text class="logo-outline" x="118" y="21" text-anchor="middle" dominant-baseline="middle"
+            font-family="'Arial Black','Impact',sans-serif" font-size="20" font-weight="900"
+            letter-spacing="1" fill="none" stroke-width="2.5" stroke-linejoin="round">HUB SYSTEM</text>
+          <text class="logo-fill" x="118" y="21" text-anchor="middle" dominant-baseline="middle"
+            font-family="'Arial Black','Impact',sans-serif" font-size="20" font-weight="900"
+            letter-spacing="1" fill="url(#logoGrad)" stroke-width="0.3"
             paint-order="stroke fill">HUB SYSTEM</text>
         </svg>
         <div id="header-clock" role="timer" aria-label="Current time">
@@ -112,22 +130,22 @@ const template = () => `
       <ul class="layui-nav layui-layout-right" role="toolbar">
         <li class="layui-nav-item">
           <a href="javascript:;" id="i18nToggle" lay-tips="Ngôn ngữ" lay-direction="3" aria-label="Ngôn ngữ" role="button">
-            <i class="layui-icon layui-icon-website"></i>
+            <i class="hub-icon hub-icon-globe"></i>
           </a>
         </li>
         <li class="layui-nav-item">
           <a href="javascript:;" id="themeToggle" lay-tips="Giao diện sáng/tối" lay-direction="3" aria-label="Chuyển đổi giao diện sáng/tối" role="button">
-            <i class="layui-icon layui-icon-moon" id="themeIcon"></i>
+            <i class="hub-icon hub-icon-moon" id="themeIcon"></i>
           </a>
         </li>
         <li class="layui-nav-item">
           <a href="javascript:;" id="notifyBtn" lay-tips="Thông báo" lay-direction="3" aria-label="Thông báo" role="button">
-            <i class="layui-icon layui-icon-notice"></i>
+            <i class="hub-icon hub-icon-bell"></i>
           </a>
         </li>
         <li class="layui-nav-item">
           <a href="javascript:;">
-            <img src="/icons/avatar.png" class="layui-nav-img" alt="Avatar">
+            <img src="/icons/avatar.svg" class="layui-nav-img" alt="Avatar">
             <span id="headerUserName"></span>
           </a>
           <dl class="layui-nav-child">

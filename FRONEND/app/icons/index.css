@@ -1,0 +1,89 @@
+/* ── Hub Icon System (SVG via mask-image, dual-tone) ── */
+.hub-icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background-color: currentColor;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  vertical-align: middle;
+}
+
+/* ── Navigation / Layout ── */
+.hub-icon-home { -webkit-mask-image: url('/icons/home.svg'); mask-image: url('/icons/home.svg'); }
+.hub-icon-settings { -webkit-mask-image: url('/icons/settings.svg'); mask-image: url('/icons/settings.svg'); }
+.hub-icon-menu { -webkit-mask-image: url('/icons/menu.svg'); mask-image: url('/icons/menu.svg'); }
+.hub-icon-layout { -webkit-mask-image: url('/icons/layout.svg'); mask-image: url('/icons/layout.svg'); }
+.hub-icon-globe { -webkit-mask-image: url('/icons/globe.svg'); mask-image: url('/icons/globe.svg'); }
+
+/* ── Theme ── */
+.hub-icon-moon { -webkit-mask-image: url('/icons/moon.svg'); mask-image: url('/icons/moon.svg'); }
+.hub-icon-sun { -webkit-mask-image: url('/icons/sun.svg'); mask-image: url('/icons/sun.svg'); }
+
+/* ── User / Auth ── */
+.hub-icon-user { -webkit-mask-image: url('/icons/user.svg'); mask-image: url('/icons/user.svg'); }
+.hub-icon-lock { -webkit-mask-image: url('/icons/lock.svg'); mask-image: url('/icons/lock.svg'); }
+.hub-icon-mail { -webkit-mask-image: url('/icons/mail.svg'); mask-image: url('/icons/mail.svg'); }
+.hub-icon-security { -webkit-mask-image: url('/icons/security.svg'); mask-image: url('/icons/security.svg'); }
+
+/* ── Actions ── */
+.hub-icon-plus { -webkit-mask-image: url('/icons/plus.svg'); mask-image: url('/icons/plus.svg'); }
+.hub-icon-search { -webkit-mask-image: url('/icons/search.svg'); mask-image: url('/icons/search.svg'); }
+.hub-icon-refresh { -webkit-mask-image: url('/icons/refresh.svg'); mask-image: url('/icons/refresh.svg'); }
+.hub-icon-download { -webkit-mask-image: url('/icons/download.svg'); mask-image: url('/icons/download.svg'); }
+.hub-icon-sync { -webkit-mask-image: url('/icons/sync.svg'); mask-image: url('/icons/sync.svg'); }
+.hub-icon-flag { -webkit-mask-image: url('/icons/flag.svg'); mask-image: url('/icons/flag.svg'); }
+.hub-icon-link { -webkit-mask-image: url('/icons/link.svg'); mask-image: url('/icons/link.svg'); }
+
+/* ── Content ── */
+.hub-icon-bell { -webkit-mask-image: url('/icons/bell.svg'); mask-image: url('/icons/bell.svg'); }
+.hub-icon-document { -webkit-mask-image: url('/icons/document.svg'); mask-image: url('/icons/document.svg'); }
+.hub-icon-money { -webkit-mask-image: url('/icons/money.svg'); mask-image: url('/icons/money.svg'); }
+.hub-icon-monitor { -webkit-mask-image: url('/icons/monitor.svg'); mask-image: url('/icons/monitor.svg'); }
+.hub-icon-survey { -webkit-mask-image: url('/icons/survey.svg'); mask-image: url('/icons/survey.svg'); }
+.hub-icon-chart { -webkit-mask-image: url('/icons/chart.svg'); mask-image: url('/icons/chart.svg'); }
+
+/* ── Sync Tool ── */
+.hub-icon-speed { -webkit-mask-image: url('/icons/speed.svg'); mask-image: url('/icons/speed.svg'); }
+.hub-icon-speedometer { -webkit-mask-image: url('/icons/speedometer.svg'); mask-image: url('/icons/speedometer.svg'); }
+.hub-icon-play { -webkit-mask-image: url('/icons/play.svg'); mask-image: url('/icons/play.svg'); }
+.hub-icon-pause { -webkit-mask-image: url('/icons/pause.svg'); mask-image: url('/icons/pause.svg'); }
+.hub-icon-stop { -webkit-mask-image: url('/icons/stop.svg'); mask-image: url('/icons/stop.svg'); }
+.hub-icon-checkmark { -webkit-mask-image: url('/icons/checkmark.svg'); mask-image: url('/icons/checkmark.svg'); }
+.hub-icon-error { -webkit-mask-image: url('/icons/error.svg'); mask-image: url('/icons/error.svg'); }
+.hub-icon-warning { -webkit-mask-image: url('/icons/warning.svg'); mask-image: url('/icons/warning.svg'); }
+.hub-icon-clock { -webkit-mask-image: url('/icons/clock.svg'); mask-image: url('/icons/clock.svg'); }
+.hub-icon-flash { -webkit-mask-image: url('/icons/flash.svg'); mask-image: url('/icons/flash.svg'); }
+.hub-icon-rocket { -webkit-mask-image: url('/icons/rocket.svg'); mask-image: url('/icons/rocket.svg'); }
+.hub-icon-database { -webkit-mask-image: url('/icons/database.svg'); mask-image: url('/icons/database.svg'); }
+.hub-icon-connection { -webkit-mask-image: url('/icons/connection-sync.svg'); mask-image: url('/icons/connection-sync.svg'); }
+.hub-icon-activity { -webkit-mask-image: url('/icons/activity.svg'); mask-image: url('/icons/activity.svg'); }
+.hub-icon-progress { -webkit-mask-image: url('/icons/progress.svg'); mask-image: url('/icons/progress.svg'); }
+.hub-icon-checklist { -webkit-mask-image: url('/icons/checklist.svg'); mask-image: url('/icons/checklist.svg'); }
+.hub-icon-gear { -webkit-mask-image: url('/icons/gear.svg'); mask-image: url('/icons/gear.svg'); }
+.hub-icon-cancel { -webkit-mask-image: url('/icons/cancel.svg'); mask-image: url('/icons/cancel.svg'); }
+.hub-icon-ok { -webkit-mask-image: url('/icons/ok.svg'); mask-image: url('/icons/ok.svg'); }
+.hub-icon-lightning { -webkit-mask-image: url('/icons/lightning.svg'); mask-image: url('/icons/lightning.svg'); }
+.hub-icon-data-config { -webkit-mask-image: url('/icons/data-config.svg'); mask-image: url('/icons/data-config.svg'); }
+.hub-icon-batch { -webkit-mask-image: url('/icons/batch.svg'); mask-image: url('/icons/batch.svg'); }
+.hub-icon-filter { -webkit-mask-image: url('/icons/filter.svg'); mask-image: url('/icons/filter.svg'); }
+.hub-icon-list { -webkit-mask-image: url('/icons/list.svg'); mask-image: url('/icons/list.svg'); }
+.hub-icon-cloud { -webkit-mask-image: url('/icons/cloud.svg'); mask-image: url('/icons/cloud.svg'); }
+.hub-icon-graph { -webkit-mask-image: url('/icons/graph.svg'); mask-image: url('/icons/graph.svg'); }
+.hub-icon-update { -webkit-mask-image: url('/icons/update.svg'); mask-image: url('/icons/update.svg'); }
+.hub-icon-tools { -webkit-mask-image: url('/icons/tools.svg'); mask-image: url('/icons/tools.svg'); }
+.hub-icon-login { -webkit-mask-image: url('/icons/login.svg'); mask-image: url('/icons/login.svg'); }
+.hub-icon-key { -webkit-mask-image: url('/icons/key.svg'); mask-image: url('/icons/key.svg'); }
+
+/* ── Spin animation for sync icons ── */
+@keyframes hub-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.hub-icon-spin {
+  animation: hub-spin 1s linear infinite;
+}
