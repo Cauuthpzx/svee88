@@ -11,7 +11,7 @@ import { store } from '../store/index.js'
 import { ROUTES, MSG } from '../constants/index.js'
 import { t, onLangChange, setLang, getLang, LANG_OPTIONS } from '../i18n/index.js'
 import { startClock } from './clock.js'
-import { getMenuItems, renderMenuItem } from './menu.js'
+import { getMenuItems, renderMenuItem, getHeaderNavItems, renderHeaderNavItem } from './menu.js'
 import '../icons/index.css'
 import './index.css'
 
@@ -60,6 +60,9 @@ const template = () => `
           <span id="clock-date"></span>
         </div>
       </div>
+      <ul class="layui-nav" id="headerNav" lay-filter="headerNav" role="navigation" aria-label="${t('header.tools')}">
+        ${getHeaderNavItems().map(renderHeaderNavItem).join('')}
+      </ul>
       <ul class="layui-nav layui-layout-right" role="toolbar">
         <li class="layui-nav-item" id="i18nDropdown">
           <a href="javascript:;" aria-label="${t('header.language')}" role="button">
@@ -231,6 +234,13 @@ const updateLayoutTexts = () => {
   }
   const logoutBtn = document.getElementById('logoutBtn')
   if (logoutBtn) logoutBtn.textContent = t('header.logout')
+  // Re-render header nav items
+  const headerNav = document.getElementById('headerNav')
+  if (headerNav) {
+    headerNav.innerHTML = getHeaderNavItems().map(renderHeaderNavItem).join('')
+    layui.use('element', function (element) { element.render('nav', 'headerNav') })
+    headerNav.setAttribute('aria-label', t('header.tools'))
+  }
 }
 
 let unsubLang = null
