@@ -2,11 +2,10 @@ import datetime as dt
 from datetime import datetime
 from decimal import Decimal
 
-from ....core.config import APP_TZ
-
-from sqlalchemy import Date, DateTime, Index, Integer, Numeric, SmallInteger, String, UniqueConstraint
+from sqlalchemy import Date, DateTime, ForeignKey, Index, Integer, Numeric, SmallInteger, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
+from ....core.config import APP_TZ
 from ....core.db.database import Base
 
 
@@ -24,7 +23,7 @@ class ReportLottery(Base):
     lottery_id: Mapped[int] = mapped_column(SmallInteger, primary_key=True)
     username: Mapped[str] = mapped_column(String(50))
     lottery_name: Mapped[str] = mapped_column(String(100))
-    agent_id: Mapped[int] = mapped_column(SmallInteger, primary_key=True, default=1)
+    agent_id: Mapped[int] = mapped_column(SmallInteger, ForeignKey("agents.id"), primary_key=True, default=1)
     bet_count: Mapped[int] = mapped_column(Integer, default=0)
     bet_amount: Mapped[Decimal] = mapped_column(Numeric(15, 4), default=Decimal("0"))
     valid_amount: Mapped[Decimal] = mapped_column(Numeric(15, 4), default=Decimal("0"))
@@ -50,7 +49,7 @@ class ReportFunds(Base):
     uid: Mapped[int] = mapped_column(Integer)
     report_date: Mapped[dt.date] = mapped_column(Date)
     username: Mapped[str] = mapped_column(String(50))
-    agent_id: Mapped[int] = mapped_column(SmallInteger, primary_key=True, default=1)
+    agent_id: Mapped[int] = mapped_column(SmallInteger, ForeignKey("agents.id"), primary_key=True, default=1)
     user_parent: Mapped[int | None] = mapped_column(Integer, default=None)
     deposit_count: Mapped[int] = mapped_column(Integer, default=0)
     deposit_amount: Mapped[Decimal] = mapped_column(Numeric(15, 4), default=Decimal("0"))
@@ -80,7 +79,7 @@ class ReportThirdGame(Base):
     platform_id: Mapped[int] = mapped_column(Integer, primary_key=True)
     username: Mapped[str] = mapped_column(String(50))
     platform_id_name: Mapped[str] = mapped_column(String(50))
-    agent_id: Mapped[int] = mapped_column(SmallInteger, primary_key=True, default=1)
+    agent_id: Mapped[int] = mapped_column(SmallInteger, ForeignKey("agents.id"), primary_key=True, default=1)
     t_bet_amount: Mapped[Decimal] = mapped_column(Numeric(15, 4), default=Decimal("0"))
     t_bet_times: Mapped[int] = mapped_column(Integer, default=0)
     t_turnover: Mapped[Decimal] = mapped_column(Numeric(15, 4), default=Decimal("0"))

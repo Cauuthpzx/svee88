@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends, Query, Request
 from fastcrud import PaginatedListResponse, compute_offset, paginated_response
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ...core.deps import get_current_superuser
 from ...core.db.database import async_get_db
+from ...core.deps import get_current_superuser
 from ...core.exceptions.http_exceptions import DuplicateValueException, NotFoundException
 from .crud import crud_rate_limits, crud_tiers
 from .schema import (
@@ -44,7 +44,10 @@ async def write_tier(
 
 @router.get("/tiers", response_model=PaginatedListResponse[TierRead])
 async def read_tiers(
-    request: Request, db: Annotated[AsyncSession, Depends(async_get_db)], page: int = Query(default=1, ge=1), items_per_page: int = Query(default=10, ge=1, le=100)
+    request: Request,
+    db: Annotated[AsyncSession, Depends(async_get_db)],
+    page: int = Query(default=1, ge=1),
+    items_per_page: int = Query(default=10, ge=1, le=100),
 ) -> dict:
     tiers_data = await crud_tiers.get_multi(db=db, offset=compute_offset(page, items_per_page), limit=items_per_page)
 
@@ -70,7 +73,7 @@ async def patch_tier(
         raise NotFoundException("Tier not found.")
 
     await crud_tiers.update(db=db, object=values, name=name)
-    return {"message": "Tier updated."}
+    return {"code": 0, "message": "Tier updated.", "data": None, "errors": []}
 
 
 @router.delete("/tier/{name}", dependencies=[Depends(get_current_superuser)])
@@ -80,7 +83,7 @@ async def erase_tier(request: Request, name: str, db: Annotated[AsyncSession, De
         raise NotFoundException("Tier not found.")
 
     await crud_tiers.delete(db=db, name=name)
-    return {"message": "Tier deleted."}
+    return {"code": 0, "message": "Tier deleted.", "data": None, "errors": []}
 
 
 # --- Rate limit endpoints ---
@@ -166,7 +169,7 @@ async def patch_rate_limit(
         raise NotFoundException("Rate limit not found.")
 
     await crud_rate_limits.update(db=db, object=values, id=id)
-    return {"message": "Rate limit updated."}
+    return {"code": 0, "message": "Rate limit updated.", "data": None, "errors": []}
 
 
 @router.delete("/tier/{tier_name}/rate_limit/{id}", dependencies=[Depends(get_current_superuser)])
@@ -182,4 +185,4 @@ async def erase_rate_limit(
         raise NotFoundException("Rate limit not found.")
 
     await crud_rate_limits.delete(db=db, id=id)
-    return {"message": "Rate limit deleted."}
+    return {"code": 0, "message": "Rate limit deleted.", "data": None, "errors": []}

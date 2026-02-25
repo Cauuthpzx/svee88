@@ -5,7 +5,6 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from ...core.schemas import TimestampSchema
 
-
 # --- Tier schemas ---
 
 class TierBase(BaseModel):

@@ -3,7 +3,6 @@ from decimal import Decimal
 
 from pydantic import BaseModel
 
-
 # --- ReportLottery ---
 
 class ReportLotteryBase(BaseModel):

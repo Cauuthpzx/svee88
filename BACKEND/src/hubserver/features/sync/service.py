@@ -10,7 +10,6 @@ from sqlalchemy.ext.asyncio.session import AsyncSession
 from ...core.config import APP_TZ
 from .crud import crud_sync_metadata
 
-
 # Date field per endpoint (for tracking last synced data date)
 DATE_FIELDS: dict[str, str] = {
     "members": "update_time",

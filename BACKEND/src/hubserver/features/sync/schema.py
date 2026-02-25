@@ -1,13 +1,22 @@
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class SyncRequest(BaseModel):
     """Generic sync request with a list of records."""
-    data: list[dict[str, Any]]
+    data: list[dict[str, Any]] = Field(max_length=50000)
     agent_id: int = 1
+
+
+class SyncConfigRequest(BaseModel):
+    """Typed schema for /sync/config endpoint."""
+    agent_id: int = 1
+    lottery_series: list[dict[str, Any]] | None = None
+    lottery_games: list[dict[str, Any]] | None = None
+    invite_list: list[dict[str, Any]] | None = None
+    bank_list: list[dict[str, Any]] | None = None
 
 
 class SyncResponse(BaseModel):

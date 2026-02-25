@@ -3,22 +3,32 @@
 from typing import Any
 
 from fastapi import APIRouter, Depends
-from fastcrud.exceptions.http_exceptions import NotFoundException
+from ...core.exceptions.http_exceptions import NotFoundException
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
 from ...core.db.database import async_get_db
+from ...core.deps import get_current_user
 from ...core.utils.upsert import bulk_upsert
+from .account.router import router as account_router
+from .bet.model import BetLottery, BetOrder
+from .bet.router import router as bet_router
+from .config.model import BankList, InviteList, LotteryGame, LotterySeries
 from .crud import crud_sync_metadata
-from .schema import SyncResponse, SyncStatusResponse, VerifyRequest
+from .engine.router import router as engine_router
+from .finance.model import DepositWithdrawal
+from .finance.router import router as finance_router
+from .member.model import Member
+from .member.router import router as member_router
+from .report.model import ReportFunds, ReportLottery, ReportThirdGame
+from .report.router import router as report_router
+from .schema import SyncConfigRequest, SyncResponse, SyncStatusResponse, VerifyRequest
 from .service import fetch_records_by_ids
 
-from .member.model import Member
-from .bet.model import BetOrder, BetLottery
-from .finance.model import DepositWithdrawal
-from .report.model import ReportFunds, ReportLottery, ReportThirdGame
-from .config.model import BankList, InviteList, LotteryGame, LotterySeries
-
-router = APIRouter(prefix="/sync", tags=["sync"])
+router = APIRouter(
+    prefix="/sync",
+    tags=["sync"],
+    dependencies=[Depends(get_current_user)],
+)
 
 # --- Model map for verify endpoint ---
 _MODEL_MAP: dict[str, type] = {
@@ -35,27 +45,27 @@ _MODEL_MAP: dict[str, type] = {
 # --- Config endpoint ---
 @router.post("/config", response_model=SyncResponse)
 async def sync_config(
-    body: dict[str, Any],
+    body: SyncConfigRequest,
     db: AsyncSession = Depends(async_get_db),
 ):
     """Sync reference/config data: lottery_series, lottery_games, invite_list, bank_list."""
-    agent_id = body.get("agent_id", 1)
+    agent_id = body.agent_id
     total = 0
 
-    if "lottery_series" in body:
-        records = [{**r, "agent_id": agent_id} for r in body["lottery_series"]]
+    if body.lottery_series:
+        records = [{**r, "agent_id": agent_id} for r in body.lottery_series]
         total += await bulk_upsert(db, LotterySeries, records, conflict_columns=["id"])
 
-    if "lottery_games" in body:
-        records = [{**r, "agent_id": agent_id} for r in body["lottery_games"]]
+    if body.lottery_games:
+        records = [{**r, "agent_id": agent_id} for r in body.lottery_games]
         total += await bulk_upsert(db, LotteryGame, records, conflict_columns=["id"])
 
-    if "invite_list" in body:
-        records = [{**r, "agent_id": agent_id} for r in body["invite_list"]]
+    if body.invite_list:
+        records = [{**r, "agent_id": agent_id} for r in body.invite_list]
         total += await bulk_upsert(db, InviteList, records, conflict_columns=["id"])
 
-    if "bank_list" in body:
-        records = [{**r, "agent_id": agent_id} for r in body["bank_list"]]
+    if body.bank_list:
+        records = [{**r, "agent_id": agent_id} for r in body.bank_list]
         total += await bulk_upsert(db, BankList, records, conflict_columns=["id"])
 
     await db.commit()
@@ -99,13 +109,6 @@ async def get_sync_status(db: AsyncSession = Depends(async_get_db)):
 
 
 # --- Include sub-routers ---
-from .member.router import router as member_router
-from .bet.router import router as bet_router
-from .finance.router import router as finance_router
-from .report.router import router as report_router
-from .account.router import router as account_router
-from .engine.router import router as engine_router
-
 router.include_router(member_router)
 router.include_router(bet_router)
 router.include_router(finance_router)

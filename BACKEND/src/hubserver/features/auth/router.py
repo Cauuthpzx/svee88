@@ -2,10 +2,10 @@ from datetime import timedelta
 from typing import Annotated
 
 from fastapi import APIRouter, Cookie, Depends, Request, Response
-from fastapi.security import OAuth2PasswordRequestForm  # noqa: used by login endpoint
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ...core.config import settings
+from ...core.config import EnvironmentOption, settings
 from ...core.db.database import async_get_db
 from ...core.exceptions.http_exceptions import UnauthorizedException
 from ...core.schemas import Token
@@ -21,6 +21,8 @@ from ...core.security import (
 )
 
 router = APIRouter(tags=["login"])
+
+_SECURE_COOKIE = settings.ENVIRONMENT == EnvironmentOption.PRODUCTION
 
 
 @router.post("/login", response_model=Token)
@@ -40,11 +42,11 @@ async def login_for_access_token(
     max_age = settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
 
     response.set_cookie(
-        key="refresh_token", value=refresh_token, httponly=True, secure=True, samesite="lax", max_age=max_age
+        key="refresh_token", value=refresh_token, httponly=True, secure=_SECURE_COOKIE, samesite="lax", max_age=max_age
     )
     # HttpOnly access_token cookie — JS cannot read, browser auto-sends
     response.set_cookie(
-        key="access_token", value=access_token, httponly=True, secure=True, samesite="lax",
+        key="access_token", value=access_token, httponly=True, secure=_SECURE_COOKIE, samesite="lax",
         max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
     )
     # Non-HttpOnly flag for frontend guard checks (contains no secret)
@@ -74,11 +76,11 @@ async def refresh_access_token(
     new_refresh_token = create_refresh_token(data={"sub": user_data.username_or_email})
     max_age = settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
     response.set_cookie(
-        key="refresh_token", value=new_refresh_token, httponly=True, secure=True, samesite="lax", max_age=max_age
+        key="refresh_token", value=new_refresh_token, httponly=True, secure=_SECURE_COOKIE, samesite="lax", max_age=max_age
     )
     # Rotate access_token cookie
     response.set_cookie(
-        key="access_token", value=new_access_token, httponly=True, secure=True, samesite="lax",
+        key="access_token", value=new_access_token, httponly=True, secure=_SECURE_COOKIE, samesite="lax",
         max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
     )
 

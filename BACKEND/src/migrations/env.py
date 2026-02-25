@@ -23,6 +23,7 @@ if config.config_file_name is not None:
 
 
 import hubserver.features.models  # noqa: F401 — registry imports all models for Alembic discovery
+
 target_metadata = Base.metadata
 
 

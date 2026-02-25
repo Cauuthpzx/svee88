@@ -25,7 +25,6 @@ dependencies = [
     "httpx>=0.26.0",
     "pydantic-settings>=2.12.0",
     "redis>=5.0.1",
-    "arq>=0.25.0",
     "bcrypt>=4.1.1",
     "psycopg2-binary>=2.9.9",
     "fastcrud>=0.19.2",
@@ -94,7 +93,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.mccabe]
-max-complexity = 24
+max-complexity = 12
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"

@@ -43,7 +43,7 @@ export function getEndpointCols(endpoint) {
         const id = escapeHtml(String(d.id || ''))
         const base = escapeHtml((d._agent_base_url || '').replace(/\/+$/, ''))
         return `<div class="invite-actions">
-          <button class="layui-btn layui-btn-xs invite-copy-btn" data-code="${code}">${t('btn.copy_link')}</button>
+          <button class="layui-btn layui-btn-xs invite-copy-btn" data-code="${code}" data-base="${base}">${t('btn.copy_link')}</button>
           <button class="layui-btn layui-btn-xs layui-btn-normal invite-setting-btn" data-id="${id}" data-base="${base}">${t('btn.view_settings')}</button>
           <button class="layui-btn layui-btn-xs layui-btn-warm invite-qr-btn" data-id="${id}" data-base="${base}">${t('btn.qr_code')}</button>
         </div>`
@@ -136,17 +136,17 @@ export function getEndpointCols(endpoint) {
       { field: 'status_format', title: t('col.withdrawals.status_format') }
     ],
     rebate: [
-      { field: 'odds_11', title: 'Play Type', minWidth: 160 },
-      { field: 'odds_10', title: 'Rebate 10' },
-      { field: 'odds_9', title: 'Rebate 9' },
-      { field: 'odds_8', title: 'Rebate 8' },
-      { field: 'odds_7', title: 'Rebate 7' },
-      { field: 'odds_6', title: 'Rebate 6' },
-      { field: 'odds_5', title: 'Rebate 5' },
-      { field: 'odds_4', title: 'Rebate 4' },
-      { field: 'odds_3', title: 'Rebate 3' },
-      { field: 'odds_2', title: 'Rebate 2' },
-      { field: 'odds_1', title: 'Rebate 1' }
+      { field: 'odds_11', title: t('col.rebate.play_type'), minWidth: 160 },
+      { field: 'odds_10', title: t('col.rebate.rebate_10') },
+      { field: 'odds_9', title: t('col.rebate.rebate_9') },
+      { field: 'odds_8', title: t('col.rebate.rebate_8') },
+      { field: 'odds_7', title: t('col.rebate.rebate_7') },
+      { field: 'odds_6', title: t('col.rebate.rebate_6') },
+      { field: 'odds_5', title: t('col.rebate.rebate_5') },
+      { field: 'odds_4', title: t('col.rebate.rebate_4') },
+      { field: 'odds_3', title: t('col.rebate.rebate_3') },
+      { field: 'odds_2', title: t('col.rebate.rebate_2') },
+      { field: 'odds_1', title: t('col.rebate.rebate_1') }
     ]
   }
   return cols[endpoint]

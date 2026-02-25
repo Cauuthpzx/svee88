@@ -44,9 +44,7 @@ export default {
   'route.change_login_pw': 'Change Login Password',
   'route.change_trade_pw': 'Change Transaction Password',
   'route.rebate': 'Rebate Rates',
-  'route.posts': 'Post Management',
   'route.tiers': 'Tier Management',
-  'route.tasks': 'Task Management',
   'route.settings_system': 'System',
   'route.settings_sync': 'Sync & Accounts',
 
@@ -399,6 +397,40 @@ export default {
   'sync.account.success': 'Account added successfully!',
   'sync.account.error': 'Error: {message}',
   'sync.account.error_unknown': 'Unable to add',
+
+  // ── Column: rebate ──
+  'col.rebate.play_type': 'Play Type',
+  'col.rebate.rebate_10': 'Rebate 10',
+  'col.rebate.rebate_9': 'Rebate 9',
+  'col.rebate.rebate_8': 'Rebate 8',
+  'col.rebate.rebate_7': 'Rebate 7',
+  'col.rebate.rebate_6': 'Rebate 6',
+  'col.rebate.rebate_5': 'Rebate 5',
+  'col.rebate.rebate_4': 'Rebate 4',
+  'col.rebate.rebate_3': 'Rebate 3',
+  'col.rebate.rebate_2': 'Rebate 2',
+  'col.rebate.rebate_1': 'Rebate 1',
+
+  // ── Tiers ──
+  'tiers.title': 'Tier Management',
+  'col.tiers.name': 'Tier Name',
+  'col.tiers.created_at': 'Created At',
+
+  // ── Sync service progress ──
+  'sync.svc.fetching_members': 'Fetching all members...',
+  'sync.svc.uploading_members': 'Uploading {count} members...',
+  'sync.svc.verifying_samples': 'Verifying random samples...',
+  'sync.svc.up_to_date': 'Up to date (last: {date})',
+  'sync.svc.fetching_range': 'Fetching {name} from {start} to {end}...',
+  'sync.svc.uploading_records': 'Uploading {count} records...',
+  'sync.svc.verifying': 'Verifying...',
+  'sync.svc.fetching_daily': 'Fetching {name} day by day from {start}...',
+  'sync.svc.day_count': '{date}: {count} records (total: {total})',
+  'sync.svc.fetching_config': 'Fetching config data...',
+  'sync.svc.uploading_config': 'Uploading config...',
+  'sync.svc.starting': 'Starting {name}...',
+  'sync.svc.done_records': 'Done: {count} records',
+  'sync.svc.complete': 'All sync complete in {elapsed}s',
 
   // ── Invite actions ──
   'invite.link_copied': 'Link copied!',

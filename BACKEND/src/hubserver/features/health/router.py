@@ -1,7 +1,7 @@
-import logging
 from datetime import UTC, datetime
 from typing import Annotated
 
+import structlog
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 from redis.asyncio import Redis
@@ -18,7 +18,7 @@ router = APIRouter(tags=["health"])
 STATUS_HEALTHY = "healthy"
 STATUS_UNHEALTHY = "unhealthy"
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = structlog.get_logger(__name__)
 
 
 @router.get("/health", response_model=HealthCheck)
@@ -48,7 +48,7 @@ async def ready(redis: Annotated[Redis, Depends(async_get_redis)], db: Annotated
         "status": overall_status,
         "environment": settings.ENVIRONMENT.value,
         "version": settings.APP_VERSION,
-        "hubserver": STATUS_HEALTHY,
+        "app": STATUS_HEALTHY,
         "database": STATUS_HEALTHY if database_status else STATUS_UNHEALTHY,
         "redis": STATUS_HEALTHY if redis_status else STATUS_UNHEALTHY,
         "timestamp": datetime.now(UTC).isoformat(timespec="seconds"),

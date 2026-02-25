@@ -1,3 +1,8 @@
+/**
+ * Theme management — dark/light mode toggle with OS preference detection.
+ * @module utils/theme
+ */
+
 import { THEME_KEY } from '../constants/index.js'
 
 const getPreferred = () =>
@@ -13,10 +18,12 @@ const apply = (mode) => {
   }
 }
 
+/** Initialize theme from localStorage or OS preference. */
 export const initTheme = () => {
   apply(localStorage.getItem(THEME_KEY) || getPreferred())
 }
 
+/** Toggle between dark and light mode, persisting the choice. */
 export const toggleTheme = () => {
   const next = document.documentElement.classList.contains('dark') ? 'light' : 'dark'
   localStorage.setItem(THEME_KEY, next)

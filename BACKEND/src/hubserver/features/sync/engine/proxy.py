@@ -7,15 +7,15 @@ Speed design:
 """
 
 import asyncio
-import logging
 
 import httpx
+import structlog
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
 from ..account.model import Agent
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 _client_lock = asyncio.Lock()
 
@@ -33,7 +33,10 @@ UPSTREAM_PATHS: dict[str, str] = {
     "banks": "/agent/bankList.html",
 }
 
-_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+_USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+)
 
 # Default params per endpoint (required by upstream but not sent by frontend)
 UPSTREAM_DEFAULTS: dict[str, dict] = {
@@ -61,6 +64,14 @@ async def get_client() -> httpx.AsyncClient:
     return _client
 
 
+async def close_httpx_client() -> None:
+    """Close the global httpx client. Called during application shutdown."""
+    global _client
+    if _client is not None and not _client.is_closed:
+        await _client.aclose()
+        _client = None
+
+
 async def get_active_agents(db: AsyncSession, agent_id: int | None = None) -> list[Agent]:
     stmt = select(Agent).where(Agent.is_active.is_(True))
     if agent_id and agent_id > 0:
@@ -79,7 +90,7 @@ async def _fetch_one(
     headers = {
         "Cookie": agent.cookie or "",
         "X-Requested-With": "XMLHttpRequest",
-        "User-Agent": _UA,
+        "User-Agent": _USER_AGENT,
         "Referer": agent.base_url + upstream_path,
         "Origin": agent.base_url,
         "Content-Type": "application/x-www-form-urlencoded",
@@ -89,7 +100,7 @@ async def _fetch_one(
         resp = await client.post(url, data=form_data, headers=headers)
         data = resp.json()
         return agent, data
-    except Exception as e:
+    except (httpx.HTTPError, ValueError) as e:
         logger.warning("Agent %s (%s) fetch failed: %s", agent.id, agent.owner, e)
         return agent, None
 
@@ -150,7 +161,7 @@ async def _post_json(
         "Cookie": agent.cookie or "",
         "Content-Type": "application/json;charset=UTF-8",
         "X-Requested-With": "XMLHttpRequest",
-        "User-Agent": _UA,
+        "User-Agent": _USER_AGENT,
         "Referer": agent.base_url + "/agent/rebate",
         "Origin": agent.base_url,
     }
@@ -158,7 +169,7 @@ async def _post_json(
     try:
         resp = await client.post(url, json=body, headers=headers)
         return resp.json()
-    except Exception as e:
+    except (httpx.HTTPError, ValueError) as e:
         logger.warning("Agent %s JSON %s failed: %s", agent.id, path, e)
         return None
 

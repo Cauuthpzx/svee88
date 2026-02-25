@@ -1,3 +1,8 @@
+/**
+ * Hash-based SPA router with lazy-loading and auth guard.
+ * @module router
+ */
+
 import { getToken, escapeHtml } from '../utils/index.js'
 import { ROUTES, INTENDED_ROUTE_KEY } from '../constants/index.js'
 import { t } from '../i18n/index.js'
@@ -11,9 +16,7 @@ const ROUTE_MAP = {
   [ROUTES.REGISTER]: () => import('../modules/auth/index.js'),
   [ROUTES.DASHBOARD]: () => import('../modules/dashboard/index.js'),
   [ROUTES.USERS]: dataTable,
-  [ROUTES.POSTS]: () => import('../modules/posts/index.js'),
   [ROUTES.TIERS]: () => import('../modules/tiers/index.js'),
-  [ROUTES.TASKS]: () => import('../modules/tasks/index.js'),
   [ROUTES.INVITE_LIST]: dataTable,
   [ROUTES.REPORT_LOTTERY]: dataTable,
   [ROUTES.REPORT_FUNDS]: dataTable,
@@ -126,6 +129,7 @@ const navigate = async (hash) => {
 
   try {
     if (PUBLIC_ROUTES.has(hash)) {
+      if (layoutModule?.destroy) layoutModule.destroy()
       layoutModule = null
       currentPage = null
       prevHash = null
@@ -156,6 +160,7 @@ export const preloadRoute = (hash) => {
   if (loader) loader()
 }
 
+/** Initialize the hash-based SPA router and navigate to the current hash. */
 export const initRouter = () => {
   window.addEventListener('hashchange', () => navigate())
   navigate()

@@ -1,6 +1,13 @@
+"""Authentication & token utilities.
+
+Provides password hashing/verification, JWT token creation/verification,
+and token blacklisting for session invalidation.
+"""
+
+import asyncio
 from datetime import UTC, datetime, timedelta
-from enum import Enum
-from typing import Any, Literal
+from enum import StrEnum
+from typing import Any
 
 import bcrypt
 from fastapi.security import OAuth2PasswordBearer
@@ -20,61 +27,88 @@ REFRESH_TOKEN_EXPIRE_DAYS = settings.REFRESH_TOKEN_EXPIRE_DAYS
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/login")
 
 
-class TokenType(str, Enum):
+class TokenType(StrEnum):
+    """JWT token type discriminator stored in the payload."""
+
     ACCESS = "access"
     REFRESH = "refresh"
 
 
 async def verify_password(plain_password: str, hashed_password: str) -> bool:
-    correct_password: bool = bcrypt.checkpw(plain_password.encode(), hashed_password.encode())
-    return correct_password
+    """Compare a plain-text password against its bcrypt hash."""
+    return await asyncio.to_thread(
+        bcrypt.checkpw, plain_password.encode(), hashed_password.encode()
+    )
 
 
 def get_password_hash(password: str) -> str:
+    """Return the bcrypt hash for *password*."""
     hashed_password: str = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
     return hashed_password
 
 
-async def authenticate_user(username_or_email: str, password: str, db: AsyncSession) -> dict[str, Any] | Literal[False]:
+async def lookup_user(db: AsyncSession, identifier: str) -> dict[str, Any] | None:
+    """Look up a user by email (if contains '@') or username.
+
+    Returns the user dict or ``None``.
+    """
     from ..features.user.crud import crud_users  # lazy import to avoid circular
 
-    if "@" in username_or_email:
-        db_user = await crud_users.get(db=db, email=username_or_email, is_deleted=False)
-    else:
-        db_user = await crud_users.get(db=db, username=username_or_email, is_deleted=False)
+    if "@" in identifier:
+        return await crud_users.get(db=db, email=identifier, is_deleted=False)
+    return await crud_users.get(db=db, username=identifier, is_deleted=False)
 
+
+async def authenticate_user(
+    username_or_email: str, password: str, db: AsyncSession
+) -> dict[str, Any] | None:
+    """Validate credentials and return the user dict, or ``None`` on failure."""
+    db_user = await lookup_user(db, username_or_email)
     if not db_user:
-        return False
+        return None
 
     if not await verify_password(password, db_user["hashed_password"]):
-        return False
+        return None
 
     return db_user
 
 
-def create_access_token(data: dict[str, Any], expires_delta: timedelta | None = None) -> str:
+# ── Token creation ──────────────────────────────────────────────────
+
+
+def _create_token(
+    data: dict[str, Any], token_type: TokenType, expires_delta: timedelta | None = None
+) -> str:
+    """Create a signed JWT with the given *token_type* and expiration."""
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.now(UTC) + expires_delta
     else:
-        expire = datetime.now(UTC) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire, "token_type": TokenType.ACCESS})
-    encoded_jwt: str = jwt.encode(to_encode, SECRET_KEY.get_secret_value(), algorithm=ALGORITHM)
-    return encoded_jwt
+        default = (
+            timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+            if token_type == TokenType.ACCESS
+            else timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+        )
+        expire = datetime.now(UTC) + default
+    to_encode.update({"exp": expire, "token_type": token_type})
+    return jwt.encode(to_encode, SECRET_KEY.get_secret_value(), algorithm=ALGORITHM)
+
+
+def create_access_token(data: dict[str, Any], expires_delta: timedelta | None = None) -> str:
+    """Create a short-lived access token."""
+    return _create_token(data, TokenType.ACCESS, expires_delta)
 
 
 def create_refresh_token(data: dict[str, Any], expires_delta: timedelta | None = None) -> str:
-    to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.now(UTC) + expires_delta
-    else:
-        expire = datetime.now(UTC) + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
-    to_encode.update({"exp": expire, "token_type": TokenType.REFRESH})
-    encoded_jwt: str = jwt.encode(to_encode, SECRET_KEY.get_secret_value(), algorithm=ALGORITHM)
-    return encoded_jwt
+    """Create a long-lived refresh token."""
+    return _create_token(data, TokenType.REFRESH, expires_delta)
+
+
+# ── Token verification & blacklisting ───────────────────────────────
 
 
 async def verify_token(token: str, expected_token_type: TokenType, db: AsyncSession) -> TokenData | None:
+    """Decode and validate a JWT. Returns ``None`` if invalid or blacklisted."""
     is_blacklisted = await crud_token_blacklist.exists(db, token=token)
     if is_blacklisted:
         return None
@@ -94,6 +128,7 @@ async def verify_token(token: str, expected_token_type: TokenType, db: AsyncSess
 
 
 async def blacklist_token(token: str, db: AsyncSession) -> None:
+    """Add a token to the blacklist so it can no longer be used."""
     try:
         payload = jwt.decode(token, SECRET_KEY.get_secret_value(), algorithms=[ALGORITHM])
     except JWTError:
@@ -106,6 +141,7 @@ async def blacklist_token(token: str, db: AsyncSession) -> None:
 
 
 async def blacklist_tokens(access_token: str, refresh_token: str, db: AsyncSession) -> None:
+    """Blacklist both access and refresh tokens (used on logout)."""
     for token in [access_token, refresh_token]:
         if token:
             await blacklist_token(token, db)

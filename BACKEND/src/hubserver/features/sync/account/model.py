@@ -3,8 +3,8 @@ from datetime import datetime
 from sqlalchemy import Boolean, DateTime, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
-from ....core.db.database import Base
 from ....core.config import APP_TZ
+from ....core.db.database import Base
 
 
 class Agent(Base):

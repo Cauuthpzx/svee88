@@ -36,16 +36,11 @@ htmlcov/
 # ruff
 .ruff_cache
 
-# Node (for FRONEND)
+# Node
 node_modules/
-FRONEND/icons8-liquid/
-.env.*
 
 # Claude
 .claude/
 
-# Crudadmin data
-crudadmin_data/
-
-# Old src/ remnants (root level only)
-/src/
+# Logs
+*.log

@@ -1,5 +1,10 @@
+"""Application settings — assembled from pydantic-settings mixins.
+
+All values are overridable via environment variables or ``.env``.
+"""
+
 import os
-from enum import Enum
+from enum import StrEnum
 from zoneinfo import ZoneInfo
 
 from pydantic import SecretStr, computed_field
@@ -105,11 +110,6 @@ class ClientSideCacheSettings(BaseSettings):
     CLIENT_CACHE_MAX_AGE: int = 60
 
 
-class RedisQueueSettings(BaseSettings):
-    REDIS_QUEUE_HOST: str = "localhost"
-    REDIS_QUEUE_PORT: int = 6379
-
-
 class RedisRateLimiterSettings(BaseSettings):
     REDIS_RATE_LIMIT_HOST: str = "localhost"
     REDIS_RATE_LIMIT_PORT: int = 6379
@@ -125,7 +125,7 @@ class DefaultRateLimitSettings(BaseSettings):
     DEFAULT_RATE_LIMIT_PERIOD: int = 3600
 
 
-class EnvironmentOption(str, Enum):
+class EnvironmentOption(StrEnum):
     LOCAL = "local"
     STAGING = "staging"
     PRODUCTION = "production"
@@ -149,7 +149,6 @@ class Settings(
     TestSettings,
     RedisCacheSettings,
     ClientSideCacheSettings,
-    RedisQueueSettings,
     RedisRateLimiterSettings,
     DefaultRateLimitSettings,
     EnvironmentSettings,

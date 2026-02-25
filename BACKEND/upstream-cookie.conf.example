@@ -1,0 +1,5 @@
+# Upstream authentication cookies
+# Copy this to upstream-cookie.conf and update with real values
+# Update this value when the session/cf_clearance expires
+# Format: paste full cookie string from browser DevTools
+set $upstream_cookie "PHPSESSID=YOUR_SESSION_ID; think_var=vi-vn; cf_clearance=YOUR_CF_CLEARANCE";

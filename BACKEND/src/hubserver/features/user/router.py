@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends, Query, Request
 from fastcrud import PaginatedListResponse, compute_offset, paginated_response
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ...core.deps import get_current_superuser, get_current_user, rate_limiter_dependency
 from ...core.db.database import async_get_db
+from ...core.deps import get_current_superuser, get_current_user, rate_limiter_dependency
 from ...core.exceptions.http_exceptions import DuplicateValueException, ForbiddenException, NotFoundException
 from ...core.security import blacklist_token, get_password_hash, oauth2_scheme
 from ..tier.crud import crud_rate_limits, crud_tiers
@@ -43,7 +43,10 @@ async def write_user(
 
 @router.get("/users", response_model=PaginatedListResponse[UserRead], dependencies=[Depends(get_current_superuser)])
 async def read_users(
-    request: Request, db: Annotated[AsyncSession, Depends(async_get_db)], page: int = Query(default=1, ge=1), items_per_page: int = Query(default=10, ge=1, le=100)
+    request: Request,
+    db: Annotated[AsyncSession, Depends(async_get_db)],
+    page: int = Query(default=1, ge=1),
+    items_per_page: int = Query(default=10, ge=1, le=100),
 ) -> dict:
     users_data = await crud_users.get_multi(
         db=db,
@@ -99,7 +102,7 @@ async def patch_user(
             raise DuplicateValueException("Username not available.")
 
     await crud_users.update(db=db, object=values, username=username)
-    return {"message": "User updated."}
+    return {"code": 0, "message": "User updated.", "data": None, "errors": []}
 
 
 @router.delete("/user/{username}")
@@ -119,7 +122,7 @@ async def erase_user(
 
     await crud_users.delete(db=db, username=username)
     await blacklist_token(token=token, db=db)
-    return {"message": "User deleted."}
+    return {"code": 0, "message": "User deleted.", "data": None, "errors": []}
 
 
 @router.delete("/db_user/{username}", dependencies=[Depends(get_current_superuser)])
@@ -135,7 +138,7 @@ async def erase_db_user(
 
     await crud_users.db_delete(db=db, username=username)
     await blacklist_token(token=token, db=db)
-    return {"message": "User permanently deleted."}
+    return {"code": 0, "message": "User permanently deleted.", "data": None, "errors": []}
 
 
 @router.get("/user/{username}/rate_limits", dependencies=[Depends(get_current_superuser)])
@@ -205,4 +208,4 @@ async def patch_user_tier(
         raise NotFoundException("Tier not found.")
 
     await crud_users.update(db=db, object=values.model_dump(), username=username)
-    return {"message": f"User tier updated for {db_user['name']}."}
+    return {"code": 0, "message": "User tier updated.", "data": None, "errors": []}

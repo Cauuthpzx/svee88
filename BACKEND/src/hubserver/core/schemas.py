@@ -1,3 +1,5 @@
+"""Shared Pydantic schemas — base mixins, token models, and health checks."""
+
 import uuid as uuid_pkg
 from datetime import UTC, datetime
 from typing import Any

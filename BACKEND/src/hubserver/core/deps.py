@@ -1,3 +1,5 @@
+"""FastAPI dependencies — authentication, authorization, and rate limiting."""
+
 from typing import Annotated, Any
 
 from fastapi import Depends, HTTPException, Request
@@ -6,11 +8,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from .config import settings
 from .db.database import async_get_db
 from .exceptions.http_exceptions import ForbiddenException, RateLimitException, UnauthorizedException
-from .logger import logging
-from .security import TokenType, oauth2_scheme, verify_token
+import structlog
+
+from .security import TokenType, lookup_user, verify_token
 from .utils.rate_limit import rate_limiter
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 DEFAULT_LIMIT = settings.DEFAULT_RATE_LIMIT_LIMIT
 DEFAULT_PERIOD = settings.DEFAULT_RATE_LIMIT_PERIOD
@@ -34,8 +37,7 @@ def _extract_token(request: Request) -> str | None:
 async def get_current_user(
     request: Request, db: Annotated[AsyncSession, Depends(async_get_db)]
 ) -> dict[str, Any]:
-    from ..features.user.crud import crud_users  # lazy import to avoid circular
-
+    """Return the authenticated user dict, or raise 401."""
     token = _extract_token(request)
     if not token:
         raise UnauthorizedException("User is not authenticated.")
@@ -44,20 +46,17 @@ async def get_current_user(
     if token_data is None:
         raise UnauthorizedException("User is not authenticated.")
 
-    if "@" in token_data.username_or_email:
-        user = await crud_users.get(db=db, email=token_data.username_or_email, is_deleted=False)
-    else:
-        user = await crud_users.get(db=db, username=token_data.username_or_email, is_deleted=False)
-
+    user = await lookup_user(db, token_data.username_or_email)
     if user:
         return user
 
     raise UnauthorizedException("User is not authenticated.")
 
 
-async def get_optional_user(request: Request, db: AsyncSession = Depends(async_get_db)) -> dict | None:
-    from ..features.user.crud import crud_users  # lazy import to avoid circular
-
+async def get_optional_user(
+    request: Request, db: AsyncSession = Depends(async_get_db)
+) -> dict[str, Any] | None:
+    """Return the authenticated user dict if a valid token is present, else ``None``."""
     token = _extract_token(request)
     if not token:
         return None
@@ -67,13 +66,7 @@ async def get_optional_user(request: Request, db: AsyncSession = Depends(async_g
         if token_data is None:
             return None
 
-        # Fetch user directly — avoids calling get_current_user which would verify_token again
-        if "@" in token_data.username_or_email:
-            user = await crud_users.get(db=db, email=token_data.username_or_email, is_deleted=False)
-        else:
-            user = await crud_users.get(db=db, username=token_data.username_or_email, is_deleted=False)
-
-        return user
+        return await lookup_user(db, token_data.username_or_email)
 
     except HTTPException as http_exc:
         if http_exc.status_code != 401:
@@ -86,6 +79,7 @@ async def get_optional_user(request: Request, db: AsyncSession = Depends(async_g
 
 
 async def get_current_superuser(current_user: Annotated[dict, Depends(get_current_user)]) -> dict:
+    """Return the current user if superuser, else raise 403."""
     if not current_user["is_superuser"]:
         raise ForbiddenException("You do not have enough privileges.")
 
@@ -93,8 +87,11 @@ async def get_current_superuser(current_user: Annotated[dict, Depends(get_curren
 
 
 async def rate_limiter_dependency(
-    request: Request, db: Annotated[AsyncSession, Depends(async_get_db)], user: dict | None = Depends(get_optional_user)
+    request: Request,
+    db: Annotated[AsyncSession, Depends(async_get_db)],
+    user: dict | None = Depends(get_optional_user),
 ) -> None:
+    """Check per-user or per-IP rate limits before processing the request."""
     from ..features.tier.crud import crud_rate_limits, crud_tiers  # lazy import
     from ..features.tier.schema import RateLimitRead, TierRead, sanitize_path  # lazy import
 
@@ -103,7 +100,7 @@ async def rate_limiter_dependency(
 
     path = sanitize_path(request.url.path)
     if user:
-        user_id = user["id"]
+        user_id: int | str = user["id"]
         tier = await crud_tiers.get(db, id=user["tier_id"], schema_to_select=TierRead)
         if tier:
             rate_limit = await crud_rate_limits.get(

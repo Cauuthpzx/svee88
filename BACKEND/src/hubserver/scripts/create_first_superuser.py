@@ -1,18 +1,14 @@
 import asyncio
-import logging
-from datetime import UTC, datetime
 
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, MetaData, String, Table, insert, select
-from sqlalchemy.dialects.postgresql import UUID
-from uuid6 import uuid7  # 126
+import structlog
+from sqlalchemy import select
 
 from ..core.config import settings
-from ..core.db.database import AsyncSession, async_engine, local_session
+from ..core.db.database import AsyncSession, local_session
 from ..core.security import get_password_hash
 from ..features.user.model import User
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 async def create_first_user(session: AsyncSession) -> None:
@@ -27,45 +23,22 @@ async def create_first_user(session: AsyncSession) -> None:
         user = result.scalar_one_or_none()
 
         if user is None:
-            metadata = MetaData()
-            user_table = Table(
-                "user",
-                metadata,
-                Column("id", Integer, primary_key=True, autoincrement=True, nullable=False),
-                Column("name", String(30), nullable=False),
-                Column("username", String(20), nullable=False, unique=True, index=True),
-                Column("email", String(50), nullable=False, unique=True, index=True),
-                Column("hashed_password", String, nullable=False),
-                Column("profile_image_url", String, default="https://profileimageurl.com"),
-                Column("uuid", UUID(as_uuid=True), default=uuid7, unique=True),
-                Column("created_at", DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False),
-                Column("updated_at", DateTime),
-                Column("deleted_at", DateTime),
-                Column("is_deleted", Boolean, default=False, index=True),
-                Column("is_superuser", Boolean, default=False),
-                Column("tier_id", Integer, ForeignKey("tier.id"), index=True),
+            new_user = User(
+                name=name,
+                email=email,
+                username=username,
+                hashed_password=hashed_password,
+                is_superuser=True,
             )
-
-            data = {
-                "name": name,
-                "email": email,
-                "username": username,
-                "hashed_password": hashed_password,
-                "is_superuser": True,
-            }
-
-            stmt = insert(user_table).values(data)
-            async with async_engine.connect() as conn:
-                await conn.execute(stmt)
-                await conn.commit()
-
-            logger.info(f"Đã tạo thành công tài khoản quản trị viên {username}.")
+            session.add(new_user)
+            await session.commit()
+            logger.info("Đã tạo thành công tài khoản quản trị viên %s.", username)
 
         else:
-            logger.info(f"Tài khoản quản trị viên {username} đã tồn tại.")
+            logger.info("Tài khoản quản trị viên %s đã tồn tại.", username)
 
-    except Exception as e:
-        logger.error(f"Lỗi khi tạo tài khoản quản trị viên: {e}")
+    except Exception:
+        logger.exception("Lỗi khi tạo tài khoản quản trị viên")
 
 
 async def main():
@@ -74,5 +47,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

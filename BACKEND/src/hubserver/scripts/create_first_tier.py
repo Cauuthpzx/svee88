@@ -1,14 +1,13 @@
 import asyncio
-import logging
 
+import structlog
 from sqlalchemy import select
 
 from ..core.config import config
 from ..core.db.database import AsyncSession, local_session
 from ..features.tier.model import Tier
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 async def create_first_tier(session: AsyncSession) -> None:
@@ -22,13 +21,13 @@ async def create_first_tier(session: AsyncSession) -> None:
         if tier is None:
             session.add(Tier(name=tier_name))
             await session.commit()
-            logger.info(f"Đã tạo thành công gói dịch vụ '{tier_name}'.")
+            logger.info("Đã tạo thành công gói dịch vụ '%s'.", tier_name)
 
         else:
-            logger.info(f"Gói dịch vụ '{tier_name}' đã tồn tại.")
+            logger.info("Gói dịch vụ '%s' đã tồn tại.", tier_name)
 
-    except Exception as e:
-        logger.error(f"Lỗi khi tạo gói dịch vụ: {e}")
+    except Exception:
+        logger.exception("Lỗi khi tạo gói dịch vụ")
 
 
 async def main():
@@ -37,5 +36,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

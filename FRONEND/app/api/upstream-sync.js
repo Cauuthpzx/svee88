@@ -2,7 +2,6 @@
  * Upstream Sync Helpers — fetchAllPages, fetchDateChunked
  */
 
-import http from './http.js'
 import { stripSensitive } from './upstream-client.js'
 
 /**
@@ -15,13 +14,13 @@ import { stripSensitive } from './upstream-client.js'
  * @param {boolean} [options.sensitive=false] - Strip password/salt fields
  * @returns {Promise<{data: Array, totalData: object|null}>}
  */
-export async function fetchAllPages(listFn, filters = {}, { pageSize = 50, sensitive = false } = {}) {
+export async function fetchAllPages(listFn, filters = {}, { pageSize = 50, maxPages = Infinity, sensitive = false } = {}) {
   const allData = []
   let page = 1
   let totalCount = Infinity
   let totalData = null
 
-  while (allData.length < totalCount) {
+  while (allData.length < totalCount && page <= maxPages) {
     const res = await listFn({ ...filters, page, limit: pageSize })
 
     if (res.code !== 0 || !Array.isArray(res.data)) break
@@ -77,19 +76,3 @@ export async function fetchDateChunked(listFn, startDate, endDate, filters = {},
   return allData
 }
 
-/**
- * Fetch data and POST to local backend for sync.
- *
- * @param {Function} listFn
- * @param {string} localEndpoint
- * @param {object} filters
- * @param {object} [options]
- * @returns {Promise<{fetched: number, synced: boolean}>}
- */
-export async function syncToLocal(listFn, localEndpoint, filters = {}, { pageSize = 50, sensitive = false } = {}) {
-  const { data } = await fetchAllPages(listFn, filters, { pageSize, sensitive })
-  if (data.length === 0) return { fetched: 0, synced: true }
-
-  const res = await http.post(localEndpoint, { data, count: data.length })
-  return { fetched: data.length, synced: res != null }
-}

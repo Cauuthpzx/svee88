@@ -1,4 +1,4 @@
-import { ROUTE_TITLES } from '../../constants/index.js'
+import { getRouteTitle } from '../../constants/index.js'
 import { escapeHtml } from '../../utils/index.js'
 import { t } from '../../i18n/index.js'
 
@@ -17,7 +17,7 @@ let currentHash = null
 export const render = (hash, container) => {
   currentHash = hash
   const el = container || document.getElementById('main-content')
-  const title = ROUTE_TITLES[hash] || hash.replace('#/', '')
+  const title = getRouteTitle(hash) || hash.replace('#/', '')
   el.innerHTML = template(title)
 }
 

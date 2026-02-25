@@ -10,17 +10,17 @@ frontend triggers ?_fresh=1 reload for fresh data.
 
 import hashlib
 import json
-import logging
 import time
 from collections import OrderedDict
 from dataclasses import dataclass
 
+import structlog
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
 from ....core.utils import cache as redis_cache
 from .proxy import fetch_all_agents
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 # ── Tuning constants ──
 MEMORY_FRESH_TTL = 300      # seconds — data considered "fresh" (5 min)
@@ -161,13 +161,13 @@ async def swr_fetch(
         response["_cache_age"] = _memory.get_age(key)
         return response
 
-    # Layer 2: Redis
+    # Layer 2: Redis — data was not in memory, so treat as stale
     data = await _redis_get(key)
     if data is not None:
         _memory.put(key, data)
         response = {**data}
         response["_cache_status"] = "stale"
-        response["_cache_age"] = 30
+        response["_cache_age"] = _memory.get_age(key)
         return response
 
     # Layer 3: Upstream fetch

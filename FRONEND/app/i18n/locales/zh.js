@@ -44,9 +44,7 @@ export default {
   'route.change_login_pw': '修改登录密码',
   'route.change_trade_pw': '修改交易密码',
   'route.rebate': '返水比例',
-  'route.posts': '文章管理',
   'route.tiers': '等级管理',
-  'route.tasks': '任务管理',
   'route.settings_system': '系统',
   'route.settings_sync': '同步 & 账户',
 
@@ -399,6 +397,40 @@ export default {
   'sync.account.success': '账户添加成功！',
   'sync.account.error': '错误：{message}',
   'sync.account.error_unknown': '无法添加',
+
+  // ── Column: rebate ──
+  'col.rebate.play_type': '玩法类型',
+  'col.rebate.rebate_10': '返水 10',
+  'col.rebate.rebate_9': '返水 9',
+  'col.rebate.rebate_8': '返水 8',
+  'col.rebate.rebate_7': '返水 7',
+  'col.rebate.rebate_6': '返水 6',
+  'col.rebate.rebate_5': '返水 5',
+  'col.rebate.rebate_4': '返水 4',
+  'col.rebate.rebate_3': '返水 3',
+  'col.rebate.rebate_2': '返水 2',
+  'col.rebate.rebate_1': '返水 1',
+
+  // ── Tiers ──
+  'tiers.title': '等级管理',
+  'col.tiers.name': '等级名称',
+  'col.tiers.created_at': '创建时间',
+
+  // ── Sync service progress ──
+  'sync.svc.fetching_members': '正在加载所有会员...',
+  'sync.svc.uploading_members': '正在上传 {count} 个会员...',
+  'sync.svc.verifying_samples': '正在验证随机样本...',
+  'sync.svc.up_to_date': '已更新（最后：{date}）',
+  'sync.svc.fetching_range': '正在加载 {name} 从 {start} 到 {end}...',
+  'sync.svc.uploading_records': '正在上传 {count} 条记录...',
+  'sync.svc.verifying': '正在验证...',
+  'sync.svc.fetching_daily': '正在按天加载 {name} 从 {start}...',
+  'sync.svc.day_count': '{date}：{count} 条记录（共：{total}）',
+  'sync.svc.fetching_config': '正在加载配置数据...',
+  'sync.svc.uploading_config': '正在上传配置...',
+  'sync.svc.starting': '开始 {name}...',
+  'sync.svc.done_records': '完成：{count} 条记录',
+  'sync.svc.complete': '全部同步完成，耗时 {elapsed}s',
 
   // ── Invite actions ──
   'invite.link_copied': '链接已复制！',

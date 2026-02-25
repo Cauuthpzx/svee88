@@ -2,11 +2,11 @@ from typing import Any
 
 from fastapi.encoders import jsonable_encoder
 
-from src.app import models
+from src.hubserver.features.user.model import User
 from tests.conftest import fake
 
 
-def get_current_user(user: models.User) -> dict[str, Any]:
+def get_current_user(user: User) -> dict[str, Any]:
     return jsonable_encoder(user)
 
 

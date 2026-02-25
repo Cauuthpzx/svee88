@@ -1,10 +1,9 @@
-import logging
-
+import structlog
 from redis.asyncio import Redis
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = structlog.get_logger(__name__)
 
 
 async def check_database_health(db: AsyncSession) -> bool:

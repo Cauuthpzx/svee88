@@ -8,17 +8,11 @@ import anyio
 import fastapi
 import redis.asyncio as redis
 import structlog
-from arq import create_pool
-from arq.connections import RedisSettings
 from fastapi import APIRouter, Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
-logger = structlog.get_logger()
 from fastapi.openapi.docs import get_redoc_html, get_swagger_ui_html
 from fastapi.openapi.utils import get_openapi
 
-from .exceptions import register_exception_handlers
-from .utils.rate_limit import rate_limiter
 from ..middleware.client_cache import ClientCacheMiddleware
 from ..middleware.logger import LoggerMiddleware
 from .config import (
@@ -30,13 +24,16 @@ from .config import (
     EnvironmentSettings,
     FirstUserSettings,
     RedisCacheSettings,
-    RedisQueueSettings,
     RedisRateLimiterSettings,
     settings,
 )
 from .db.database import Base
 from .db.database import async_engine as engine
-from .utils import cache, queue
+from .exceptions import register_exception_handlers
+from .utils import cache
+from .utils.rate_limit import rate_limiter
+
+logger = structlog.get_logger()
 
 
 # -------------- database --------------
@@ -56,16 +53,6 @@ async def close_redis_cache_pool() -> None:
         await cache.client.aclose()  # type: ignore
 
 
-# -------------- queue --------------
-async def create_redis_queue_pool() -> None:
-    queue.pool = await create_pool(RedisSettings(host=settings.REDIS_QUEUE_HOST, port=settings.REDIS_QUEUE_PORT))
-
-
-async def close_redis_queue_pool() -> None:
-    if queue.pool is not None:
-        await queue.pool.aclose()  # type: ignore
-
-
 # -------------- rate limit --------------
 async def create_redis_rate_limit_pool() -> None:
     rate_limiter.initialize(settings.REDIS_RATE_LIMIT_URL)  # type: ignore
@@ -74,6 +61,28 @@ async def create_redis_rate_limit_pool() -> None:
 async def close_redis_rate_limit_pool() -> None:
     if rate_limiter.client is not None:
         await rate_limiter.client.aclose()  # type: ignore
+
+
+# -------------- token blacklist cleanup --------------
+async def cleanup_expired_tokens() -> None:
+    """Delete expired token blacklist entries on startup."""
+    from datetime import UTC, datetime
+
+    from sqlalchemy import delete
+
+    from .db.database import local_session
+    from .db.token_blacklist import TokenBlacklist
+
+    try:
+        async with local_session() as session:
+            result = await session.execute(
+                delete(TokenBlacklist).where(TokenBlacklist.expires_at < datetime.now(UTC))
+            )
+            await session.commit()
+            if result.rowcount:
+                logger.info("Cleaned up %d expired blacklisted tokens", result.rowcount)
+    except Exception:
+        logger.warning("Failed to clean up expired tokens", exc_info=True)
 
 
 # -------------- application --------------
@@ -89,7 +98,6 @@ def lifespan_factory(
         | AppSettings
         | ClientSideCacheSettings
         | CORSSettings
-        | RedisQueueSettings
         | RedisRateLimiterSettings
         | EnvironmentSettings
     ),
@@ -108,14 +116,13 @@ def lifespan_factory(
             if isinstance(settings, RedisCacheSettings):
                 await create_redis_cache_pool()
 
-            if isinstance(settings, RedisQueueSettings):
-                await create_redis_queue_pool()
-
             if isinstance(settings, RedisRateLimiterSettings):
                 await create_redis_rate_limit_pool()
 
             if create_tables_on_start:
                 await create_tables()
+
+            await cleanup_expired_tokens()
 
             initialization_complete.set()
 
@@ -135,16 +142,28 @@ def lifespan_factory(
 
             try:
                 async with asyncio.timeout(deadline):
-                    if isinstance(settings, RedisCacheSettings):
-                        await _close_resource("Redis cache", close_redis_cache_pool())
+                    try:
+                        from ..features.sync.engine.proxy import close_httpx_client
+                        await _close_resource("httpx proxy client", close_httpx_client())
+                    except Exception:
+                        logger.warning("  ╳ Failed to close httpx client", exc_info=True)
 
-                    if isinstance(settings, RedisQueueSettings):
-                        await _close_resource("Redis queue", close_redis_queue_pool())
+                    if isinstance(settings, RedisCacheSettings):
+                        try:
+                            await _close_resource("Redis cache", close_redis_cache_pool())
+                        except Exception:
+                            logger.warning("  ╳ Failed to close Redis cache", exc_info=True)
 
                     if isinstance(settings, RedisRateLimiterSettings):
-                        await _close_resource("Redis rate-limiter", close_redis_rate_limit_pool())
+                        try:
+                            await _close_resource("Redis rate-limiter", close_redis_rate_limit_pool())
+                        except Exception:
+                            logger.warning("  ╳ Failed to close Redis rate-limiter", exc_info=True)
 
-                    await _close_resource("Database engine", engine.dispose())
+                    try:
+                        await _close_resource("Database engine", engine.dispose())
+                    except Exception:
+                        logger.warning("  ╳ Failed to close database engine", exc_info=True)
 
             except TimeoutError:
                 elapsed = time.monotonic() - shutdown_start
@@ -164,7 +183,6 @@ def create_application(
         | AppSettings
         | ClientSideCacheSettings
         | CORSSettings
-        | RedisQueueSettings
         | RedisRateLimiterSettings
         | EnvironmentSettings
     ),

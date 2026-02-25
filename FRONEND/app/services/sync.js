@@ -4,6 +4,7 @@
 
 import http from '../api/http.js'
 import { SYNC_API } from '../constants/index.js'
+import { t } from '../i18n/index.js'
 import {
   memberApi, betOrderApi, betApi, depositWithdrawalApi,
   reportLotteryApi, reportFundsApi, reportThirdGameApi,
@@ -99,17 +100,17 @@ const ENDPOINTS = {
 // --------------- Core sync functions ---------------
 
 async function syncMembers(onProgress) {
-  onProgress?.({ endpoint: 'members', step: 'fetch', message: 'Fetching all members...' })
+  onProgress?.({ endpoint: 'members', step: 'fetch', message: t('sync.svc.fetching_members') })
 
   const { data } = await fetchAllPages(memberApi.list, {}, { pageSize: 50, sensitive: true })
   if (data.length === 0) {
     return { endpoint: 'members', fetched: 0, processed: 0, skipped: false }
   }
 
-  onProgress?.({ endpoint: 'members', step: 'upload', message: `Uploading ${data.length} members...` })
+  onProgress?.({ endpoint: 'members', step: 'upload', message: t('sync.svc.uploading_members', { count: data.length }) })
   const processed = await postBatched(SYNC_API.MEMBERS, data, DEFAULT_AGENT_ID, onProgress)
 
-  onProgress?.({ endpoint: 'members', step: 'verify', message: 'Verifying random samples...' })
+  onProgress?.({ endpoint: 'members', step: 'verify', message: t('sync.svc.verifying_samples') })
   const verify = await verifyRandom('members', data)
 
   return { endpoint: 'members', fetched: data.length, processed, verify }
@@ -121,14 +122,14 @@ async function syncDateBased(config, onProgress) {
   const endDate = today()
 
   if (startDate >= endDate) {
-    onProgress?.({ endpoint: config.name, step: 'skip', message: `Up to date (last: ${startDate})` })
+    onProgress?.({ endpoint: config.name, step: 'skip', message: t('sync.svc.up_to_date', { date: startDate }) })
     return { endpoint: config.name, fetched: 0, processed: 0, skipped: true, lastDate: startDate }
   }
 
   onProgress?.({
     endpoint: config.name,
     step: 'fetch',
-    message: `Fetching ${config.name} from ${startDate} to ${endDate}...`,
+    message: t('sync.svc.fetching_range', { name: config.name, start: startDate, end: endDate }),
   })
 
   const data = await fetchDateChunked(
@@ -140,10 +141,10 @@ async function syncDateBased(config, onProgress) {
     return { endpoint: config.name, fetched: 0, processed: 0, startDate, endDate }
   }
 
-  onProgress?.({ endpoint: config.name, step: 'upload', message: `Uploading ${data.length} records...` })
+  onProgress?.({ endpoint: config.name, step: 'upload', message: t('sync.svc.uploading_records', { count: data.length }) })
   const processed = await postBatched(config.syncUrl, data, DEFAULT_AGENT_ID, onProgress)
 
-  onProgress?.({ endpoint: config.name, step: 'verify', message: 'Verifying...' })
+  onProgress?.({ endpoint: config.name, step: 'verify', message: t('sync.svc.verifying') })
   const verify = await verifyRandom(config.name, data)
 
   return { endpoint: config.name, fetched: data.length, processed, verify, startDate, endDate }
@@ -155,14 +156,14 @@ async function syncReport(config, onProgress) {
   const endDate = today()
 
   if (startDate >= endDate) {
-    onProgress?.({ endpoint: config.name, step: 'skip', message: `Up to date (last: ${startDate})` })
+    onProgress?.({ endpoint: config.name, step: 'skip', message: t('sync.svc.up_to_date', { date: startDate }) })
     return { endpoint: config.name, fetched: 0, processed: 0, skipped: true, lastDate: startDate }
   }
 
   onProgress?.({
     endpoint: config.name,
     step: 'fetch',
-    message: `Fetching ${config.name} day by day from ${startDate}...`,
+    message: t('sync.svc.fetching_daily', { name: config.name, start: startDate }),
   })
 
   const allData = []
@@ -193,7 +194,7 @@ async function syncReport(config, onProgress) {
     onProgress?.({
       endpoint: config.name,
       step: 'fetch',
-      message: `${dateStr}: ${data.length} records (total: ${allData.length})`,
+      message: t('sync.svc.day_count', { date: dateStr, count: data.length, total: allData.length }),
     })
 
     current.setDate(current.getDate() + 1)
@@ -203,14 +204,14 @@ async function syncReport(config, onProgress) {
     return { endpoint: config.name, fetched: 0, processed: 0, startDate, endDate }
   }
 
-  onProgress?.({ endpoint: config.name, step: 'upload', message: `Uploading ${allData.length} records...` })
+  onProgress?.({ endpoint: config.name, step: 'upload', message: t('sync.svc.uploading_records', { count: allData.length }) })
   const processed = await postBatched(config.syncUrl, allData, DEFAULT_AGENT_ID, onProgress)
 
   return { endpoint: config.name, fetched: allData.length, processed, startDate, endDate }
 }
 
 async function syncConfig(onProgress) {
-  onProgress?.({ endpoint: 'config', step: 'fetch', message: 'Fetching config data...' })
+  onProgress?.({ endpoint: 'config', step: 'fetch', message: t('sync.svc.fetching_config') })
 
   const body = { agent_id: DEFAULT_AGENT_ID }
 
@@ -220,8 +221,8 @@ async function syncConfig(onProgress) {
       body.lottery_series = lotteryInit.data.seriesData || []
       body.lottery_games = lotteryInit.data.lotteryData || []
     }
-  } catch (_) {
-    /* lottery config fetch failed — non-critical */
+  } catch (e) {
+    console.warn('[sync] lottery config fetch failed:', e.message)
   }
 
   const { data: invites } = await fetchAllPages(inviteApi.list, {}, { pageSize: 50 })
@@ -230,7 +231,7 @@ async function syncConfig(onProgress) {
   const { data: banks } = await fetchAllPages(bankApi.list, {}, { pageSize: 50 })
   if (banks.length) body.bank_list = banks
 
-  onProgress?.({ endpoint: 'config', step: 'upload', message: 'Uploading config...' })
+  onProgress?.({ endpoint: 'config', step: 'upload', message: t('sync.svc.uploading_config') })
   const res = await http.post(SYNC_API.CONFIG, body)
 
   return { endpoint: 'config', processed: res.processed }
@@ -266,10 +267,10 @@ export async function syncAll(onProgress) {
 
   for (const name of order) {
     try {
-      onProgress?.({ endpoint: name, step: 'start', message: `Starting ${name}...` })
+      onProgress?.({ endpoint: name, step: 'start', message: t('sync.svc.starting', { name }) })
       const result = await syncEndpoint(name, onProgress)
       results.push(result)
-      onProgress?.({ endpoint: name, step: 'done', message: `Done: ${result.processed || 0} records`, result })
+      onProgress?.({ endpoint: name, step: 'done', message: t('sync.svc.done_records', { count: result.processed || 0 }), result })
     } catch (e) {
       results.push({ endpoint: name, error: e.message })
       onProgress?.({ endpoint: name, step: 'error', message: e.message })
@@ -277,7 +278,7 @@ export async function syncAll(onProgress) {
   }
 
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1)
-  onProgress?.({ step: 'complete', message: `All sync complete in ${elapsed}s`, results })
+  onProgress?.({ step: 'complete', message: t('sync.svc.complete', { elapsed }), results })
 
   return results
 }

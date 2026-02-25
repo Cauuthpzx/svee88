@@ -44,9 +44,7 @@ export default {
   'route.change_login_pw': 'Đổi mật khẩu đăng nhập',
   'route.change_trade_pw': 'Đổi mật khẩu giao dịch',
   'route.rebate': 'Tỷ lệ hoàn trả',
-  'route.posts': 'Quản lý bài viết',
   'route.tiers': 'Quản lý cấp bậc',
-  'route.tasks': 'Quản lý tác vụ',
   'route.settings_system': 'Hệ thống',
   'route.settings_sync': 'Đồng bộ & Tài khoản',
 
@@ -399,6 +397,40 @@ export default {
   'sync.account.success': 'Thêm tài khoản thành công!',
   'sync.account.error': 'Lỗi: {message}',
   'sync.account.error_unknown': 'Không thể thêm',
+
+  // ── Column: rebate ──
+  'col.rebate.play_type': 'Loại cược',
+  'col.rebate.rebate_10': 'Hoàn trả 10',
+  'col.rebate.rebate_9': 'Hoàn trả 9',
+  'col.rebate.rebate_8': 'Hoàn trả 8',
+  'col.rebate.rebate_7': 'Hoàn trả 7',
+  'col.rebate.rebate_6': 'Hoàn trả 6',
+  'col.rebate.rebate_5': 'Hoàn trả 5',
+  'col.rebate.rebate_4': 'Hoàn trả 4',
+  'col.rebate.rebate_3': 'Hoàn trả 3',
+  'col.rebate.rebate_2': 'Hoàn trả 2',
+  'col.rebate.rebate_1': 'Hoàn trả 1',
+
+  // ── Tiers ──
+  'tiers.title': 'Quản lý cấp bậc',
+  'col.tiers.name': 'Tên cấp bậc',
+  'col.tiers.created_at': 'Ngày tạo',
+
+  // ── Sync service progress ──
+  'sync.svc.fetching_members': 'Đang tải tất cả hội viên...',
+  'sync.svc.uploading_members': 'Đang tải lên {count} hội viên...',
+  'sync.svc.verifying_samples': 'Đang xác minh mẫu ngẫu nhiên...',
+  'sync.svc.up_to_date': 'Đã cập nhật (lần cuối: {date})',
+  'sync.svc.fetching_range': 'Đang tải {name} từ {start} đến {end}...',
+  'sync.svc.uploading_records': 'Đang tải lên {count} bản ghi...',
+  'sync.svc.verifying': 'Đang xác minh...',
+  'sync.svc.fetching_daily': 'Đang tải {name} theo ngày từ {start}...',
+  'sync.svc.day_count': '{date}: {count} bản ghi (tổng: {total})',
+  'sync.svc.fetching_config': 'Đang tải dữ liệu cấu hình...',
+  'sync.svc.uploading_config': 'Đang tải lên cấu hình...',
+  'sync.svc.starting': 'Bắt đầu {name}...',
+  'sync.svc.done_records': 'Xong: {count} bản ghi',
+  'sync.svc.complete': 'Hoàn tất đồng bộ trong {elapsed}s',
 
   // ── Invite actions ──
   'invite.link_copied': 'Đã copy đường link!',

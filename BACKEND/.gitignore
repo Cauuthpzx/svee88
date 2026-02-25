@@ -135,6 +135,7 @@ cython_debug/
 
 # Config files:
 src/.env
+upstream-cookie.conf
 
 # Ignore root files:
 /Dockerfile

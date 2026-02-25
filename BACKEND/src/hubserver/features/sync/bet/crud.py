@@ -14,7 +14,9 @@ from .schema import (
     BetOrderUpdateInternal,
 )
 
-CRUDBetOrder = FastCRUD[BetOrder, BetOrderCreateInternal, BetOrderUpdate, BetOrderUpdateInternal, BetOrderDelete, BetOrderRead]
+CRUDBetOrder = FastCRUD[
+    BetOrder, BetOrderCreateInternal, BetOrderUpdate, BetOrderUpdateInternal, BetOrderDelete, BetOrderRead
+]
 crud_bet_orders = CRUDBetOrder(BetOrder)
 
 CRUDBetLottery = FastCRUD[

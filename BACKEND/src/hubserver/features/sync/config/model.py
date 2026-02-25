@@ -12,7 +12,7 @@ class LotterySeries(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(100))
-    agent_id: Mapped[int] = mapped_column(SmallInteger, default=1)
+    agent_id: Mapped[int] = mapped_column(SmallInteger, ForeignKey("agents.id"), default=1)
 
 
 class LotteryGame(Base):
@@ -24,7 +24,7 @@ class LotteryGame(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(100))
     series_id: Mapped[int] = mapped_column(Integer, ForeignKey("lottery_series.id"))
-    agent_id: Mapped[int] = mapped_column(SmallInteger, default=1)
+    agent_id: Mapped[int] = mapped_column(SmallInteger, ForeignKey("agents.id"), default=1)
 
 
 class BankList(Base):
@@ -36,7 +36,7 @@ class BankList(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     bank: Mapped[str] = mapped_column(String(100))
     create_time: Mapped[datetime] = mapped_column(DateTime)
-    agent_id: Mapped[int] = mapped_column(SmallInteger, default=1)
+    agent_id: Mapped[int] = mapped_column(SmallInteger, ForeignKey("agents.id"), default=1)
     is_default: Mapped[bool] = mapped_column(Boolean, default=False)
     branch: Mapped[str | None] = mapped_column(String(255), default=None)
     card_number: Mapped[str | None] = mapped_column(String(30), default=None)
@@ -54,7 +54,7 @@ class InviteList(Base):
     invite_code: Mapped[str] = mapped_column(String(50))
     create_time: Mapped[datetime] = mapped_column(DateTime)
     update_time: Mapped[datetime] = mapped_column(DateTime)
-    agent_id: Mapped[int] = mapped_column(SmallInteger, default=1)
+    agent_id: Mapped[int] = mapped_column(SmallInteger, ForeignKey("agents.id"), default=1)
     group_id: Mapped[int] = mapped_column(Integer, default=0)
     user_type: Mapped[str | None] = mapped_column(String(50), default=None)
     rebate_arr: Mapped[dict | None] = mapped_column(JSONB, default=None)

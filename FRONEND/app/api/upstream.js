@@ -9,9 +9,7 @@
  *   Rebate APIs → { code: 1, msg: "", data: {...} }
  */
 
-import upstream from './upstream-client.js'
 import { postForm, postJson } from './upstream-client.js'
-export { fetchAllPages, fetchDateChunked, syncToLocal } from './upstream-sync.js'
 
 // ── 1. MEMBERS ──
 export const memberApi = {
@@ -70,15 +68,7 @@ export const depositWithdrawalApi = {
     })
 }
 
-// ── 8. WITHDRAWAL RECORDS ──
-export const withdrawalRecordApi = {
-  list: ({ page = 1, limit = 10, create_time, username, serial_no, status } = {}) =>
-    postForm('/agent/withdrawalsRecord.html', {
-      page, limit, create_time, username, serial_no, status
-    })
-}
-
-// ── 9. BET ORDERS - LOTTERY ──
+// ── 8. BET ORDERS - LOTTERY ──
 export const betApi = {
   list: ({ page = 1, limit = 10, username, create_time,
            serial_no, lottery_id, play_type_id, play_id, status, es = 1 } = {}) =>
@@ -108,22 +98,3 @@ export const rebateApi = {
     postJson('/agent/getRebateOddsPanel', { lottery_id: lotteryId, series_id: seriesId })
 }
 
-// ── 12. WITHDRAW COMMISSION ──
-export const withdrawApi = {
-  submit: (data) => postForm('/agent/withdraw.html', data)
-}
-
-// ── 13. ACCOUNT SETTINGS ──
-export const accountApi = {
-  changePassword: (oldPwd, newPwd, confirmPwd) =>
-    postForm('/agent/editPassword', { oldPwd, newPwd, confirmPwd }),
-
-  changeFundPassword: (oldPwd, newPwd, confirmPwd) =>
-    postForm('/agent/editFundPassword', { oldPwd, newPwd, confirmPwd })
-}
-
-// ── 14. USER REBATE SETTINGS ──
-export const userRebateApi = {
-  get: (userId) =>
-    upstream.get('/agent/seeUserRebate', { params: { id: userId } })
-}

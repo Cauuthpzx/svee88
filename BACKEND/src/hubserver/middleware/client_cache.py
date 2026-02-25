@@ -17,6 +17,12 @@ class ClientCacheMiddleware:
             await self.app(scope, receive, send)
             return
 
+        # Skip cache headers for API endpoints — they return authenticated data
+        path: str = scope.get("path", "")
+        if path.startswith("/api/"):
+            await self.app(scope, receive, send)
+            return
+
         async def send_with_cache(message: Message) -> None:
             if message["type"] == "http.response.start":
                 headers = list(message.get("headers", []))

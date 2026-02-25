@@ -19,9 +19,7 @@ export const ROUTES = {
   REGISTER: '#/register',
   DASHBOARD: '#/dashboard',
   USERS: '#/users',
-  POSTS: '#/posts',
   TIERS: '#/tiers',
-  TASKS: '#/tasks',
   INVITE_LIST: '#/invite-list',
   REPORT_LOTTERY: '#/report-lottery',
   REPORT_FUNDS: '#/report-funds',
@@ -51,9 +49,7 @@ const ROUTE_TITLE_KEYS = {
   [ROUTES.CHANGE_LOGIN_PW]: 'route.change_login_pw',
   [ROUTES.CHANGE_TRADE_PW]: 'route.change_trade_pw',
   [ROUTES.REBATE_LIST]: 'route.rebate',
-  [ROUTES.POSTS]: 'route.posts',
   [ROUTES.TIERS]: 'route.tiers',
-  [ROUTES.TASKS]: 'route.tasks',
   [ROUTES.SETTINGS_SYSTEM]: 'route.settings_system',
   [ROUTES.SETTINGS_SYNC]: 'route.settings_sync'
 }
@@ -63,11 +59,6 @@ export const getRouteTitle = (hash) => {
   return key ? t(key) : ''
 }
 
-/** @deprecated Use getRouteTitle(hash) — kept for backward compatibility */
-export const ROUTE_TITLES = new Proxy({}, {
-  get: (_, hash) => getRouteTitle(hash)
-})
-
 export const API = {
   LOGIN: '/api/v1/login',
   REGISTER: '/api/v1/user',
@@ -75,13 +66,8 @@ export const API = {
   USER_ME: '/api/v1/user/me/',
   USERS: '/api/v1/users',
   USER: (username) => `/api/v1/user/${username}`,
-  POSTS: (username) => `/api/v1/${username}/posts`,
-  POST: (username, id) => `/api/v1/${username}/post/${id}`,
-  POST_CREATE: (username) => `/api/v1/${username}/post`,
   TIERS: '/api/v1/tiers',
-  TIER: (name) => `/api/v1/tier/${name}`,
-  TASKS_CREATE: '/api/v1/tasks/task',
-  TASK: (id) => `/api/v1/tasks/task/${id}`
+  TIER: (name) => `/api/v1/tier/${name}`
 }
 
 /** Sync API — backend endpoints for data synchronization */
@@ -115,31 +101,6 @@ export const UPSTREAM = {
   EDIT_PASSWORD: '/agent/editPassword',
   EDIT_FUND_PASSWORD: '/agent/editFundPassword'
 }
-
-/** Route → section mapping for transition type detection */
-export const ROUTE_SECTIONS = {
-  [ROUTES.DASHBOARD]: 'dashboard',
-  [ROUTES.USERS]: 'members',
-  [ROUTES.INVITE_LIST]: 'members',
-  [ROUTES.REPORT_LOTTERY]: 'reports',
-  [ROUTES.REPORT_FUNDS]: 'reports',
-  [ROUTES.REPORT_PROVIDER]: 'reports',
-  [ROUTES.DEPOSIT_LIST]: 'finance',
-  [ROUTES.WITHDRAWAL_HISTORY]: 'finance',
-  [ROUTES.BET_LIST]: 'bets',
-  [ROUTES.BET_THIRD_PARTY]: 'bets',
-  [ROUTES.CHANGE_LOGIN_PW]: 'customer',
-  [ROUTES.CHANGE_TRADE_PW]: 'customer',
-  [ROUTES.REBATE_LIST]: 'rebate',
-  [ROUTES.POSTS]: 'content',
-  [ROUTES.TIERS]: 'system',
-  [ROUTES.TASKS]: 'system',
-  [ROUTES.SETTINGS_SYSTEM]: 'settings',
-  [ROUTES.SETTINGS_SYNC]: 'settings'
-}
-
-/** Must match longest CSS transition duration */
-export const TRANSITION_MS = 350
 
 export const MSG = {
   get LOGIN_SUCCESS() { return t('msg.login_success') },

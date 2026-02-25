@@ -1,12 +1,17 @@
 """Upstream proxy router — forward requests to agents in parallel."""
 
+from urllib.parse import parse_qs
+
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
 from ....core.db.database import async_get_db
 from ....core.deps import get_current_user
-from .proxy import fetch_rebate_init, fetch_rebate_games, fetch_rebate_panel
-from .swr import swr_fetch, get_cache_stats
+from .proxy import fetch_rebate_games, fetch_rebate_init, fetch_rebate_panel
+from .swr import get_cache_stats, swr_fetch
+
+# Maximum rows fetched for computing report totals (prevents OOM)
+_TOTALS_MAX_ROWS = 5000
 
 router = APIRouter(
     prefix="/proxy",
@@ -16,7 +21,7 @@ router = APIRouter(
 
 
 def _parse_form(body: bytes) -> dict[str, str]:
-    from urllib.parse import parse_qs
+    """Decode URL-encoded form body into a flat dict."""
     parsed = parse_qs(body.decode("utf-8"))
     return {k: v[0] for k, v in parsed.items()}
 
@@ -87,8 +92,7 @@ async def proxy_upstream(
     force_fresh = request.query_params.get("_fresh") == "1"
     result = await swr_fetch(db, endpoint, params, agent_id, force_fresh)
 
-    # Report endpoints: compute column totals (capped at 5000 rows to prevent OOM)
-    _TOTALS_MAX_ROWS = 5000
+    # Report endpoints: compute column totals
     if endpoint.startswith("report-") and result.get("code") == 0:
         totals_params = {k: v for k, v in params.items() if k not in ("page", "limit")}
         totals_params["page"] = "1"

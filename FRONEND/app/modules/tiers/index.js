@@ -1,9 +1,10 @@
 import { API } from '../../constants/index.js'
 import { escapeHtml, getToken } from '../../utils/index.js'
+import { t } from '../../i18n/index.js'
 
 const template = () => `
   <div class="layui-card">
-    <div class="layui-card-header">Quản lý cấp bậc</div>
+    <div class="layui-card-header">${t('tiers.title')}</div>
     <div class="layui-card-body">
       <table id="tierTable" lay-filter="tierTable"></table>
     </div>
@@ -23,8 +24,8 @@ const loadTiers = () => {
       }),
       request: { pageName: 'page', limitName: 'items_per_page' },
       cols: [[
-        { field: 'name', title: 'Tên cấp bậc', width: 200, templet: (d) => escapeHtml(d.name) },
-        { field: 'created_at', title: 'Ngày tạo', width: 160 }
+        { field: 'name', title: t('col.tiers.name'), width: 200, templet: (d) => escapeHtml(d.name) },
+        { field: 'created_at', title: t('col.tiers.created_at'), width: 160 }
       ]],
       page: false,
       skin: 'line',

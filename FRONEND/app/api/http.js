@@ -23,10 +23,9 @@ const tryRefresh = async () => {
   refreshPromise = http.post(REFRESH_API, null, {
     _skipAuthRetry: true,
     _noRetry: true
-  }).then(() => {
-    // Server sets new HttpOnly access_token cookie — browser sends it automatically.
-    // Just ensure the logged_in flag stays set for frontend guard checks.
-    setToken('1')
+  }).then((res) => {
+    // Store the new JWT for Authorization header fallback
+    setToken(res?.access_token || '1')
     return true
   }).catch(() => false).finally(() => {
     refreshPromise = null

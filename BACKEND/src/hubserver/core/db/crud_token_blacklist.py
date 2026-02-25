@@ -1,7 +1,7 @@
 from fastcrud import FastCRUD
 
-from .token_blacklist import TokenBlacklist
 from ..schemas import TokenBlacklistCreate, TokenBlacklistRead, TokenBlacklistUpdate
+from .token_blacklist import TokenBlacklist
 
 CRUDTokenBlacklist = FastCRUD[
     TokenBlacklist,

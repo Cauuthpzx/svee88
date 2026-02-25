@@ -1,7 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 
-from sqlalchemy import Boolean, DateTime, Index, Integer, Numeric, SmallInteger, String, Text, UniqueConstraint
+from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Integer, Numeric, SmallInteger, String, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -25,7 +25,7 @@ class Member(Base):
     register_time: Mapped[datetime] = mapped_column(DateTime)
     create_time: Mapped[datetime] = mapped_column(DateTime)
     update_time: Mapped[datetime] = mapped_column(DateTime)
-    agent_id: Mapped[int] = mapped_column(SmallInteger, default=1)
+    agent_id: Mapped[int] = mapped_column(SmallInteger, ForeignKey("agents.id"), default=1)
     user_parent: Mapped[int | None] = mapped_column(Integer, default=None)
     user_tree: Mapped[dict | None] = mapped_column(JSONB, default=None)
     level: Mapped[int] = mapped_column(SmallInteger, default=0)

@@ -1,13 +1,13 @@
 from sqlalchemy.orm import Session
-from uuid6 import uuid7  # 126
+from uuid6 import uuid7
 
-from src.app import models
-from src.app.core.security import get_password_hash
+from src.hubserver.core.security import get_password_hash
+from src.hubserver.features.user.model import User
 from tests.conftest import fake
 
 
-def create_user(db: Session, is_super_user: bool = False) -> models.User:
-    _user = models.User(
+def create_user(db: Session, is_super_user: bool = False) -> User:
+    _user = User(
         name=fake.name(),
         username=fake.user_name(),
         email=fake.email(),

@@ -25,21 +25,6 @@ class NotFoundError(AppException):
         super().__init__(status_code=404, message=message)
 
 
-class ValidationError(AppException):
-    def __init__(self, message: str = "Validation failed", errors: list | None = None):
-        super().__init__(status_code=422, message=message, errors=errors)
-
-
-class AuthError(AppException):
-    def __init__(self, message: str = "Authentication required"):
-        super().__init__(status_code=401, message=message)
-
-
-class ForbiddenError(AppException):
-    def __init__(self, message: str = "Forbidden"):
-        super().__init__(status_code=403, message=message)
-
-
 def register_exception_handlers(app: FastAPI) -> None:
     """Register all global exception handlers on the FastAPI app."""
 

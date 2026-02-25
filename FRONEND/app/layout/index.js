@@ -1,3 +1,8 @@
+/**
+ * Admin layout — header, sidebar, clock, theme toggle, i18n, user menu.
+ * @module layout
+ */
+
 import { authApi } from '../api/auth.js'
 import { clearToken } from '../utils/index.js'
 import { initTheme, toggleTheme } from '../utils/theme.js'
@@ -5,78 +10,13 @@ import { preloadRoute } from '../router/index.js'
 import { store } from '../store/index.js'
 import { ROUTES, MSG } from '../constants/index.js'
 import { t, onLangChange, setLang, getLang, LANG_OPTIONS } from '../i18n/index.js'
+import { startClock } from './clock.js'
+import { getMenuItems, renderMenuItem } from './menu.js'
 import '../icons/index.css'
 import './index.css'
 
 const LAYOUT_ID = 'admin-layout'
 const CONTENT_ID = 'main-content'
-
-const getMenuItems = () => [
-  { hash: ROUTES.DASHBOARD, icon: 'hub-icon-home', label: t('menu.home') },
-  {
-    icon: 'hub-icon-user', label: t('menu.members_group'),
-    children: [
-      { hash: ROUTES.USERS, label: t('menu.members') },
-      { hash: ROUTES.INVITE_LIST, label: t('menu.invites') }
-    ]
-  },
-  {
-    icon: 'hub-icon-document', label: t('menu.reports_group'),
-    children: [
-      { hash: ROUTES.REPORT_LOTTERY, label: t('menu.report_lottery') },
-      { hash: ROUTES.REPORT_FUNDS, label: t('menu.report_funds') },
-      { hash: ROUTES.REPORT_PROVIDER, label: t('menu.report_provider') }
-    ]
-  },
-  {
-    icon: 'hub-icon-money', label: t('menu.finance_group'),
-    children: [
-      { hash: ROUTES.DEPOSIT_LIST, label: t('menu.deposits') },
-      { hash: ROUTES.WITHDRAWAL_HISTORY, label: t('menu.withdrawals') }
-    ]
-  },
-  {
-    icon: 'hub-icon-monitor', label: t('menu.bets_group'),
-    children: [
-      { hash: ROUTES.BET_LIST, label: t('menu.bets') },
-      { hash: ROUTES.BET_THIRD_PARTY, label: t('menu.bet_orders') }
-    ]
-  },
-  {
-    icon: 'hub-icon-menu', label: t('menu.rebate_group'),
-    children: [{ hash: ROUTES.REBATE_LIST, label: t('menu.rebate') }]
-  },
-  {
-    icon: 'hub-icon-settings', label: t('menu.settings_group'),
-    children: [
-      { hash: ROUTES.SETTINGS_SYSTEM, label: t('menu.settings_system') },
-      { hash: ROUTES.SETTINGS_SYNC, label: t('menu.settings_sync') }
-    ]
-  }
-]
-
-const renderMenuItem = (item) => {
-  if (item.children) {
-    const childHtml = item.children.map((c) => {
-      const href = c.hash || 'javascript:;'
-      const dataHash = c.hash ? ` data-hash="${c.hash}"` : ''
-      return `<dd><a href="${href}"${dataHash}>${c.label}</a></dd>`
-    }).join('')
-    return `
-      <li class="layui-nav-item">
-        <a href="javascript:;">
-          <i class="hub-icon ${item.icon}"></i> <span>${item.label}</span>
-        </a>
-        <dl class="layui-nav-child">${childHtml}</dl>
-      </li>`
-  }
-  return `
-    <li class="layui-nav-item">
-      <a href="${item.hash}" data-hash="${item.hash}">
-        <i class="hub-icon ${item.icon}"></i> <span>${item.label}</span>
-      </a>
-    </li>`
-}
 
 const template = () => `
   <div class="layui-layout layui-layout-admin" id="${LAYOUT_ID}">
@@ -170,7 +110,7 @@ const template = () => `
 const handleLogout = () => {
   layui.use('layer', function (layer) {
     layer.confirm(t('header.logout_confirm'), { icon: 3 }, async (idx) => {
-      try { await authApi.logout() } catch (_) { /* noop */ }
+      try { await authApi.logout() } catch (e) { console.warn('[layout] logout error:', e.message) }
       clearToken()
       store.set('user', null)
       layer.close(idx)
@@ -195,28 +135,14 @@ const loadUserInfo = async () => {
     const user = await authApi.getMe()
     store.set('user', user)
     setHeaderName(user)
-  } catch (_) { /* handled by global error handler */ }
+  } catch (e) { console.warn('[layout] user info error:', e.message) }
 }
 
-let clockTimer = null
-const pad = (n) => String(n).padStart(2, '0')
-const updateClock = () => {
-  const now = new Date()
-  const h = now.getHours()
-  const h12 = h % 12 || 12
-  const ampm = h < 12 ? 'AM' : 'PM'
-  const time = `${pad(h12)}:${pad(now.getMinutes())}:${pad(now.getSeconds())}  ${ampm}`
-  const date = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()}`
-  const timeEl = document.getElementById('clock-display')
-  const dateEl = document.getElementById('clock-date')
-  if (timeEl) timeEl.textContent = time
-  if (dateEl) dateEl.textContent = date
-}
-const startClock = () => {
-  updateClock()
-  clockTimer = setInterval(updateClock, 1000)
-}
+let clockHandle = null
+let tipsMouseOver = null
+let tipsMouseOut = null
 
+/** @returns {boolean} Whether the admin layout is currently in the DOM */
 export const isRendered = () => !!document.getElementById(LAYOUT_ID)
 
 const handleSidebarHover = (e) => {
@@ -229,7 +155,7 @@ const initTips = () => {
     let activeEl = null
     let closeTimer = null
 
-    document.addEventListener('mouseover', (e) => {
+    tipsMouseOver = (e) => {
       const el = e.target.closest('[lay-tips]')
       if (el) {
         clearTimeout(closeTimer)
@@ -239,9 +165,9 @@ const initTips = () => {
         const dir = parseInt(el.getAttribute('lay-direction'), 10) || 1
         layer.tips(text, el, { tips: dir, time: 0 })
       }
-    })
+    }
 
-    document.addEventListener('mouseout', (e) => {
+    tipsMouseOut = (e) => {
       const el = e.target.closest('[lay-tips]')
       if (!el) return
       const to = e.relatedTarget
@@ -250,7 +176,10 @@ const initTips = () => {
         layer.closeAll('tips')
         activeEl = null
       }, 80)
-    })
+    }
+
+    document.addEventListener('mouseover', tipsMouseOver)
+    document.addEventListener('mouseout', tipsMouseOut)
   })
 }
 
@@ -306,6 +235,7 @@ const updateLayoutTexts = () => {
 
 let unsubLang = null
 
+/** Render the admin layout — header, sidebar, clock, theme, user info. */
 export const render = async () => {
   document.getElementById('app').innerHTML = template()
   layui.use('element', function (element) { element.render('nav') })
@@ -318,18 +248,21 @@ export const render = async () => {
     ?.addEventListener('click', handleLogout)
   document.getElementById('hubSidebarL')
     ?.addEventListener('mouseenter', handleSidebarHover, true)
-  startClock()
+  clockHandle = startClock()
   await loadUserInfo()
   unsubLang = onLangChange(updateLayoutTexts)
 }
 
+/** @returns {HTMLElement|null} The main content container for page rendering */
 export const getContentContainer = () => document.getElementById(CONTENT_ID)
 
+/** Show the skeleton loading indicator. */
 export const showLoading = () => {
   const el = document.getElementById('routeLoading')
   if (el) el.style.display = ''
 }
 
+/** Hide the skeleton loading indicator. */
 export const hideLoading = () => {
   const el = document.getElementById('routeLoading')
   if (el) el.style.display = 'none'
@@ -341,6 +274,10 @@ export const removeSkeleton = () => {
   if (el) el.remove()
 }
 
+/**
+ * Highlight the sidebar menu item matching the given hash.
+ * @param {string} hash - Route hash (e.g. '#/users')
+ */
 export const setActiveMenu = (hash) => {
   const sidebar = document.getElementById('hubSidebarL')
   if (!sidebar) return
@@ -361,4 +298,28 @@ export const setActiveMenu = (hash) => {
     const li = link.closest('.layui-nav-item')
     if (li) li.classList.add('layui-this')
   }
+}
+
+/** Clean up layout resources — clock, event listeners, i18n subscription. */
+export const destroy = () => {
+  if (clockHandle) {
+    clockHandle.stop()
+    clockHandle = null
+  }
+  if (unsubLang) {
+    unsubLang()
+    unsubLang = null
+  }
+  if (tipsMouseOver) {
+    document.removeEventListener('mouseover', tipsMouseOver)
+    tipsMouseOver = null
+  }
+  if (tipsMouseOut) {
+    document.removeEventListener('mouseout', tipsMouseOut)
+    tipsMouseOut = null
+  }
+  const sidebar = document.getElementById('hubSidebarL')
+  if (sidebar) sidebar.removeEventListener('mouseenter', handleSidebarHover, true)
+  document.getElementById('themeToggle')?.removeEventListener('click', toggleTheme)
+  document.getElementById('logoutBtn')?.removeEventListener('click', handleLogout)
 }
