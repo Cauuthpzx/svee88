@@ -8,18 +8,25 @@ from sqlalchemy.ext.asyncio.session import AsyncSession
 
 from ....core.config import APP_TZ
 from ....core.db.database import async_get_db
+from ....core.deps import get_current_superuser
 from .model import Agent
 from .schema import AgentCreate, AgentRead, AgentUpdate
 
-router = APIRouter(prefix="/agents", tags=["agents"])
+router = APIRouter(
+    prefix="/agents",
+    tags=["agents"],
+    dependencies=[Depends(get_current_superuser)],
+)
 
 
 def _serialize(agent: Agent) -> dict:
+    """Serialize agent — cookie is NEVER exposed in API responses."""
     return {
         "id": agent.id,
         "owner": agent.owner,
         "username": agent.username,
         "base_url": agent.base_url,
+        "cookie_set": bool(agent.cookie),
         "is_active": agent.is_active,
         "last_login_at": agent.last_login_at.isoformat() if agent.last_login_at else None,
         "created_at": agent.created_at.isoformat() if agent.created_at else None,

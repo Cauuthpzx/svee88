@@ -55,9 +55,9 @@ async def authenticate_user(username_or_email: str, password: str, db: AsyncSess
 def create_access_token(data: dict[str, Any], expires_delta: timedelta | None = None) -> str:
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.now(UTC).replace(tzinfo=None) + expires_delta
+        expire = datetime.now(UTC) + expires_delta
     else:
-        expire = datetime.now(UTC).replace(tzinfo=None) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        expire = datetime.now(UTC) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire, "token_type": TokenType.ACCESS})
     encoded_jwt: str = jwt.encode(to_encode, SECRET_KEY.get_secret_value(), algorithm=ALGORITHM)
     return encoded_jwt
@@ -66,9 +66,9 @@ def create_access_token(data: dict[str, Any], expires_delta: timedelta | None = 
 def create_refresh_token(data: dict[str, Any], expires_delta: timedelta | None = None) -> str:
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.now(UTC).replace(tzinfo=None) + expires_delta
+        expire = datetime.now(UTC) + expires_delta
     else:
-        expire = datetime.now(UTC).replace(tzinfo=None) + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+        expire = datetime.now(UTC) + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
     to_encode.update({"exp": expire, "token_type": TokenType.REFRESH})
     encoded_jwt: str = jwt.encode(to_encode, SECRET_KEY.get_secret_value(), algorithm=ALGORITHM)
     return encoded_jwt
@@ -94,7 +94,11 @@ async def verify_token(token: str, expected_token_type: TokenType, db: AsyncSess
 
 
 async def blacklist_token(token: str, db: AsyncSession) -> None:
-    payload = jwt.decode(token, SECRET_KEY.get_secret_value(), algorithms=[ALGORITHM])
+    try:
+        payload = jwt.decode(token, SECRET_KEY.get_secret_value(), algorithms=[ALGORITHM])
+    except JWTError:
+        return  # Token already expired or invalid — no need to blacklist
+
     exp_timestamp = payload.get("exp")
     if exp_timestamp is not None:
         expires_at = datetime.fromtimestamp(exp_timestamp, tz=UTC)
@@ -103,4 +107,5 @@ async def blacklist_token(token: str, db: AsyncSession) -> None:
 
 async def blacklist_tokens(access_token: str, refresh_token: str, db: AsyncSession) -> None:
     for token in [access_token, refresh_token]:
-        await blacklist_token(token, db)
+        if token:
+            await blacklist_token(token, db)

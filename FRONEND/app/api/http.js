@@ -23,13 +23,11 @@ const tryRefresh = async () => {
   refreshPromise = http.post(REFRESH_API, null, {
     _skipAuthRetry: true,
     _noRetry: true
-  }).then((res) => {
-    const newToken = res?.access_token
-    if (newToken) {
-      setToken(newToken)
-      return true
-    }
-    return false
+  }).then(() => {
+    // Server sets new HttpOnly access_token cookie — browser sends it automatically.
+    // Just ensure the logged_in flag stays set for frontend guard checks.
+    setToken('1')
+    return true
   }).catch(() => false).finally(() => {
     refreshPromise = null
   })
@@ -59,7 +57,7 @@ http.interceptors.response.use(
       config._skipAuthRetry = true
       const refreshed = await tryRefresh()
       if (refreshed) {
-        config.headers.Authorization = `Bearer ${getToken()}`
+        // No need to set Authorization header — browser sends HttpOnly cookie automatically
         return http(config)
       }
       clearToken()

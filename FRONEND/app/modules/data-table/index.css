@@ -107,6 +107,12 @@
   border: none;
   box-shadow: 0 0 0 1px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.05);
 }
+.data-panel .layui-table-cell {
+  white-space: normal;
+  word-break: break-word;
+  height: auto;
+  line-height: 1.6;
+}
 .data-panel .layui-table td,
 .data-panel .layui-table th {
   border-color: #e6e6e6;

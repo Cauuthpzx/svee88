@@ -17,6 +17,8 @@ from ..account.model import Agent
 
 logger = logging.getLogger(__name__)
 
+_client_lock = asyncio.Lock()
+
 # Map frontend endpoint names → upstream URL paths
 UPSTREAM_PATHS: dict[str, str] = {
     "members": "/agent/user.html",
@@ -43,9 +45,13 @@ UPSTREAM_DEFAULTS: dict[str, dict] = {
 _client: httpx.AsyncClient | None = None
 
 
-def get_client() -> httpx.AsyncClient:
+async def get_client() -> httpx.AsyncClient:
     global _client
-    if _client is None or _client.is_closed:
+    if _client is not None and not _client.is_closed:
+        return _client
+    async with _client_lock:
+        if _client is not None and not _client.is_closed:
+            return _client
         _client = httpx.AsyncClient(
             timeout=30.0,
             verify=True,
@@ -107,7 +113,7 @@ async def fetch_all_agents(
     defaults = UPSTREAM_DEFAULTS.get(endpoint, {})
     merged_params = {**defaults, **form_params}
 
-    client = get_client()
+    client = await get_client()
 
     # Parallel fetch from all agents
     tasks = [_fetch_one(client, ag, upstream_path, merged_params) for ag in agents]
@@ -167,7 +173,7 @@ async def fetch_rebate_init(
         return {"series": [], "games": []}
 
     agent = agents[0]
-    client = get_client()
+    client = await get_client()
 
     # 1. Get all series
     res = await _post_json(client, agent, "/agent/getLottery", {"type": "init"})
@@ -203,7 +209,7 @@ async def fetch_rebate_games(
         return {"games": []}
 
     agent = agents[0]
-    client = get_client()
+    client = await get_client()
     res = await _post_json(
         client, agent, "/agent/getLottery",
         {"type": "getLottery", "series_id": series_id},
@@ -228,7 +234,7 @@ async def fetch_rebate_panel(
         return {"code": 0, "data": [], "count": 0}
 
     agent = agents[0]
-    client = get_client()
+    client = await get_client()
     res = await _post_json(
         client, agent, "/agent/getRebateOddsPanel",
         {"lottery_id": lottery_id, "series_id": series_id},

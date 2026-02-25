@@ -3,7 +3,6 @@ from __future__ import annotations
 from datetime import UTC, datetime
 
 from redis.asyncio import ConnectionPool, Redis
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..logger import logging
 from ...features.tier.schema import sanitize_path
@@ -11,10 +10,20 @@ from ...features.tier.schema import sanitize_path
 logger = logging.getLogger(__name__)
 
 
+_RATE_LIMIT_LUA = """
+local current = redis.call('INCR', KEYS[1])
+if current == 1 then
+    redis.call('EXPIRE', KEYS[1], ARGV[1])
+end
+return current
+"""
+
+
 class RateLimiter:
     _instance: "RateLimiter" | None = None
     pool: ConnectionPool | None = None
     client: Redis | None = None
+    _script: object | None = None
 
     def __new__(cls) -> "RateLimiter":
         if cls._instance is None:
@@ -27,6 +36,7 @@ class RateLimiter:
         if instance.pool is None:
             instance.pool = ConnectionPool.from_url(redis_url)
             instance.client = Redis(connection_pool=instance.pool)
+            instance._script = instance.client.register_script(_RATE_LIMIT_LUA)
 
     @classmethod
     def get_client(cls) -> Redis:
@@ -36,8 +46,10 @@ class RateLimiter:
             raise RuntimeError("Redis client is not initialized.")
         return instance.client
 
-    async def is_rate_limited(self, db: AsyncSession, user_id: int, path: str, limit: int, period: int) -> bool:
-        client = self.get_client()
+    async def is_rate_limited(self, user_id: int, path: str, limit: int, period: int) -> bool:
+        if self._script is None:
+            raise RuntimeError("RateLimiter not initialized.")
+
         current_timestamp = int(datetime.now(UTC).timestamp())
         window_start = current_timestamp - (current_timestamp % period)
 
@@ -45,18 +57,12 @@ class RateLimiter:
         key = f"ratelimit:{user_id}:{sanitized_path}:{window_start}"
 
         try:
-            current_count = await client.incr(key)
-            if current_count == 1:
-                await client.expire(key, period)
-
-            if current_count > limit:
-                return True
+            current_count = await self._script(keys=[key], args=[period])
+            return current_count > limit
 
         except Exception as e:
             logger.exception("Error checking rate limit for user %s on path %s: %s", user_id, path, e)
-            raise e
-
-        return False
+            raise
 
 
 rate_limiter = RateLimiter()

@@ -4,10 +4,15 @@ from fastapi import APIRouter, Depends, Request
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
 from ....core.db.database import async_get_db
+from ....core.deps import get_current_user
 from .proxy import fetch_rebate_init, fetch_rebate_games, fetch_rebate_panel
 from .swr import swr_fetch, get_cache_stats
 
-router = APIRouter(prefix="/proxy", tags=["proxy"])
+router = APIRouter(
+    prefix="/proxy",
+    tags=["proxy"],
+    dependencies=[Depends(get_current_user)],
+)
 
 
 def _parse_form(body: bytes) -> dict[str, str]:
@@ -82,11 +87,12 @@ async def proxy_upstream(
     force_fresh = request.query_params.get("_fresh") == "1"
     result = await swr_fetch(db, endpoint, params, agent_id, force_fresh)
 
-    # Report endpoints: compute column totals across ALL pages
+    # Report endpoints: compute column totals (capped at 5000 rows to prevent OOM)
+    _TOTALS_MAX_ROWS = 5000
     if endpoint.startswith("report-") and result.get("code") == 0:
         totals_params = {k: v for k, v in params.items() if k not in ("page", "limit")}
         totals_params["page"] = "1"
-        totals_params["limit"] = "99999"
+        totals_params["limit"] = str(_TOTALS_MAX_ROWS)
         totals_res = await swr_fetch(
             db, endpoint, totals_params, agent_id, force_fresh=False,
         )
@@ -107,5 +113,7 @@ async def proxy_upstream(
             for key, vals in _uniques.items():
                 _totals[key] = len(vals)
             result["_totals"] = _totals
+            if len(totals_res["data"]) >= _TOTALS_MAX_ROWS:
+                result["_totals_truncated"] = True
 
     return result

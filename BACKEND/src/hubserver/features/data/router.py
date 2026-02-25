@@ -16,13 +16,18 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
 from ...core.db.database import async_get_db
+from ...core.deps import get_current_user
 from ..sync.member.model import Member
 from ..sync.bet.model import BetOrder, BetLottery
 from ..sync.finance.model import DepositWithdrawal
 from ..sync.report.model import ReportFunds, ReportLottery, ReportThirdGame
 from ..sync.config.model import BankList, InviteList
 
-router = APIRouter(prefix="/data", tags=["data"])
+router = APIRouter(
+    prefix="/data",
+    tags=["data"],
+    dependencies=[Depends(get_current_user)],
+)
 
 # ── Model registry ──────────────────────────────────────────────────
 
@@ -82,6 +87,20 @@ _ALLOWED_FILTERS: dict[str, set[str]] = {
     "deposits": {"username", "type", "status"},
     "withdrawals": {"username", "serial_no", "status"},
     "banks": {"card_number"},
+}
+
+# Whitelist of sortable columns per endpoint
+_ALLOWED_SORT: dict[str, set[str]] = {
+    "members": {"id", "username", "money", "login_time", "register_time", "deposit_money", "withdrawal_money", "status"},
+    "invites": {"id", "create_time", "reg_count"},
+    "bets": {"create_time", "money", "serial_no"},
+    "bet-orders": {"bet_time", "bet_amount", "prize", "win_lose"},
+    "report-lottery": {"report_date", "bet_count", "bet_amount", "win_lose", "prize"},
+    "report-funds": {"report_date", "deposit_amount", "withdrawal_amount"},
+    "report-third": {"report_date", "t_bet_amount", "t_prize", "t_win_lose"},
+    "deposits": {"create_time", "amount"},
+    "withdrawals": {"create_time", "amount"},
+    "banks": {"id"},
 }
 
 
@@ -189,8 +208,9 @@ async def get_data(
                 stmt = stmt.where(col.between(start_dt, end_dt))
                 count_stmt = count_stmt.where(col.between(start_dt, end_dt))
 
-    # Sorting
-    if sort_field:
+    # Sorting (only whitelisted columns)
+    allowed_sort = _ALLOWED_SORT.get(endpoint, set())
+    if sort_field and sort_field in allowed_sort:
         col = table.c.get(sort_field)
         if col is not None:
             stmt = stmt.order_by(col.desc() if sort_direction == "desc" else col.asc())

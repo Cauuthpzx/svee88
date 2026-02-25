@@ -70,11 +70,21 @@ class PostgresSettings(DatabaseSettings):
         return f"{credentials}@{location}"
 
 
+_WEAK_PASSWORDS = {"123123", "123456", "password", "admin", "admin123", ""}
+
+
 class FirstUserSettings(BaseSettings):
     ADMIN_NAME: str = "admin"
     ADMIN_EMAIL: str = "admin@admin.com"
     ADMIN_USERNAME: str = "admin"
     ADMIN_PASSWORD: str = "123123"
+
+    def check_admin_password_strength(self, environment: str) -> None:
+        if environment == "production" and self.ADMIN_PASSWORD in _WEAK_PASSWORDS:
+            raise ValueError(
+                "ADMIN_PASSWORD is too weak for production. "
+                "Set a strong ADMIN_PASSWORD via environment variable."
+            )
 
 
 class TestSettings(BaseSettings):

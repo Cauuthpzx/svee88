@@ -46,7 +46,15 @@ class CacheEntry:
 
 
 class MemoryCache:
-    """LRU-bounded in-process cache with fresh/stale distinction."""
+    """LRU-bounded in-process cache with fresh/stale distinction.
+
+    WARNING: This is a per-process cache. When running multiple Uvicorn workers
+    (e.g. ``--workers 4``), each worker maintains its own independent cache.
+    This means cache hits are not shared across workers, leading to higher
+    upstream traffic and inconsistent staleness between requests served by
+    different workers. For multi-worker deployments, rely primarily on the
+    Redis layer (Layer 2) for shared caching.
+    """
 
     def __init__(
         self,
@@ -75,8 +83,9 @@ class MemoryCache:
         return entry.data, age < self._fresh_ttl
 
     def get_age(self, key: str) -> float:
+        """Return age in seconds, or -1 on cache miss."""
         entry = self._store.get(key)
-        return round(time.monotonic() - entry.created_at, 1) if entry else 0
+        return round(time.monotonic() - entry.created_at, 1) if entry else -1
 
     def put(self, key: str, data: dict) -> None:
         if key in self._store:

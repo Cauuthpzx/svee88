@@ -41,7 +41,7 @@ async def write_user(
     return created_user
 
 
-@router.get("/users", response_model=PaginatedListResponse[UserRead])
+@router.get("/users", response_model=PaginatedListResponse[UserRead], dependencies=[Depends(get_current_superuser)])
 async def read_users(
     request: Request, db: Annotated[AsyncSession, Depends(async_get_db)], page: int = Query(default=1, ge=1), items_per_page: int = Query(default=10, ge=1, le=100)
 ) -> dict:
@@ -61,7 +61,7 @@ async def read_users_me(request: Request, current_user: Annotated[dict, Depends(
     return current_user
 
 
-@router.get("/user/{username}", response_model=UserRead)
+@router.get("/user/{username}", response_model=UserRead, dependencies=[Depends(get_current_user)])
 async def read_user(
     request: Request, username: str, db: Annotated[AsyncSession, Depends(async_get_db)]
 ) -> dict[str, Any]:
@@ -164,8 +164,14 @@ async def read_user_rate_limits(
 
 @router.get("/user/{username}/tier")
 async def read_user_tier(
-    request: Request, username: str, db: Annotated[AsyncSession, Depends(async_get_db)]
+    request: Request,
+    username: str,
+    current_user: Annotated[dict, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(async_get_db)],
 ) -> dict | None:
+    if username != current_user["username"] and not current_user["is_superuser"]:
+        raise ForbiddenException("You can only view your own tier.")
+
     db_user = await crud_users.get(db=db, username=username, schema_to_select=UserRead)
     if db_user is None:
         raise NotFoundException("User not found.")

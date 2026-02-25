@@ -16,10 +16,29 @@ DEFAULT_LIMIT = settings.DEFAULT_RATE_LIMIT_LIMIT
 DEFAULT_PERIOD = settings.DEFAULT_RATE_LIMIT_PERIOD
 
 
+def _extract_token(request: Request) -> str | None:
+    """Extract access token from HttpOnly cookie or Authorization header (fallback)."""
+    # 1. HttpOnly cookie (preferred — immune to XSS)
+    cookie_token = request.cookies.get("access_token")
+    if cookie_token:
+        return cookie_token
+    # 2. Authorization header (fallback for API clients / Layui table)
+    auth_header = request.headers.get("Authorization")
+    if auth_header:
+        scheme, _, token = auth_header.partition(" ")
+        if scheme.lower() == "bearer" and token:
+            return token
+    return None
+
+
 async def get_current_user(
-    token: Annotated[str, Depends(oauth2_scheme)], db: Annotated[AsyncSession, Depends(async_get_db)]
+    request: Request, db: Annotated[AsyncSession, Depends(async_get_db)]
 ) -> dict[str, Any]:
     from ..features.user.crud import crud_users  # lazy import to avoid circular
+
+    token = _extract_token(request)
+    if not token:
+        raise UnauthorizedException("User is not authenticated.")
 
     token_data = await verify_token(token, TokenType.ACCESS, db)
     if token_data is None:
@@ -37,20 +56,24 @@ async def get_current_user(
 
 
 async def get_optional_user(request: Request, db: AsyncSession = Depends(async_get_db)) -> dict | None:
-    token = request.headers.get("Authorization")
+    from ..features.user.crud import crud_users  # lazy import to avoid circular
+
+    token = _extract_token(request)
     if not token:
         return None
 
     try:
-        token_type, _, token_value = token.partition(" ")
-        if token_type.lower() != "bearer" or not token_value:
-            return None
-
-        token_data = await verify_token(token_value, TokenType.ACCESS, db)
+        token_data = await verify_token(token, TokenType.ACCESS, db)
         if token_data is None:
             return None
 
-        return await get_current_user(token_value, db=db)
+        # Fetch user directly — avoids calling get_current_user which would verify_token again
+        if "@" in token_data.username_or_email:
+            user = await crud_users.get(db=db, email=token_data.username_or_email, is_deleted=False)
+        else:
+            user = await crud_users.get(db=db, username=token_data.username_or_email, is_deleted=False)
+
+        return user
 
     except HTTPException as http_exc:
         if http_exc.status_code != 401:
@@ -101,6 +124,6 @@ async def rate_limiter_dependency(
         user_id = request.client.host if request.client else "unknown"
         limit, period = DEFAULT_LIMIT, DEFAULT_PERIOD
 
-    is_limited = await rate_limiter.is_rate_limited(db=db, user_id=user_id, path=path, limit=limit, period=period)
+    is_limited = await rate_limiter.is_rate_limited(user_id=user_id, path=path, limit=limit, period=period)
     if is_limited:
         raise RateLimitException("Rate limit exceeded.")

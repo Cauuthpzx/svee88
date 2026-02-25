@@ -4,27 +4,28 @@
  */
 
 import { t } from '../../i18n/index.js'
+import { escapeHtml } from '../../utils/index.js'
 import { LOTTERY_OPTIONS, PLATFORM_OPTIONS } from './options.js'
 
 /** Agent column — prepended to all endpoint configs */
-const agentCol = () => ({ field: '_agent_name', title: t('col.agent'), minWidth: 110 })
+const agentCol = () => ({ field: '_agent_name', title: t('col.agent') })
 
 /** Column configs — field names match upstream exactly */
 export function getEndpointCols(endpoint) {
   const cols = {
     members: [
       agentCol(),
-      { field: 'username', title: t('col.members.username'), minWidth: 130 },
-      { field: 'type_format', title: t('col.members.type_format'), minWidth: 100 },
-      { field: 'parent_user', title: t('col.members.parent_user'), minWidth: 130 },
-      { field: 'money', title: t('col.members.money'), minWidth: 120 },
-      { field: 'deposit_count', title: t('col.members.deposit_count'), minWidth: 90 },
-      { field: 'withdrawal_count', title: t('col.members.withdrawal_count'), minWidth: 90 },
-      { field: 'deposit_amount', title: t('col.members.deposit_amount'), minWidth: 110 },
-      { field: 'withdrawal_amount', title: t('col.members.withdrawal_amount'), minWidth: 110 },
-      { field: 'login_time', title: t('col.members.login_time'), minWidth: 150 },
-      { field: 'register_time', title: t('col.members.register_time'), minWidth: 150 },
-      { field: 'status_format', title: t('col.members.status_format'), minWidth: 90 }
+      { field: 'username', title: t('col.members.username') },
+      { field: 'type_format', title: t('col.members.type_format') },
+      { field: 'parent_user', title: t('col.members.parent_user') },
+      { field: 'money', title: t('col.members.money') },
+      { field: 'deposit_count', title: t('col.members.deposit_count') },
+      { field: 'withdrawal_count', title: t('col.members.withdrawal_count') },
+      { field: 'deposit_amount', title: t('col.members.deposit_amount') },
+      { field: 'withdrawal_amount', title: t('col.members.withdrawal_amount') },
+      { field: 'login_time', title: t('col.members.login_time') },
+      { field: 'register_time', title: t('col.members.register_time') },
+      { field: 'status_format', title: t('col.members.status_format') }
     ],
     invites: [
       agentCol(),
@@ -37,10 +38,10 @@ export function getEndpointCols(endpoint) {
       { field: 'register_recharge_count', title: t('col.invites.register_recharge_count') },
       { field: 'remark', title: t('col.invites.remark') },
       { field: 'create_time', title: t('col.invites.create_time') },
-      { field: 'operate', title: t('col.invites.operate'), width: 280, templet: (d) => {
-        const code = d.invite_code || ''
-        const id = d.id || ''
-        const base = (d._agent_base_url || '').replace(/\/+$/, '')
+      { field: 'operate', title: t('col.invites.operate'), minWidth: 280, templet: (d) => {
+        const code = escapeHtml(d.invite_code || '')
+        const id = escapeHtml(String(d.id || ''))
+        const base = escapeHtml((d._agent_base_url || '').replace(/\/+$/, ''))
         return `<div class="invite-actions">
           <button class="layui-btn layui-btn-xs invite-copy-btn" data-code="${code}">${t('btn.copy_link')}</button>
           <button class="layui-btn layui-btn-xs layui-btn-normal invite-setting-btn" data-id="${id}" data-base="${base}">${t('btn.view_settings')}</button>
@@ -50,59 +51,59 @@ export function getEndpointCols(endpoint) {
     ],
     bets: [
       agentCol(),
-      { field: 'serial_no', title: t('col.bets.serial_no'), width: 200 },
-      { field: 'username', title: t('col.bets.username'), width: 150 },
-      { field: 'create_time', title: t('col.bets.create_time'), width: 160 },
-      { field: 'lottery_name', title: t('col.bets.lottery_name'), minWidth: 150 },
-      { field: 'play_type_name', title: t('col.bets.play_type_name'), minWidth: 150 },
-      { field: 'play_name', title: t('col.bets.play_name'), minWidth: 150 },
-      { field: 'issue', title: t('col.bets.issue'), minWidth: 150 },
-      { field: 'content', title: t('col.bets.content'), minWidth: 150 },
-      { field: 'money', title: t('col.bets.money'), minWidth: 150 },
-      { field: 'rebate_amount', title: t('col.bets.rebate_amount'), minWidth: 150 },
-      { field: 'result', title: t('col.bets.result'), minWidth: 150 },
-      { field: 'status_text', title: t('col.bets.status_text'), width: 100 }
+      { field: 'serial_no', title: t('col.bets.serial_no') },
+      { field: 'username', title: t('col.bets.username') },
+      { field: 'create_time', title: t('col.bets.create_time') },
+      { field: 'lottery_name', title: t('col.bets.lottery_name') },
+      { field: 'play_type_name', title: t('col.bets.play_type_name') },
+      { field: 'play_name', title: t('col.bets.play_name') },
+      { field: 'issue', title: t('col.bets.issue') },
+      { field: 'content', title: t('col.bets.content') },
+      { field: 'money', title: t('col.bets.money') },
+      { field: 'rebate_amount', title: t('col.bets.rebate_amount') },
+      { field: 'result', title: t('col.bets.result') },
+      { field: 'status_text', title: t('col.bets.status_text') }
     ],
     'bet-orders': [
       agentCol(),
-      { field: 'serial_no', title: t('col.bet_orders.serial_no'), width: 250 },
-      { field: 'platform_id_name', title: t('col.bet_orders.platform_id_name'), width: 150 },
-      { field: 'platform_username', title: t('col.bet_orders.platform_username'), width: 150 },
-      { field: 'c_name', title: t('col.bet_orders.c_name'), width: 150 },
-      { field: 'game_name', title: t('col.bet_orders.game_name'), width: 150 },
-      { field: 'bet_amount', title: t('col.bet_orders.bet_amount'), width: 150 },
-      { field: 'turnover', title: t('col.bet_orders.turnover'), width: 150 },
-      { field: 'prize', title: t('col.bet_orders.prize'), width: 150 },
-      { field: 'win_lose', title: t('col.bet_orders.win_lose'), width: 150 },
-      { field: 'bet_time', title: t('col.bet_orders.bet_time'), width: 160 }
+      { field: 'serial_no', title: t('col.bet_orders.serial_no') },
+      { field: 'platform_id_name', title: t('col.bet_orders.platform_id_name') },
+      { field: 'platform_username', title: t('col.bet_orders.platform_username') },
+      { field: 'c_name', title: t('col.bet_orders.c_name') },
+      { field: 'game_name', title: t('col.bet_orders.game_name') },
+      { field: 'bet_amount', title: t('col.bet_orders.bet_amount') },
+      { field: 'turnover', title: t('col.bet_orders.turnover') },
+      { field: 'prize', title: t('col.bet_orders.prize') },
+      { field: 'win_lose', title: t('col.bet_orders.win_lose') },
+      { field: 'bet_time', title: t('col.bet_orders.bet_time') }
     ],
     'report-lottery': [
       agentCol(),
-      { field: 'username', title: t('col.report_lottery.username'), width: 150 },
-      { field: 'user_parent_format', title: t('col.report_lottery.user_parent_format'), width: 150 },
-      { field: 'bet_count', title: t('col.report_lottery.bet_count'), minWidth: 150 },
-      { field: 'bet_amount', title: t('col.report_lottery.bet_amount'), minWidth: 150 },
-      { field: 'valid_amount', title: t('col.report_lottery.valid_amount'), minWidth: 160 },
-      { field: 'rebate_amount', title: t('col.report_lottery.rebate_amount'), minWidth: 150 },
-      { field: 'result', title: t('col.report_lottery.result'), minWidth: 150 },
-      { field: 'win_lose', title: t('col.report_lottery.win_lose'), minWidth: 180 },
-      { field: 'prize', title: t('col.report_lottery.prize'), minWidth: 150 },
-      { field: 'lottery_name', title: t('col.report_lottery.lottery_name'), width: 160 }
+      { field: 'username', title: t('col.report_lottery.username') },
+      { field: 'user_parent_format', title: t('col.report_lottery.user_parent_format') },
+      { field: 'bet_count', title: t('col.report_lottery.bet_count') },
+      { field: 'bet_amount', title: t('col.report_lottery.bet_amount') },
+      { field: 'valid_amount', title: t('col.report_lottery.valid_amount') },
+      { field: 'rebate_amount', title: t('col.report_lottery.rebate_amount') },
+      { field: 'result', title: t('col.report_lottery.result') },
+      { field: 'win_lose', title: t('col.report_lottery.win_lose') },
+      { field: 'prize', title: t('col.report_lottery.prize') },
+      { field: 'lottery_name', title: t('col.report_lottery.lottery_name') }
     ],
     'report-funds': [
       agentCol(),
-      { field: 'username', title: t('col.report_funds.username'), width: 150 },
-      { field: 'user_parent_format', title: t('col.report_funds.user_parent_format'), width: 150 },
-      { field: 'deposit_count', title: t('col.report_funds.deposit_count'), width: 160 },
-      { field: 'deposit_amount', title: t('col.report_funds.deposit_amount'), minWidth: 150, sort: true },
-      { field: 'withdrawal_count', title: t('col.report_funds.withdrawal_count'), minWidth: 150 },
-      { field: 'withdrawal_amount', title: t('col.report_funds.withdrawal_amount'), minWidth: 160 },
-      { field: 'charge_fee', title: t('col.report_funds.charge_fee'), minWidth: 150 },
-      { field: 'agent_commission', title: t('col.report_funds.agent_commission'), minWidth: 150 },
-      { field: 'promotion', title: t('col.report_funds.promotion'), minWidth: 150 },
-      { field: 'third_rebate', title: t('col.report_funds.third_rebate'), minWidth: 150 },
-      { field: 'third_activity_amount', title: t('col.report_funds.third_activity_amount'), minWidth: 150 },
-      { field: 'date', title: t('col.report_funds.date'), minWidth: 160 }
+      { field: 'username', title: t('col.report_funds.username') },
+      { field: 'user_parent_format', title: t('col.report_funds.user_parent_format') },
+      { field: 'deposit_count', title: t('col.report_funds.deposit_count') },
+      { field: 'deposit_amount', title: t('col.report_funds.deposit_amount'), sort: true },
+      { field: 'withdrawal_count', title: t('col.report_funds.withdrawal_count') },
+      { field: 'withdrawal_amount', title: t('col.report_funds.withdrawal_amount') },
+      { field: 'charge_fee', title: t('col.report_funds.charge_fee') },
+      { field: 'agent_commission', title: t('col.report_funds.agent_commission') },
+      { field: 'promotion', title: t('col.report_funds.promotion') },
+      { field: 'third_rebate', title: t('col.report_funds.third_rebate') },
+      { field: 'third_activity_amount', title: t('col.report_funds.third_activity_amount') },
+      { field: 'date', title: t('col.report_funds.date') }
     ],
     'report-third': [
       agentCol(),
@@ -125,8 +126,8 @@ export function getEndpointCols(endpoint) {
     ],
     withdrawals: [
       agentCol(),
-      { field: 'serial_no', title: t('col.withdrawals.serial_no'), width: 180 },
-      { field: 'create_time', title: t('col.withdrawals.create_time'), width: 160 },
+      { field: 'serial_no', title: t('col.withdrawals.serial_no') },
+      { field: 'create_time', title: t('col.withdrawals.create_time') },
       { field: 'username', title: t('col.withdrawals.username') },
       { field: 'user_parent_format', title: t('col.withdrawals.user_parent_format') },
       { field: 'amount', title: t('col.withdrawals.amount') },
@@ -136,16 +137,16 @@ export function getEndpointCols(endpoint) {
     ],
     rebate: [
       { field: 'odds_11', title: 'Play Type', minWidth: 160 },
-      { field: 'odds_10', title: 'Rebate 10', minWidth: 100 },
-      { field: 'odds_9', title: 'Rebate 9', minWidth: 100 },
-      { field: 'odds_8', title: 'Rebate 8', minWidth: 100 },
-      { field: 'odds_7', title: 'Rebate 7', minWidth: 100 },
-      { field: 'odds_6', title: 'Rebate 6', minWidth: 100 },
-      { field: 'odds_5', title: 'Rebate 5', minWidth: 100 },
-      { field: 'odds_4', title: 'Rebate 4', minWidth: 100 },
-      { field: 'odds_3', title: 'Rebate 3', minWidth: 100 },
-      { field: 'odds_2', title: 'Rebate 2', minWidth: 100 },
-      { field: 'odds_1', title: 'Rebate 1', minWidth: 100 }
+      { field: 'odds_10', title: 'Rebate 10' },
+      { field: 'odds_9', title: 'Rebate 9' },
+      { field: 'odds_8', title: 'Rebate 8' },
+      { field: 'odds_7', title: 'Rebate 7' },
+      { field: 'odds_6', title: 'Rebate 6' },
+      { field: 'odds_5', title: 'Rebate 5' },
+      { field: 'odds_4', title: 'Rebate 4' },
+      { field: 'odds_3', title: 'Rebate 3' },
+      { field: 'odds_2', title: 'Rebate 2' },
+      { field: 'odds_1', title: 'Rebate 1' }
     ]
   }
   return cols[endpoint]

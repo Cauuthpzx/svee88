@@ -28,6 +28,7 @@ from .config import (
     DatabaseSettings,
     EnvironmentOption,
     EnvironmentSettings,
+    FirstUserSettings,
     RedisCacheSettings,
     RedisQueueSettings,
     RedisRateLimiterSettings,
@@ -183,6 +184,9 @@ def create_application(
     if isinstance(settings, EnvironmentSettings):
         kwargs.update({"docs_url": None, "redoc_url": None, "openapi_url": None})
 
+    if isinstance(settings, FirstUserSettings) and isinstance(settings, EnvironmentSettings):
+        settings.check_admin_password_strength(settings.ENVIRONMENT.value)
+
     if lifespan is None:
         lifespan = lifespan_factory(settings, create_tables_on_start=create_tables_on_start)
 
@@ -196,12 +200,9 @@ def create_application(
     if isinstance(settings, CORSSettings):
         if isinstance(settings, EnvironmentSettings):
             if settings.CORS_ORIGINS == ["*"] and settings.ENVIRONMENT == EnvironmentOption.PRODUCTION:
-                import warnings
-
-                warnings.warn(
+                raise ValueError(
                     "CORS_ORIGINS=['*'] with allow_credentials=True in production is a security risk. "
-                    "Set CORS_ORIGINS to specific allowed domains.",
-                    stacklevel=2,
+                    "Set CORS_ORIGINS to specific allowed domains via environment variable."
                 )
         application.add_middleware(
             CORSMiddleware,

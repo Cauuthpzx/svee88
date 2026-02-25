@@ -1,5 +1,5 @@
 import { ROUTE_TITLES } from '../../constants/index.js'
-import { escapeHtml } from '../../utils/index.js'
+import { escapeHtml, getToken } from '../../utils/index.js'
 import { t, onLangChange } from '../../i18n/index.js'
 import {
   getEndpointCols, getEndpointNames, ENDPOINT_HAS_DATE,
@@ -7,6 +7,12 @@ import {
   UPSTREAM_URL, getReportTotalFields
 } from './config.js'
 import './index.css'
+
+/* ── Auth helper — inject Bearer token into fetch/table headers ── */
+const authHeaders = (extra = {}) => {
+  const token = getToken()
+  return token ? { Authorization: `Bearer ${token}`, ...extra } : { ...extra }
+}
 
 /* ── Sync endpoint icons (language-independent) ── */
 const SYNC_EP_ICONS = {
@@ -674,7 +680,7 @@ const openAddAccountDialog = (form, layer) => {
         const { owner, username, base_url } = data.field
         fetch('/api/v1/sync/agents', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: authHeaders({ 'Content-Type': 'application/json' }),
           body: JSON.stringify({ owner, username, base_url, cookie: '' })
         })
           .then((r) => r.json())
@@ -699,7 +705,7 @@ const initRebatePage = (table, form, layer, tableCols) => {
 
   const agentSelect = document.getElementById('agentFilter')
   if (agentSelect) {
-    fetch('/api/v1/sync/agents')
+    fetch('/api/v1/sync/agents', { headers: authHeaders() })
       .then((r) => r.json())
       .then((res) => {
         if (res.agents) {
@@ -716,7 +722,7 @@ const initRebatePage = (table, form, layer, tableCols) => {
       .catch(() => {})
   }
 
-  fetch('/api/v1/sync/proxy/rebate-init', { method: 'POST' })
+  fetch('/api/v1/sync/proxy/rebate-init', { method: 'POST', headers: authHeaders() })
     .then((r) => r.json())
     .then((res) => {
       const seriesSel = document.getElementById('rebateSeriesSelect')
@@ -753,6 +759,7 @@ const initRebatePage = (table, form, layer, tableCols) => {
         url: rebateUrl,
         method: 'post',
         contentType: 'application/x-www-form-urlencoded',
+        headers: authHeaders(),
         where: initWhere,
         cols: [tableCols],
         page: false,
@@ -785,7 +792,7 @@ const initRebatePage = (table, form, layer, tableCols) => {
     const seriesId = data.value
     fetch('/api/v1/sync/proxy/rebate-games', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: authHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }),
       body: `series_id=${encodeURIComponent(seriesId)}`
     })
       .then((r) => r.json())
@@ -906,7 +913,7 @@ const swrSilentRefresh = async (upstreamUrl, endpoint) => {
 
     const resp = await fetch(upstreamUrl + '?_fresh=1', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: authHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }),
       body: formBody.toString()
     })
     const freshRes = await resp.json()
@@ -963,7 +970,7 @@ const loadTable = (endpoint, hash) => {
 
     const agentSelect = document.getElementById('agentFilter')
     if (agentSelect) {
-      fetch('/api/v1/sync/agents')
+      fetch('/api/v1/sync/agents', { headers: authHeaders() })
         .then((r) => r.json())
         .then((res) => {
           if (res.agents) {
@@ -994,6 +1001,7 @@ const loadTable = (endpoint, hash) => {
       url: useUpstream ? upstreamUrl : `/api/v1/data/${endpoint}`,
       method: useUpstream ? 'post' : 'get',
       contentType: useUpstream ? 'application/x-www-form-urlencoded' : undefined,
+      headers: authHeaders(),
       cols: [tableCols],
       page: { limit: 10, limits: [10, 50, 100, 200] },
       request: { pageName: 'page', limitName: 'limit' },
