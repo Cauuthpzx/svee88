@@ -23,10 +23,10 @@ from .proxy import fetch_all_agents
 logger = logging.getLogger(__name__)
 
 # ── Tuning constants ──
-MEMORY_FRESH_TTL = 30       # seconds — data considered "fresh"
-MEMORY_MAX_STALE_TTL = 600  # seconds — evict after this
+MEMORY_FRESH_TTL = 300      # seconds — data considered "fresh" (5 min)
+MEMORY_MAX_STALE_TTL = 3600 # seconds — evict after this (1 hour)
 MEMORY_MAX_ENTRIES = 500
-REDIS_TTL = 300             # seconds — 5 minutes
+REDIS_TTL = 1800            # seconds — 30 minutes
 
 
 # ── Cache key ──
@@ -138,8 +138,8 @@ async def swr_fetch(
     if force_fresh:
         result = await fetch_all_agents(db, endpoint, form_params, agent_id)
         if result.get("code") == 0 and result.get("data"):
-            _memory.put(key, result)
-            await _redis_put(key, result)
+            _memory.put(key, {**result})
+            await _redis_put(key, {**result})
         result["_cache_status"] = "miss"
         result["_cache_age"] = 0
         return result
@@ -164,8 +164,8 @@ async def swr_fetch(
     # Layer 3: Upstream fetch
     result = await fetch_all_agents(db, endpoint, form_params, agent_id)
     if result.get("code") == 0 and result.get("data"):
-        _memory.put(key, result)
-        await _redis_put(key, result)
+        _memory.put(key, {**result})
+        await _redis_put(key, {**result})
 
     result["_cache_status"] = "miss"
     result["_cache_age"] = 0

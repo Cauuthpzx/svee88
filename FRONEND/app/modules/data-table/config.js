@@ -285,21 +285,24 @@ export const HASH_TO_ICON = {
   '#/settings-sync': 'hub-icon-settings'
 }
 
-/** Report total summary — fields to sum for blockquote below table */
+/** Report total summary — fields to sum for blockquote below table
+ *  type: 'unique' → count distinct values (e.g. unique usernames)
+ *  type: 'sum'    → sum numeric values (default)
+ *  color: true    → green/red based on positive/negative
+ */
 export const REPORT_TOTAL_FIELDS = {
   'report-lottery': [
+    { field: 'username', label: 'Số khách đặt cược', type: 'unique' },
     { field: 'bet_count', label: 'Số lần cược' },
     { field: 'bet_amount', label: 'Tiền cược' },
-    { field: 'valid_amount', label: 'Tiền cược hợp lệ' },
+    { field: 'valid_amount', label: 'Tiền cược hợp lệ (trừ cược hoà)' },
     { field: 'rebate_amount', label: 'Hoàn trả' },
     { field: 'result', label: 'Thắng thua', color: true },
-    { field: 'win_lose', label: 'Kết quả thắng thua', color: true },
+    { field: 'win_lose', label: 'Kết quả thắng thua (không gồm hoàn trả)', color: true },
     { field: 'prize', label: 'Tiền trúng' }
   ],
   'report-funds': [
-    { field: 'deposit_count', label: 'Số lần nạp' },
     { field: 'deposit_amount', label: 'Số tiền nạp' },
-    { field: 'withdrawal_count', label: 'Số lần rút' },
     { field: 'withdrawal_amount', label: 'Số tiền rút' },
     { field: 'charge_fee', label: 'Phí dịch vụ' },
     { field: 'agent_commission', label: 'Hoa hồng đại lý' },
@@ -309,6 +312,7 @@ export const REPORT_TOTAL_FIELDS = {
   ],
   'report-third': [
     { field: 't_bet_times', label: 'Số lần cược' },
+    { field: 'username', label: 'Số khách đặt cược', type: 'unique' },
     { field: 't_bet_amount', label: 'Tiền cược' },
     { field: 't_turnover', label: 'Tiền cược hợp lệ' },
     { field: 't_prize', label: 'Tiền thưởng' },

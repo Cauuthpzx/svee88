@@ -235,6 +235,9 @@ const template = (title, endpoint, hash) => {
 let currentEndpoint = null
 let syncAbort = false
 let swrReloading = false
+let swrCurrentWhere = {}
+let swrPage = 1
+let swrLimit = 10
 
 const getDateStr = (d) => {
   const y = d.getFullYear()
@@ -868,9 +871,9 @@ const initRebatePage = (table, form, layer, tableCols) => {
 }
 
 /* ── Report total summary ── */
-const fmtNum = (v, isCount) => {
-  if (isCount) return Math.round(v).toLocaleString()
-  return v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+const fmtVN = (v, isInt) => {
+  if (isInt) return Math.round(v).toLocaleString('vi-VN')
+  return v.toLocaleString('vi-VN')
 }
 
 const renderTotalSummary = (endpoint, data) => {
@@ -882,17 +885,31 @@ const renderTotalSummary = (endpoint, data) => {
   }
 
   const totals = {}
-  fields.forEach((f) => { totals[f.field] = 0 })
+  const uniques = {}
+  fields.forEach((f) => {
+    if (f.type === 'unique') uniques[f.field] = new Set()
+    else totals[f.field] = 0
+  })
   data.forEach((row) => {
     fields.forEach((f) => {
-      totals[f.field] += parseFloat(row[f.field]) || 0
+      if (f.type === 'unique') {
+        if (row[f.field]) uniques[f.field].add(row[f.field])
+      } else {
+        totals[f.field] += parseFloat(row[f.field]) || 0
+      }
     })
   })
 
   const items = fields.map((f) => {
-    const val = totals[f.field]
-    const isCount = /count|times/i.test(f.field)
-    const formatted = fmtNum(val, isCount)
+    let val, formatted
+    if (f.type === 'unique') {
+      val = uniques[f.field].size
+      formatted = fmtVN(val, true)
+    } else {
+      val = totals[f.field]
+      const isInt = /count|times/i.test(f.field)
+      formatted = fmtVN(val, isInt)
+    }
     let cls = ''
     if (f.color) cls = val > 0 ? 'val-pos' : val < 0 ? 'val-neg' : ''
     return `<span class="total-item"><b>${f.label}:</b> <span class="total-val ${cls}">${formatted}</span></span>`
@@ -901,6 +918,63 @@ const renderTotalSummary = (endpoint, data) => {
   const body = document.getElementById('data-total-body')
   if (body) body.innerHTML = `<i class="hub-icon hub-icon-chart"></i> <b>Tổng kết:</b> ${items}`
   if (wrap) wrap.style.display = ''
+}
+
+/* ── SWR silent background refresh (zero flash) ── */
+const swrSilentRefresh = async (upstreamUrl, endpoint) => {
+  await new Promise((r) => setTimeout(r, 200))
+  try {
+    if (currentEndpoint !== endpoint) return
+
+    const formBody = new URLSearchParams()
+    Object.entries(swrCurrentWhere).forEach(([k, v]) => {
+      if (v !== undefined && v !== null && v !== '') formBody.append(k, String(v))
+    })
+    formBody.append('page', String(swrPage))
+    formBody.append('limit', String(swrLimit))
+
+    const resp = await fetch(upstreamUrl + '?_fresh=1', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formBody.toString()
+    })
+    const freshRes = await resp.json()
+    swrReloading = false
+
+    if (currentEndpoint !== endpoint) return
+    if (!freshRes.data || !freshRes.data.length) return
+
+    // Direct DOM update — only change cells whose value differs
+    const view = document.querySelector('#dataTable')?.closest('.layui-table-view')
+    if (!view) return
+
+    freshRes.data.forEach((row, idx) => {
+      for (const [field, value] of Object.entries(row)) {
+        if (field === 'LAY_TABLE_INDEX') continue
+        const cells = view.querySelectorAll(
+          `tr[data-index="${idx}"] td[data-field="${field}"] .layui-table-cell`
+        )
+        const newVal = String(value ?? '')
+        cells.forEach((cell) => {
+          if (cell.children.length > 0) return // skip template cells (buttons)
+          if (cell.textContent.trim() !== newVal.trim()) {
+            cell.textContent = newVal
+          }
+        })
+      }
+    })
+
+    // Update layui internal cache for exports/sort
+    if (typeof layui !== 'undefined' && layui.table && layui.table.cache) {
+      layui.table.cache['dataTable'] = freshRes.data.map((row, i) => ({
+        ...row, LAY_TABLE_INDEX: i
+      }))
+    }
+
+    renderTotalSummary(endpoint, freshRes.data)
+  } catch (e) {
+    swrReloading = false
+  }
 }
 
 /* ── Load table ── */
@@ -958,18 +1032,10 @@ const loadTable = (endpoint, hash) => {
       request: { pageName: 'page', limitName: 'limit' },
       parseData: (res) => {
         if (useUpstream) {
-          const cacheStatus = res._cache_status
-
-          // SWR: nếu data stale → schedule 1 lần reload fresh
-          if (cacheStatus === 'stale' && !swrReloading) {
+          // SWR: data stale → silent background refresh (zero flash)
+          if (res._cache_status === 'stale' && !swrReloading) {
             swrReloading = true
-            setTimeout(() => {
-              table.reload('dataTable', { url: upstreamUrl + '?_fresh=1' })
-            }, 200)
-          }
-          // Reset flag khi nhận fresh/miss (từ SWR reload)
-          if (swrReloading && cacheStatus !== 'stale') {
-            swrReloading = false
+            swrSilentRefresh(upstreamUrl, endpoint)
           }
 
           return {
@@ -991,8 +1057,11 @@ const loadTable = (endpoint, hash) => {
       even: true,
       size: 'sm',
       text: { none: 'Không có dữ liệu' },
-      done: (res) => {
-        renderTotalSummary(endpoint, res.data)
+      done: function(res, curr) {
+        swrPage = curr || 1
+        const limitEl = document.querySelector('.layui-laypage-limits select')
+        if (limitEl) swrLimit = parseInt(limitEl.value, 10) || 10
+        renderTotalSummary(endpoint, res.data || table.cache['dataTable'] || [])
       }
     })
 
@@ -1014,6 +1083,7 @@ const loadTable = (endpoint, hash) => {
         }
       }
       swrReloading = false
+      swrCurrentWhere = { ...where }
       table.reload('dataTable', { url: upstreamUrl, where, page: { curr: 1 } })
       return false
     })
@@ -1027,6 +1097,7 @@ const loadTable = (endpoint, hash) => {
         if (ENDPOINT_HAS_DATE[endpoint]) initDatePicker()
         form.render('select')
         swrReloading = false
+        swrCurrentWhere = {}
         table.reload('dataTable', { url: upstreamUrl, where: {}, page: { curr: 1 } })
       })
     }
@@ -1103,4 +1174,7 @@ export const destroy = () => {
   currentEndpoint = null
   syncAbort = true
   swrReloading = false
+  swrCurrentWhere = {}
+  swrPage = 1
+  swrLimit = 10
 }
