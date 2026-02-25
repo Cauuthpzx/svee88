@@ -238,6 +238,11 @@
 .text-muted { color: #999; }
 .task-toolbar { margin-bottom: 16px; }
 
+/* ── Header nav (left of toolbar, right of logo) ── */
+#headerNav {
+  margin-left: 200px;
+}
+
 /* ── Header dropdown caret ── */
 .layui-header .layui-layout-right .layui-nav-item > a:has(+ .layui-nav-child)::after {
   content: '';
