@@ -107,6 +107,9 @@
   border: none;
   box-shadow: 0 0 0 1px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.05);
 }
+.data-panel .layui-table-body {
+  overflow-x: hidden;
+}
 .data-panel .layui-table-cell {
   white-space: normal;
   word-break: break-word;

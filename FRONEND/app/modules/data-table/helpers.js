@@ -30,19 +30,17 @@ export const getDateStr = formatDateStr
  */
 export const loadAgentOptions = (selectEl, form) => {
   if (!selectEl) return
-  fetch('/api/v1/sync/agents', { headers: authHeaders() })
+  fetch('/api/v1/sync/agent-options', { headers: authHeaders() })
     .then((r) => r.json())
     .then((res) => {
-      if (res.agents) {
-        for (const ag of res.agents) {
-          if (!ag.is_active) continue
-          const opt = document.createElement('option')
-          opt.value = ag.id
-          opt.textContent = ag.owner
-          selectEl.appendChild(opt)
-        }
-        form.render('select')
+      const agents = res.agents || []
+      for (const ag of agents) {
+        const opt = document.createElement('option')
+        opt.value = ag.id
+        opt.textContent = ag.owner
+        selectEl.appendChild(opt)
       }
+      if (agents.length) form.render('select')
     })
     .catch((e) => console.warn('[agents]', e.message))
 }

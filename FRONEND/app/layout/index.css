@@ -1,3 +1,9 @@
+/* ── Body — prevent horizontal scroll from scrollbar width shift ── */
+.layui-layout-admin .layui-body {
+  scrollbar-gutter: stable;
+  overflow-x: hidden;
+}
+
 /* ── Page wrapper ── */
 .page {
   position: absolute;

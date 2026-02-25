@@ -132,6 +132,15 @@ async def _redis_put(key: str, data: dict) -> None:
         logger.warning("Redis SET failed: %s", key, exc_info=True)
 
 
+# ── Pagination helper ──
+def _paginate(result: dict, page: int, limit: int) -> dict:
+    """Apply server-side pagination to a cached/fetched result."""
+    data = result.get("data", [])
+    start = (page - 1) * limit
+    paged = data[start : start + limit]
+    return {**result, "data": paged}
+
+
 # ── SWR orchestrator ──
 async def swr_fetch(
     db: AsyncSession,
@@ -140,7 +149,15 @@ async def swr_fetch(
     agent_id: int | None = None,
     force_fresh: bool = False,
 ) -> dict:
-    """3-layer SWR cache. Returns response with _cache_status metadata."""
+    """3-layer SWR cache. Returns response with _cache_status metadata.
+
+    Pagination (page/limit) is applied AFTER cache lookup so all pages
+    share a single cache entry containing ALL merged agent data.
+    """
+    # Extract pagination — cache key excludes page/limit
+    page = int(form_params.pop("page", 1) or 1)
+    limit = int(form_params.pop("limit", 10) or 10)
+
     key = make_cache_key(endpoint, agent_id, form_params)
 
     # Force fresh — bypass all caches
@@ -149,14 +166,15 @@ async def swr_fetch(
         if result.get("code") == 0 and result.get("data"):
             _memory.put(key, {**result})
             await _redis_put(key, {**result})
-        result["_cache_status"] = "miss"
-        result["_cache_age"] = 0
-        return result
+        response = _paginate(result, page, limit)
+        response["_cache_status"] = "miss"
+        response["_cache_age"] = 0
+        return response
 
     # Layer 1: Memory
     data, is_fresh = _memory.get(key)
     if data is not None:
-        response = {**data}
+        response = _paginate(data, page, limit)
         response["_cache_status"] = "fresh" if is_fresh else "stale"
         response["_cache_age"] = _memory.get_age(key)
         return response
@@ -165,7 +183,7 @@ async def swr_fetch(
     data = await _redis_get(key)
     if data is not None:
         _memory.put(key, data)
-        response = {**data}
+        response = _paginate(data, page, limit)
         response["_cache_status"] = "stale"
         response["_cache_age"] = _memory.get_age(key)
         return response
@@ -176,9 +194,10 @@ async def swr_fetch(
         _memory.put(key, {**result})
         await _redis_put(key, {**result})
 
-    result["_cache_status"] = "miss"
-    result["_cache_age"] = 0
-    return result
+    response = _paginate(result, page, limit)
+    response["_cache_status"] = "miss"
+    response["_cache_age"] = 0
+    return response
 
 
 def get_cache_stats() -> dict:

@@ -6,9 +6,12 @@ from fastapi import APIRouter, Depends
 from ...core.exceptions.http_exceptions import NotFoundException
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
+from sqlalchemy import select
+
 from ...core.db.database import async_get_db
 from ...core.deps import get_current_user
 from ...core.utils.upsert import bulk_upsert
+from .account.model import Agent
 from .account.router import router as account_router
 from .bet.model import BetLottery, BetOrder
 from .bet.router import router as bet_router
@@ -86,6 +89,18 @@ async def verify_records(
 
     records = await fetch_records_by_ids(db, model, body.ids)
     return {"records": records, "count": len(records), "requested": len(body.ids)}
+
+
+# --- Agent options (lightweight, any authenticated user) ---
+@router.get("/agent-options")
+async def agent_options(db: AsyncSession = Depends(async_get_db)) -> dict:
+    """Return active agents (id + owner) for dropdown filters."""
+    result = await db.execute(
+        select(Agent.id, Agent.owner)
+        .where(Agent.is_active.is_(True))
+        .order_by(Agent.id)
+    )
+    return {"agents": [{"id": row.id, "owner": row.owner} for row in result.all()]}
 
 
 # --- Status endpoint ---

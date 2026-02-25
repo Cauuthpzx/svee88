@@ -66,8 +66,8 @@ export const template = (title, endpoint, hash) => {
                 <div class="layui-input-inline data-quick-select">
                   <select id="quickDateSelect" lay-filter="quickDateSelect">
                     <option value="">${t('date.quick_select')}</option>
-                    <option value="yesterday">${t('date.yesterday')}</option>
                     <option value="today">${t('date.today')}</option>
+                    <option value="yesterday">${t('date.yesterday')}</option>
                     <option value="thisWeek">${t('date.this_week')}</option>
                     <option value="thisMonth">${t('date.this_month')}</option>
                     <option value="lastMonth">${t('date.last_month')}</option>

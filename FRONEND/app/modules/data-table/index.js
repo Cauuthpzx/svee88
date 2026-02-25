@@ -139,6 +139,7 @@ const loadTable = (endpoint, hash) => {
       skin: 'grid',
       even: true,
       size: 'sm',
+      cellMinWidth: 50,
       text: { none: t('table.no_data') },
       done: function(res, curr) {
         moduleState.swrPage = curr || 1

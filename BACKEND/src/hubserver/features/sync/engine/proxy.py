@@ -105,13 +105,21 @@ async def _fetch_one(
         return agent, None
 
 
+# Max rows to fetch from each agent (get everything for server-side pagination)
+_AGENT_FETCH_LIMIT = 5000
+
+
 async def fetch_all_agents(
     db: AsyncSession,
     endpoint: str,
     form_params: dict,
     agent_id: int | None = None,
 ) -> dict:
-    """Fan-out to all active agents in parallel, merge results."""
+    """Fan-out to all active agents in parallel, merge results.
+
+    Pagination is applied server-side on the merged result so that
+    ``limit`` means total rows across ALL agents, not per-agent.
+    """
     upstream_path = UPSTREAM_PATHS.get(endpoint)
     if not upstream_path:
         return {"code": 1, "msg": f"Unknown endpoint: {endpoint}", "data": [], "count": 0}
@@ -122,16 +130,20 @@ async def fetch_all_agents(
 
     # Inject default params (e.g. es=1 for bet endpoints)
     defaults = UPSTREAM_DEFAULTS.get(endpoint, {})
-    merged_params = {**defaults, **form_params}
+    upstream_params = {**defaults, **form_params}
+
+    # Override upstream pagination: fetch ALL rows from each agent.
+    # Server-side pagination on the merged result is done by swr_fetch().
+    upstream_params["page"] = "1"
+    upstream_params["limit"] = str(_AGENT_FETCH_LIMIT)
 
     client = await get_client()
 
     # Parallel fetch from all agents
-    tasks = [_fetch_one(client, ag, upstream_path, merged_params) for ag in agents]
+    tasks = [_fetch_one(client, ag, upstream_path, upstream_params) for ag in agents]
     results = await asyncio.gather(*tasks)
 
     all_data: list[dict] = []
-    total_count = 0
 
     for agent, result in results:
         if result is None:
@@ -142,9 +154,13 @@ async def fetch_all_agents(
                 row["_agent_name"] = agent.owner
                 row["_agent_base_url"] = agent.base_url
             all_data.extend(result["data"])
-            total_count += result.get("count", len(result["data"]))
 
-    return {"code": 0, "data": all_data, "count": total_count}
+    # Sort mixed data so records from all agents interleave naturally
+    # (same order as viewing a single agent — newest first by id)
+    all_data.sort(key=lambda r: r.get("id", 0), reverse=True)
+
+    # count = actual merged rows (not upstream's count which may differ)
+    return {"code": 0, "data": all_data, "count": len(all_data)}
 
 
 # ── Rebate-specific helpers (JSON API, not form-encoded) ──────────
