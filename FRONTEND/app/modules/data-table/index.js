@@ -82,7 +82,7 @@ const initQuickDate = (form) => {
 const loadTable = (endpoint, hash) => {
   const cols = getEndpointCols(endpoint)
   if (!cols) return
-  const isSync = hash === '#/settings-sync'
+  const isSync = hash === '#/settings-sync' || hash === '#/settings-account'
   const tableCols = isSync ? [{ type: 'checkbox', fixed: 'left' }, ...cols] : cols
 
   layui.use(['table', 'form', 'laydate', 'layer'], function (table, form, laydate, layer) {
@@ -111,7 +111,8 @@ const loadTable = (endpoint, hash) => {
       contentType: useUpstream ? 'application/x-www-form-urlencoded' : undefined,
       headers: authHeaders(),
       cols: [tableCols],
-      page: { limit: 10, limits: [10, 50, 100, 200] },
+      page: isSync ? false : { limit: 10, limits: [10, 50, 100, 200] },
+      limit: isSync ? 100 : undefined,
       request: { pageName: 'page', limitName: 'limit' },
       parseData: (res) => {
         if (useUpstream) {

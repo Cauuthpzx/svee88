@@ -13,6 +13,13 @@ const agentCol = () => ({ field: '_agent_name', title: t('col.agent') })
 /** Column configs — field names match upstream exactly */
 export function getEndpointCols(endpoint) {
   const cols = {
+    agents: [
+      { field: 'owner', title: t('col.owner') },
+      { field: 'username', title: t('col.agents.username') },
+      { field: 'cookie_set', title: t('col.agents.cookie_set'), templet: (d) => d.cookie_set ? '✓' : '✗' },
+      { field: 'is_active', title: t('col.agents.is_active'), templet: (d) => d.is_active ? '✓' : '✗' },
+      { field: 'last_login_at', title: t('col.agents.last_login_at') },
+    ],
     members: [
       agentCol(),
       { field: 'username', title: t('col.members.username') },
@@ -282,7 +289,8 @@ export const HASH_TO_ICON = {
   '#/bet-list': 'hub-icon-monitor',
   '#/bet-third-party': 'hub-icon-monitor',
   '#/rebate-list': 'hub-icon-menu',
-  '#/settings-sync': 'hub-icon-settings'
+  '#/settings-sync': 'hub-icon-settings',
+  '#/settings-account': 'hub-icon-settings'
 }
 
 /** Report total summary — fields to sum for blockquote below table */
@@ -331,5 +339,6 @@ export const HASH_TO_ENDPOINT = {
   '#/bet-list': 'bets',
   '#/bet-third-party': 'bet-orders',
   '#/rebate-list': 'rebate',
-  '#/settings-sync': 'members'
+  '#/settings-sync': 'agents',
+  '#/settings-account': 'agents'
 }

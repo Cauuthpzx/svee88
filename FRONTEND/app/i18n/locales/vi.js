@@ -35,7 +35,8 @@ export default {
   'menu.rebate': 'Tỷ lệ hoàn trả',
   'menu.settings_group': 'Cài đặt',
   'menu.settings_system': 'Hệ thống',
-  'menu.settings_sync': 'Đồng bộ & Tài khoản',
+  'menu.settings_sync': 'Đồng Bộ',
+  'menu.settings_account': 'Tài Khoản',
 
   // ── Route titles ──
   'route.dashboard': 'Trang chủ',
@@ -53,7 +54,8 @@ export default {
   'route.rebate': 'Tỷ lệ hoàn trả',
   'route.tiers': 'Quản lý cấp bậc',
   'route.settings_system': 'Hệ thống',
-  'route.settings_sync': 'Đồng bộ & Tài khoản',
+  'route.settings_sync': 'Đồng Bộ',
+  'route.settings_account': 'Tài Khoản',
 
   // ── Messages ──
   'msg.login_success': 'Đăng nhập thành công',

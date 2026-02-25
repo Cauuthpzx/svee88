@@ -32,7 +32,8 @@ export const ROUTES = {
   CHANGE_TRADE_PW: '#/change-trade-pw',
   REBATE_LIST: '#/rebate-list',
   SETTINGS_SYSTEM: '#/settings-system',
-  SETTINGS_SYNC: '#/settings-sync'
+  SETTINGS_SYNC: '#/settings-sync',
+  SETTINGS_ACCOUNT: '#/settings-account'
 }
 
 const ROUTE_TITLE_KEYS = {
@@ -51,7 +52,8 @@ const ROUTE_TITLE_KEYS = {
   [ROUTES.REBATE_LIST]: 'route.rebate',
   [ROUTES.TIERS]: 'route.tiers',
   [ROUTES.SETTINGS_SYSTEM]: 'route.settings_system',
-  [ROUTES.SETTINGS_SYNC]: 'route.settings_sync'
+  [ROUTES.SETTINGS_SYNC]: 'route.settings_sync',
+  [ROUTES.SETTINGS_ACCOUNT]: 'route.settings_account'
 }
 
 export const getRouteTitle = (hash) => {

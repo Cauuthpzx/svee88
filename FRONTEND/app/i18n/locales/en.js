@@ -35,7 +35,8 @@ export default {
   'menu.rebate': 'Rebate Rates',
   'menu.settings_group': 'Settings',
   'menu.settings_system': 'System',
-  'menu.settings_sync': 'Sync & Accounts',
+  'menu.settings_sync': 'Sync',
+  'menu.settings_account': 'Accounts',
 
   // ── Route titles ──
   'route.dashboard': 'Dashboard',
@@ -53,7 +54,8 @@ export default {
   'route.rebate': 'Rebate Rates',
   'route.tiers': 'Tier Management',
   'route.settings_system': 'System',
-  'route.settings_sync': 'Sync & Accounts',
+  'route.settings_sync': 'Sync',
+  'route.settings_account': 'Accounts',
 
   // ── Messages ──
   'msg.login_success': 'Login successful',

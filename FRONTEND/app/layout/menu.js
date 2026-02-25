@@ -49,7 +49,8 @@ export const getMenuItems = () => [
     icon: 'hub-icon-settings', label: t('menu.settings_group'),
     children: [
       { hash: ROUTES.SETTINGS_SYSTEM, label: t('menu.settings_system') },
-      { hash: ROUTES.SETTINGS_SYNC, label: t('menu.settings_sync') }
+      { hash: ROUTES.SETTINGS_SYNC, label: t('menu.settings_sync') },
+      { hash: ROUTES.SETTINGS_ACCOUNT, label: t('menu.settings_account') }
     ]
   }
 ]

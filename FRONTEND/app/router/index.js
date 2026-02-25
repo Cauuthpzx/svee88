@@ -29,7 +29,8 @@ const ROUTE_MAP = {
   [ROUTES.CHANGE_TRADE_PW]: placeholder,
   [ROUTES.REBATE_LIST]: dataTable,
   [ROUTES.SETTINGS_SYSTEM]: placeholder,
-  [ROUTES.SETTINGS_SYNC]: dataTable
+  [ROUTES.SETTINGS_SYNC]: dataTable,
+  [ROUTES.SETTINGS_ACCOUNT]: dataTable
 }
 
 const PUBLIC_ROUTES = new Set([ROUTES.LOGIN, ROUTES.REGISTER])
