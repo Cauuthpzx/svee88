@@ -189,6 +189,13 @@ const loadTable = (endpoint) => {
       text: { none: 'Không có dữ liệu' }
     })
 
+    // Convert toolbar native title → lay-tips for unified Layui tips
+    document.querySelectorAll('.layui-table-tool-self [title]').forEach((el) => {
+      el.setAttribute('lay-tips', el.getAttribute('title'))
+      el.setAttribute('lay-direction', '3')
+      el.removeAttribute('title')
+    })
+
     // Search submit — rename 'date' to upstream param name
     form.on('submit(doDataSearch)', (data) => {
       const where = { ...data.field }

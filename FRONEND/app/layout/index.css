@@ -47,13 +47,16 @@
 }
 .layui-layout-admin .layui-logo {
   display: inline-flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 0 10px;
+  gap: 0;
 }
 .header-logo {
   max-width: 100%;
   height: auto;
+  margin-bottom: -6px;
 }
 .logo-outline {
   stroke: rgba(0, 0, 0, .25);
@@ -85,48 +88,35 @@
   color: #16baaa;
 }
 
-/* ── Header clock ── */
+/* ── Header clock — inside logo ── */
 #header-clock {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  top: 0;
-  height: 50px;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  gap: 6px;
   pointer-events: none;
   white-space: nowrap;
+  font-family: 'Arial Black', 'Impact', sans-serif;
+}
+#clock-display,
+#clock-date {
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  line-height: 1;
+  color: #333;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, .2);
 }
 #clock-display {
-  font-size: 16px;
-  font-weight: 700;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 2px;
-  line-height: 1.2;
-  color: #333;
-}
-#clock-date {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 1px;
-  line-height: 1.2;
-  color: #999;
 }
 @media (max-width: 768px) {
   #header-clock { display: none; }
 }
-.dark #clock-display {
-  color: #5ce0d2;
-  text-shadow: 0 0 8px rgba(92, 224, 210, .5), 0 0 20px rgba(92, 224, 210, .2);
-  animation-name: clock-glow;
+.dark #clock-display,
+.dark #clock-date {
+  color: #fff;
+  text-shadow: 0 0 8px rgba(255, 255, 255, .6), 0 0 20px rgba(255, 255, 255, .25);
 }
-@keyframes clock-glow {
-  0%, 100% { text-shadow: 0 0 8px rgba(92, 224, 210, .5), 0 0 20px rgba(92, 224, 210, .2); }
-  50%      { text-shadow: 0 0 12px rgba(92, 224, 210, .7), 0 0 30px rgba(92, 224, 210, .35); }
-}
-.dark #clock-date { color: var(--lay-color-text-3); }
 
 /* ── Sidebar ── var() fallback = light value, resolves dark via theme CSS vars */
 .hub-sidebar {
@@ -307,6 +297,9 @@
   color: #999;
   margin: 0 0 16px;
 }
+
+/* ── Lay-tips — prevent flicker ── */
+.layui-layer-tips { pointer-events: none; }
 
 /* ── Shared utility classes ── */
 .text-success { color: #16baaa; }

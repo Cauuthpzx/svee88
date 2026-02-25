@@ -105,24 +105,24 @@ const template = () => `
             letter-spacing="1" fill="url(#logoGrad)" stroke-width="0.4"
             paint-order="stroke fill">HUB SYSTEM</text>
         </svg>
-      </div>
-      <div id="header-clock" role="timer" aria-label="Current time">
-        <span id="clock-display" aria-live="off"></span>
-        <span id="clock-date"></span>
+        <div id="header-clock" role="timer" aria-label="Current time">
+          <span id="clock-display" aria-live="off"></span>
+          <span id="clock-date"></span>
+        </div>
       </div>
       <ul class="layui-nav layui-layout-right" role="toolbar">
         <li class="layui-nav-item">
-          <a href="javascript:;" id="i18nToggle" aria-label="Ngôn ngữ" role="button">
+          <a href="javascript:;" id="i18nToggle" lay-tips="Ngôn ngữ" lay-direction="3" aria-label="Ngôn ngữ" role="button">
             <i class="layui-icon layui-icon-website"></i>
           </a>
         </li>
         <li class="layui-nav-item">
-          <a href="javascript:;" id="themeToggle" aria-label="Chuyển đổi giao diện sáng/tối" role="button">
+          <a href="javascript:;" id="themeToggle" lay-tips="Giao diện sáng/tối" lay-direction="3" aria-label="Chuyển đổi giao diện sáng/tối" role="button">
             <i class="layui-icon layui-icon-moon" id="themeIcon"></i>
           </a>
         </li>
         <li class="layui-nav-item">
-          <a href="javascript:;" id="notifyBtn" aria-label="Thông báo" role="button">
+          <a href="javascript:;" id="notifyBtn" lay-tips="Thông báo" lay-direction="3" aria-label="Thông báo" role="button">
             <i class="layui-icon layui-icon-notice"></i>
           </a>
         </li>
@@ -213,10 +213,41 @@ const handleSidebarHover = (e) => {
   if (link) preloadRoute(link.dataset.hash)
 }
 
+const initTips = () => {
+  layui.use('layer', function (layer) {
+    let activeEl = null
+    let closeTimer = null
+
+    document.addEventListener('mouseover', (e) => {
+      const el = e.target.closest('[lay-tips]')
+      if (el) {
+        clearTimeout(closeTimer)
+        if (el === activeEl) return
+        activeEl = el
+        const text = el.getAttribute('lay-tips')
+        const dir = parseInt(el.getAttribute('lay-direction'), 10) || 1
+        layer.tips(text, el, { tips: dir, time: 0 })
+      }
+    })
+
+    document.addEventListener('mouseout', (e) => {
+      const el = e.target.closest('[lay-tips]')
+      if (!el) return
+      const to = e.relatedTarget
+      if (to && el.contains(to)) return
+      closeTimer = setTimeout(() => {
+        layer.closeAll('tips')
+        activeEl = null
+      }, 80)
+    })
+  })
+}
+
 export const render = async () => {
   document.getElementById('app').innerHTML = template()
   layui.use('element', function (element) { element.render('nav') })
   initTheme()
+  initTips()
   document.getElementById('themeToggle')
     ?.addEventListener('click', toggleTheme)
   document.getElementById('logoutBtn')
