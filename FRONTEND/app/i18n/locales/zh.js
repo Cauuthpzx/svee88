@@ -36,7 +36,7 @@ export default {
   'menu.settings_group': '设置',
   'menu.settings_system': '系统',
   'menu.settings_sync': '同步',
-  'menu.settings_account': '账户',
+  'menu.settings_account': 'HUBER权限',
 
   // ── Route titles ──
   'route.dashboard': '首页',
@@ -55,7 +55,7 @@ export default {
   'route.tiers': '等级管理',
   'route.settings_system': '系统',
   'route.settings_sync': '同步',
-  'route.settings_account': '账户',
+  'route.settings_account': 'HUBER权限',
 
   // ── Messages ──
   'msg.login_success': '登录成功',

@@ -36,7 +36,7 @@ export default {
   'menu.settings_group': 'Settings',
   'menu.settings_system': 'System',
   'menu.settings_sync': 'Sync',
-  'menu.settings_account': 'Accounts',
+  'menu.settings_account': 'HUBER Permissions',
 
   // ── Route titles ──
   'route.dashboard': 'Dashboard',
@@ -55,7 +55,7 @@ export default {
   'route.tiers': 'Tier Management',
   'route.settings_system': 'System',
   'route.settings_sync': 'Sync',
-  'route.settings_account': 'Accounts',
+  'route.settings_account': 'HUBER Permissions',
 
   // ── Messages ──
   'msg.login_success': 'Login successful',

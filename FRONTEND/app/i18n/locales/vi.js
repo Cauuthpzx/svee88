@@ -36,7 +36,7 @@ export default {
   'menu.settings_group': 'Cài đặt',
   'menu.settings_system': 'Hệ thống',
   'menu.settings_sync': 'Đồng Bộ',
-  'menu.settings_account': 'Tài Khoản',
+  'menu.settings_account': 'Phân Quyền HUBER',
 
   // ── Route titles ──
   'route.dashboard': 'Trang chủ',
@@ -55,7 +55,7 @@ export default {
   'route.tiers': 'Quản lý cấp bậc',
   'route.settings_system': 'Hệ thống',
   'route.settings_sync': 'Đồng Bộ',
-  'route.settings_account': 'Tài Khoản',
+  'route.settings_account': 'Phân Quyền HUBER',
 
   // ── Messages ──
   'msg.login_success': 'Đăng nhập thành công',
