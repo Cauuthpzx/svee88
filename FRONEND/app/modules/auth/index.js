@@ -12,6 +12,7 @@ import {
   USERNAME_PATTERN,
   INTENDED_ROUTE_KEY
 } from '../../constants/index.js'
+import { t } from '../../i18n/index.js'
 import './index.css'
 
 const loginTemplate = () => `
@@ -35,18 +36,18 @@ const loginTemplate = () => `
             letter-spacing="1" fill="url(#authLogoGrad)" stroke="#cc1833" stroke-width="0.4"
             paint-order="stroke fill" style="filter:drop-shadow(1px 2px 2px rgba(0,0,0,.35))">HUB LOGIN</text>
         </svg>
-        <p>Chào mừng bạn quay trở lại</p>
+        <p>${t('auth.welcome_back')}</p>
       </div>
       <div class="auth-body">
-        <form class="layui-form" lay-filter="loginForm" role="form" aria-label="Đăng nhập">
+        <form class="layui-form" lay-filter="loginForm" role="form" aria-label="${t('auth.login')}">
           <div class="layui-form-item">
             <div class="layui-input-wrap">
               <div class="layui-input-prefix">
                 <i class="hub-icon hub-icon-user"></i>
               </div>
               <input type="text" name="username" class="layui-input"
-                placeholder="Tên đăng nhập hoặc email" autocomplete="username"
-                lay-verify="required" lay-reqtext="Vui lòng nhập tên đăng nhập"
+                placeholder="${t('auth.username_placeholder')}" autocomplete="username"
+                lay-verify="required" lay-reqtext="${t('auth.required_username')}"
                 lay-affix="clear">
             </div>
           </div>
@@ -56,14 +57,14 @@ const loginTemplate = () => `
                 <i class="hub-icon hub-icon-lock"></i>
               </div>
               <input type="password" name="password" class="layui-input"
-                placeholder="Mật khẩu" autocomplete="current-password"
-                lay-verify="required" lay-reqtext="Vui lòng nhập mật khẩu"
+                placeholder="${t('auth.password_placeholder')}" autocomplete="current-password"
+                lay-verify="required" lay-reqtext="${t('auth.required_password')}"
                 lay-affix="eye">
             </div>
           </div>
           <div class="layui-form-item">
             <button class="layui-btn layui-btn-fluid" lay-submit
-              lay-filter="submitLogin">Đăng nhập</button>
+              lay-filter="submitLogin">${t('auth.login')}</button>
           </div>
         </form>
       </div>
@@ -75,20 +76,20 @@ const registerTemplate = () => `
   <div class="auth-wrapper">
     <div class="auth-card">
       <div class="auth-header">
-        <h2>Đăng ký</h2>
-        <p>Tạo tài khoản mới</p>
+        <h2>${t('auth.register')}</h2>
+        <p>${t('auth.register_desc')}</p>
       </div>
       <div class="auth-body">
-        <form class="layui-form" lay-filter="registerForm" role="form" aria-label="Đăng ký">
+        <form class="layui-form" lay-filter="registerForm" role="form" aria-label="${t('auth.register')}">
           <div class="layui-form-item">
             <div class="layui-input-wrap">
               <div class="layui-input-prefix">
                 <i class="hub-icon hub-icon-user"></i>
               </div>
               <input type="text" name="name" class="layui-input"
-                placeholder="Họ và tên" autocomplete="name"
+                placeholder="${t('auth.full_name')}" autocomplete="name"
                 lay-verify="required|nameLength"
-                lay-reqtext="Vui lòng nhập họ tên" lay-affix="clear">
+                lay-reqtext="${t('auth.required_name')}" lay-affix="clear">
             </div>
           </div>
           <div class="layui-form-item">
@@ -97,9 +98,9 @@ const registerTemplate = () => `
                 <i class="hub-icon hub-icon-user"></i>
               </div>
               <input type="text" name="username" class="layui-input"
-                placeholder="Tên đăng nhập" autocomplete="username"
+                placeholder="${t('auth.username')}" autocomplete="username"
                 lay-verify="required|usernameRule"
-                lay-reqtext="Vui lòng nhập tên đăng nhập" lay-affix="clear">
+                lay-reqtext="${t('auth.required_username')}" lay-affix="clear">
             </div>
           </div>
           <div class="layui-form-item">
@@ -108,9 +109,9 @@ const registerTemplate = () => `
                 <i class="hub-icon hub-icon-mail"></i>
               </div>
               <input type="text" name="email" class="layui-input"
-                placeholder="Email" autocomplete="email"
+                placeholder="${t('auth.email')}" autocomplete="email"
                 lay-verify="required|emailRule"
-                lay-reqtext="Vui lòng nhập email" lay-affix="clear">
+                lay-reqtext="${t('auth.required_email')}" lay-affix="clear">
             </div>
           </div>
           <div class="layui-form-item">
@@ -119,10 +120,10 @@ const registerTemplate = () => `
                 <i class="hub-icon hub-icon-lock"></i>
               </div>
               <input type="password" name="password" id="regPassword"
-                class="layui-input" placeholder="Mật khẩu (tối thiểu 8 ký tự)"
+                class="layui-input" placeholder="${t('auth.password_min_hint')}"
                 autocomplete="new-password"
                 lay-verify="required|passwordRule"
-                lay-reqtext="Vui lòng nhập mật khẩu" lay-affix="eye">
+                lay-reqtext="${t('auth.required_password')}" lay-affix="eye">
             </div>
           </div>
           <div class="layui-form-item">
@@ -131,15 +132,15 @@ const registerTemplate = () => `
                 <i class="hub-icon hub-icon-lock"></i>
               </div>
               <input type="password" name="confirmPassword"
-                class="layui-input" placeholder="Xác nhận mật khẩu"
+                class="layui-input" placeholder="${t('auth.confirm_password')}"
                 autocomplete="new-password"
                 lay-verify="required|confirmPwd"
-                lay-reqtext="Vui lòng xác nhận mật khẩu" lay-affix="eye">
+                lay-reqtext="${t('auth.required_confirm')}" lay-affix="eye">
             </div>
           </div>
           <div class="layui-form-item">
             <button class="layui-btn layui-btn-fluid" lay-submit
-              lay-filter="submitRegister">Đăng ký</button>
+              lay-filter="submitRegister">${t('auth.register')}</button>
           </div>
         </form>
       </div>

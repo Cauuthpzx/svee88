@@ -1,173 +1,170 @@
 /**
  * Data Table — Column configs, search fields, endpoint metadata.
- * Columns match backend model fields exactly.
+ * Factory functions call t() at render time for i18n support.
  */
 
+import { t } from '../../i18n/index.js'
 import { LOTTERY_OPTIONS, PLATFORM_OPTIONS } from './options.js'
 
 /** Agent column — prepended to all endpoint configs */
-const AGENT_COL = { field: '_agent_name', title: 'Đại lý', minWidth: 110 }
+const agentCol = () => ({ field: '_agent_name', title: t('col.agent'), minWidth: 110 })
 
-/** Column configs — field names & Vietnamese titles match upstream exactly */
-export const ENDPOINT_COLS = {
-  // Member — upstream trả 11 fields (khớp trang gốc)
-  members: [
-    AGENT_COL,
-    { field: 'username', title: 'Hội viên', minWidth: 130 },
-    { field: 'type_format', title: 'Loại hình hội viên', minWidth: 100 },
-    { field: 'parent_user', title: 'Tài khoản đại lý', minWidth: 130 },
-    { field: 'money', title: 'Số dư', minWidth: 120 },
-    { field: 'deposit_count', title: 'Lần nạp', minWidth: 90 },
-    { field: 'withdrawal_count', title: 'Lần rút', minWidth: 90 },
-    { field: 'deposit_amount', title: 'Tổng tiền nạp', minWidth: 110 },
-    { field: 'withdrawal_amount', title: 'Tổng tiền rút', minWidth: 110 },
-    { field: 'login_time', title: 'Lần đăng nhập cuối', minWidth: 150 },
-    { field: 'register_time', title: 'Thời gian đăng ký', minWidth: 150 },
-    { field: 'status_format', title: 'Trạng thái', minWidth: 90 }
-  ],
-  // InviteList — upstream trả 10 fields (khớp trang gốc)
-  invites: [
-    AGENT_COL,
-    { field: 'invite_code', title: 'Mã giới thiệu' },
-    { field: 'user_type', title: 'Loại hình giới thiệu' },
-    { field: 'reg_count', title: 'Tổng số đã đăng ký' },
-    { field: 'scope_reg_count', title: 'Số lượng người dùng đã đăng ký' },
-    { field: 'recharge_count', title: 'Số người nạp tiền' },
-    { field: 'first_recharge_count', title: 'Nạp đầu trong ngày' },
-    { field: 'register_recharge_count', title: 'Nạp đầu trong ngày đăng kí' },
-    { field: 'remark', title: 'Ghi chú' },
-    { field: 'create_time', title: 'Thời gian thêm vào' },
-    { field: 'operate', title: 'Thao tác', width: 280, templet: (d) => {
-      const code = d.invite_code || ''
-      const id = d.id || ''
-      const base = (d._agent_base_url || '').replace(/\/+$/, '')
-      return `<div class="invite-actions">
-        <button class="layui-btn layui-btn-xs invite-copy-btn" data-code="${code}">Copy đường link</button>
-        <button class="layui-btn layui-btn-xs layui-btn-normal invite-setting-btn" data-id="${id}" data-base="${base}">Xem cài đặt</button>
-        <button class="layui-btn layui-btn-xs layui-btn-warm invite-qr-btn" data-id="${id}" data-base="${base}">Mã QR</button>
-      </div>`
-    }}
-  ],
-  // BetLottery — upstream trả 12 fields (khớp trang gốc)
-  bets: [
-    AGENT_COL,
-    { field: 'serial_no', title: 'Mã giao dịch', width: 200 },
-    { field: 'username', title: 'Tên người dùng', width: 150 },
-    { field: 'create_time', title: 'Thời gian cược', width: 160 },
-    { field: 'lottery_name', title: 'Trò chơi', minWidth: 150 },
-    { field: 'play_type_name', title: 'Loại trò chơi', minWidth: 150 },
-    { field: 'play_name', title: 'Cách chơi', minWidth: 150 },
-    { field: 'issue', title: 'Kỳ', minWidth: 150 },
-    { field: 'content', title: 'Thông tin cược', minWidth: 150 },
-    { field: 'money', title: 'Tiền cược', minWidth: 150 },
-    { field: 'rebate_amount', title: 'Tiền hoàn trả', minWidth: 150 },
-    { field: 'result', title: 'Thắng thua', minWidth: 150 },
-    { field: 'status_text', title: 'Trạng thái', width: 100 }
-  ],
-  // Cược bên thứ 3 — upstream 10 fields (khớp trang gốc)
-  'bet-orders': [
-    AGENT_COL,
-    { field: 'serial_no', title: 'Mã giao dịch', width: 250 },
-    { field: 'platform_id_name', title: 'Nhà cung cấp game bên thứ 3', width: 150 },
-    { field: 'platform_username', title: 'Tên tài khoản thuộc nhà cái', width: 150 },
-    { field: 'c_name', title: 'Loại hình trò chơi', width: 150 },
-    { field: 'game_name', title: 'Tên trò chơi bên thứ 3', width: 150 },
-    { field: 'bet_amount', title: 'Tiền cược', width: 150 },
-    { field: 'turnover', title: 'Tiền cược hợp lệ', width: 150 },
-    { field: 'prize', title: 'Tiền thưởng', width: 150 },
-    { field: 'win_lose', title: 'Thắng thua', width: 150 },
-    { field: 'bet_time', title: 'Thời gian cược', width: 160 }
-  ],
-  // Báo cáo xổ số — upstream 10 fields (khớp trang gốc)
-  'report-lottery': [
-    AGENT_COL,
-    { field: 'username', title: 'Tên tài khoản', width: 150 },
-    { field: 'user_parent_format', title: 'Thuộc đại lý', width: 150 },
-    { field: 'bet_count', title: 'Số lần cược', minWidth: 150 },
-    { field: 'bet_amount', title: 'Tiền cược', minWidth: 150 },
-    { field: 'valid_amount', title: 'Tiền cược hợp lệ (trừ cược hoà)', minWidth: 160 },
-    { field: 'rebate_amount', title: 'Hoàn trả', minWidth: 150 },
-    { field: 'result', title: 'Thắng thua', minWidth: 150 },
-    { field: 'win_lose', title: 'Kết quả thắng thua (không gồm hoàn trả)', minWidth: 180 },
-    { field: 'prize', title: 'Tiền trúng', minWidth: 150 },
-    { field: 'lottery_name', title: 'Tên loại xổ', width: 160 }
-  ],
-  // Báo cáo tài chính — upstream 12 fields (khớp trang gốc)
-  'report-funds': [
-    AGENT_COL,
-    { field: 'username', title: 'Tên tài khoản', width: 150 },
-    { field: 'user_parent_format', title: 'Thuộc đại lý', width: 150 },
-    { field: 'deposit_count', title: 'Số lần nạp', width: 160 },
-    { field: 'deposit_amount', title: 'Số tiền nạp', minWidth: 150, sort: true },
-    { field: 'withdrawal_count', title: 'Số lần rút', minWidth: 150 },
-    { field: 'withdrawal_amount', title: 'Số tiền rút', minWidth: 160 },
-    { field: 'charge_fee', title: 'Phí dịch vụ', minWidth: 150 },
-    { field: 'agent_commission', title: 'Hoa hồng đại lý', minWidth: 150 },
-    { field: 'promotion', title: 'Ưu đãi', minWidth: 150 },
-    { field: 'third_rebate', title: 'Hoàn trả bên thứ 3', minWidth: 150 },
-    { field: 'third_activity_amount', title: 'Tiền thưởng từ bên thứ 3', minWidth: 150 },
-    { field: 'date', title: 'Thời gian', minWidth: 160 }
-  ],
-  // Báo cáo nhà cung cấp — upstream 7 fields (khớp trang gốc)
-  'report-third': [
-    AGENT_COL,
-    { field: 'username', title: 'Tên tài khoản' },
-    { field: 'platform_id_name', title: 'Nhà cung cấp game' },
-    { field: 't_bet_times', title: 'Số lần cược' },
-    { field: 't_bet_amount', title: 'Tiền cược' },
-    { field: 't_turnover', title: 'Tiền cược hợp lệ' },
-    { field: 't_prize', title: 'Tiền thưởng' },
-    { field: 't_win_lose', title: 'Thắng thua' }
-  ],
-  // Nạp tiền — upstream 6 fields (khớp trang gốc)
-  deposits: [
-    AGENT_COL,
-    { field: 'username', title: 'Tên tài khoản' },
-    { field: 'user_parent_format', title: 'Thuộc đại lý' },
-    { field: 'amount', title: 'Số tiền' },
-    { field: 'type', title: 'Loại hình giao dịch' },
-    { field: 'status', title: 'Trạng thái giao dịch' },
-    { field: 'create_time', title: 'Thời gian tạo đơn' }
-  ],
-  // Rút tiền — upstream 8 fields (khớp trang gốc)
-  withdrawals: [
-    AGENT_COL,
-    { field: 'serial_no', title: 'Mã giao dịch', width: 180 },
-    { field: 'create_time', title: 'Thời gian tạo đơn', width: 160 },
-    { field: 'username', title: 'Tên tài khoản' },
-    { field: 'user_parent_format', title: 'Thuộc đại lý' },
-    { field: 'amount', title: 'Số tiền' },
-    { field: 'user_fee', title: 'Phí hội viên' },
-    { field: 'true_amount', title: 'Số tiền thực tế' },
-    { field: 'status_format', title: 'Trạng thái giao dịch' }
-  ],
-  // Tỷ lệ hoàn trả (upstream data, no local model)
-  rebate: [
-    { field: 'odds_11', title: 'Play Type', minWidth: 160 },
-    { field: 'odds_10', title: 'Rebate 10', minWidth: 100 },
-    { field: 'odds_9', title: 'Rebate 9', minWidth: 100 },
-    { field: 'odds_8', title: 'Rebate 8', minWidth: 100 },
-    { field: 'odds_7', title: 'Rebate 7', minWidth: 100 },
-    { field: 'odds_6', title: 'Rebate 6', minWidth: 100 },
-    { field: 'odds_5', title: 'Rebate 5', minWidth: 100 },
-    { field: 'odds_4', title: 'Rebate 4', minWidth: 100 },
-    { field: 'odds_3', title: 'Rebate 3', minWidth: 100 },
-    { field: 'odds_2', title: 'Rebate 2', minWidth: 100 },
-    { field: 'odds_1', title: 'Rebate 1', minWidth: 100 }
-  ]
+/** Column configs — field names match upstream exactly */
+export function getEndpointCols(endpoint) {
+  const cols = {
+    members: [
+      agentCol(),
+      { field: 'username', title: t('col.members.username'), minWidth: 130 },
+      { field: 'type_format', title: t('col.members.type_format'), minWidth: 100 },
+      { field: 'parent_user', title: t('col.members.parent_user'), minWidth: 130 },
+      { field: 'money', title: t('col.members.money'), minWidth: 120 },
+      { field: 'deposit_count', title: t('col.members.deposit_count'), minWidth: 90 },
+      { field: 'withdrawal_count', title: t('col.members.withdrawal_count'), minWidth: 90 },
+      { field: 'deposit_amount', title: t('col.members.deposit_amount'), minWidth: 110 },
+      { field: 'withdrawal_amount', title: t('col.members.withdrawal_amount'), minWidth: 110 },
+      { field: 'login_time', title: t('col.members.login_time'), minWidth: 150 },
+      { field: 'register_time', title: t('col.members.register_time'), minWidth: 150 },
+      { field: 'status_format', title: t('col.members.status_format'), minWidth: 90 }
+    ],
+    invites: [
+      agentCol(),
+      { field: 'invite_code', title: t('col.invites.invite_code') },
+      { field: 'user_type', title: t('col.invites.user_type') },
+      { field: 'reg_count', title: t('col.invites.reg_count') },
+      { field: 'scope_reg_count', title: t('col.invites.scope_reg_count') },
+      { field: 'recharge_count', title: t('col.invites.recharge_count') },
+      { field: 'first_recharge_count', title: t('col.invites.first_recharge_count') },
+      { field: 'register_recharge_count', title: t('col.invites.register_recharge_count') },
+      { field: 'remark', title: t('col.invites.remark') },
+      { field: 'create_time', title: t('col.invites.create_time') },
+      { field: 'operate', title: t('col.invites.operate'), width: 280, templet: (d) => {
+        const code = d.invite_code || ''
+        const id = d.id || ''
+        const base = (d._agent_base_url || '').replace(/\/+$/, '')
+        return `<div class="invite-actions">
+          <button class="layui-btn layui-btn-xs invite-copy-btn" data-code="${code}">${t('btn.copy_link')}</button>
+          <button class="layui-btn layui-btn-xs layui-btn-normal invite-setting-btn" data-id="${id}" data-base="${base}">${t('btn.view_settings')}</button>
+          <button class="layui-btn layui-btn-xs layui-btn-warm invite-qr-btn" data-id="${id}" data-base="${base}">${t('btn.qr_code')}</button>
+        </div>`
+      }}
+    ],
+    bets: [
+      agentCol(),
+      { field: 'serial_no', title: t('col.bets.serial_no'), width: 200 },
+      { field: 'username', title: t('col.bets.username'), width: 150 },
+      { field: 'create_time', title: t('col.bets.create_time'), width: 160 },
+      { field: 'lottery_name', title: t('col.bets.lottery_name'), minWidth: 150 },
+      { field: 'play_type_name', title: t('col.bets.play_type_name'), minWidth: 150 },
+      { field: 'play_name', title: t('col.bets.play_name'), minWidth: 150 },
+      { field: 'issue', title: t('col.bets.issue'), minWidth: 150 },
+      { field: 'content', title: t('col.bets.content'), minWidth: 150 },
+      { field: 'money', title: t('col.bets.money'), minWidth: 150 },
+      { field: 'rebate_amount', title: t('col.bets.rebate_amount'), minWidth: 150 },
+      { field: 'result', title: t('col.bets.result'), minWidth: 150 },
+      { field: 'status_text', title: t('col.bets.status_text'), width: 100 }
+    ],
+    'bet-orders': [
+      agentCol(),
+      { field: 'serial_no', title: t('col.bet_orders.serial_no'), width: 250 },
+      { field: 'platform_id_name', title: t('col.bet_orders.platform_id_name'), width: 150 },
+      { field: 'platform_username', title: t('col.bet_orders.platform_username'), width: 150 },
+      { field: 'c_name', title: t('col.bet_orders.c_name'), width: 150 },
+      { field: 'game_name', title: t('col.bet_orders.game_name'), width: 150 },
+      { field: 'bet_amount', title: t('col.bet_orders.bet_amount'), width: 150 },
+      { field: 'turnover', title: t('col.bet_orders.turnover'), width: 150 },
+      { field: 'prize', title: t('col.bet_orders.prize'), width: 150 },
+      { field: 'win_lose', title: t('col.bet_orders.win_lose'), width: 150 },
+      { field: 'bet_time', title: t('col.bet_orders.bet_time'), width: 160 }
+    ],
+    'report-lottery': [
+      agentCol(),
+      { field: 'username', title: t('col.report_lottery.username'), width: 150 },
+      { field: 'user_parent_format', title: t('col.report_lottery.user_parent_format'), width: 150 },
+      { field: 'bet_count', title: t('col.report_lottery.bet_count'), minWidth: 150 },
+      { field: 'bet_amount', title: t('col.report_lottery.bet_amount'), minWidth: 150 },
+      { field: 'valid_amount', title: t('col.report_lottery.valid_amount'), minWidth: 160 },
+      { field: 'rebate_amount', title: t('col.report_lottery.rebate_amount'), minWidth: 150 },
+      { field: 'result', title: t('col.report_lottery.result'), minWidth: 150 },
+      { field: 'win_lose', title: t('col.report_lottery.win_lose'), minWidth: 180 },
+      { field: 'prize', title: t('col.report_lottery.prize'), minWidth: 150 },
+      { field: 'lottery_name', title: t('col.report_lottery.lottery_name'), width: 160 }
+    ],
+    'report-funds': [
+      agentCol(),
+      { field: 'username', title: t('col.report_funds.username'), width: 150 },
+      { field: 'user_parent_format', title: t('col.report_funds.user_parent_format'), width: 150 },
+      { field: 'deposit_count', title: t('col.report_funds.deposit_count'), width: 160 },
+      { field: 'deposit_amount', title: t('col.report_funds.deposit_amount'), minWidth: 150, sort: true },
+      { field: 'withdrawal_count', title: t('col.report_funds.withdrawal_count'), minWidth: 150 },
+      { field: 'withdrawal_amount', title: t('col.report_funds.withdrawal_amount'), minWidth: 160 },
+      { field: 'charge_fee', title: t('col.report_funds.charge_fee'), minWidth: 150 },
+      { field: 'agent_commission', title: t('col.report_funds.agent_commission'), minWidth: 150 },
+      { field: 'promotion', title: t('col.report_funds.promotion'), minWidth: 150 },
+      { field: 'third_rebate', title: t('col.report_funds.third_rebate'), minWidth: 150 },
+      { field: 'third_activity_amount', title: t('col.report_funds.third_activity_amount'), minWidth: 150 },
+      { field: 'date', title: t('col.report_funds.date'), minWidth: 160 }
+    ],
+    'report-third': [
+      agentCol(),
+      { field: 'username', title: t('col.report_third.username') },
+      { field: 'platform_id_name', title: t('col.report_third.platform_id_name') },
+      { field: 't_bet_times', title: t('col.report_third.t_bet_times') },
+      { field: 't_bet_amount', title: t('col.report_third.t_bet_amount') },
+      { field: 't_turnover', title: t('col.report_third.t_turnover') },
+      { field: 't_prize', title: t('col.report_third.t_prize') },
+      { field: 't_win_lose', title: t('col.report_third.t_win_lose') }
+    ],
+    deposits: [
+      agentCol(),
+      { field: 'username', title: t('col.deposits.username') },
+      { field: 'user_parent_format', title: t('col.deposits.user_parent_format') },
+      { field: 'amount', title: t('col.deposits.amount') },
+      { field: 'type', title: t('col.deposits.type') },
+      { field: 'status', title: t('col.deposits.status') },
+      { field: 'create_time', title: t('col.deposits.create_time') }
+    ],
+    withdrawals: [
+      agentCol(),
+      { field: 'serial_no', title: t('col.withdrawals.serial_no'), width: 180 },
+      { field: 'create_time', title: t('col.withdrawals.create_time'), width: 160 },
+      { field: 'username', title: t('col.withdrawals.username') },
+      { field: 'user_parent_format', title: t('col.withdrawals.user_parent_format') },
+      { field: 'amount', title: t('col.withdrawals.amount') },
+      { field: 'user_fee', title: t('col.withdrawals.user_fee') },
+      { field: 'true_amount', title: t('col.withdrawals.true_amount') },
+      { field: 'status_format', title: t('col.withdrawals.status_format') }
+    ],
+    rebate: [
+      { field: 'odds_11', title: 'Play Type', minWidth: 160 },
+      { field: 'odds_10', title: 'Rebate 10', minWidth: 100 },
+      { field: 'odds_9', title: 'Rebate 9', minWidth: 100 },
+      { field: 'odds_8', title: 'Rebate 8', minWidth: 100 },
+      { field: 'odds_7', title: 'Rebate 7', minWidth: 100 },
+      { field: 'odds_6', title: 'Rebate 6', minWidth: 100 },
+      { field: 'odds_5', title: 'Rebate 5', minWidth: 100 },
+      { field: 'odds_4', title: 'Rebate 4', minWidth: 100 },
+      { field: 'odds_3', title: 'Rebate 3', minWidth: 100 },
+      { field: 'odds_2', title: 'Rebate 2', minWidth: 100 },
+      { field: 'odds_1', title: 'Rebate 1', minWidth: 100 }
+    ]
+  }
+  return cols[endpoint]
 }
 
-export const ENDPOINT_NAMES = {
-  members: 'Quản lí hội viên',
-  invites: 'Mã giới thiệu',
-  bets: 'Cược xổ số',
-  'bet-orders': 'Cược bên thứ 3',
-  'report-lottery': 'Báo cáo xổ số',
-  'report-funds': 'Báo cáo tài chính',
-  'report-third': 'Báo cáo nhà cung cấp',
-  deposits: 'Nạp tiền',
-  withdrawals: 'Rút tiền',
-  rebate: 'Tỷ lệ hoàn trả'
+export function getEndpointNames(endpoint) {
+  const names = {
+    members: t('endpoint.members'),
+    invites: t('endpoint.invites'),
+    bets: t('endpoint.bets'),
+    'bet-orders': t('endpoint.bet_orders'),
+    'report-lottery': t('endpoint.report_lottery'),
+    'report-funds': t('endpoint.report_funds'),
+    'report-third': t('endpoint.report_third'),
+    deposits: t('endpoint.deposits'),
+    withdrawals: t('endpoint.withdrawals'),
+    rebate: t('endpoint.rebate')
+  }
+  return names[endpoint] || endpoint
 }
 
 export const ENDPOINT_HAS_DATE = {
@@ -182,78 +179,80 @@ export const DATE_PARAM_NAME = {
   'bet-orders': 'bet_time',
   deposits: 'create_time',
   withdrawals: 'create_time'
-  // reports use 'date' — no rename needed
 }
 
-export const ENDPOINT_SEARCH = {
-  members: [
-    { name: 'username', type: 'text', label: 'Tên tài khoản' },
-    { name: 'status', type: 'select', label: 'Trạng thái', options: [
-      { value: '', text: '--' }, { value: '0', text: 'Chưa đánh giá' },
-      { value: '1', text: 'Bình thường' }, { value: '2', text: 'Đóng băng' }, { value: '3', text: 'Khoá' }
-    ]},
-    { name: 'sort_field', type: 'select', label: 'Sắp xếp', options: [
-      { value: '', text: '--' }, { value: 'money', text: 'Số dư' },
-      { value: 'login_time', text: 'Đăng nhập cuối' }, { value: 'register_time', text: 'Đăng ký' },
-      { value: 'deposit_money', text: 'Tổng nạp' }, { value: 'withdrawal_money', text: 'Tổng rút' }
-    ]},
-    { name: 'sort_direction', type: 'select', label: 'Hướng', options: [
-      { value: 'desc', text: 'Lớn → Bé' }, { value: 'asc', text: 'Bé → Lớn' }
-    ]}
-  ],
-  invites: [
-    { name: 'invite_code', type: 'text', label: 'Mã giới thiệu' },
-    { name: 'user_type', type: 'select', label: 'Loại hình', options: [
-      { value: '', text: '--' }, { value: '1', text: 'Hội viên thường' }, { value: '3', text: 'Gửi lời mời' }
-    ]}
-  ],
-  bets: [
-    { name: 'username', type: 'text', label: 'Tên tài khoản' },
-    { name: 'serial_no', type: 'text', label: 'Mã giao dịch' },
-    { name: 'lottery_id', type: 'select', label: 'Trò chơi', options: LOTTERY_OPTIONS },
-    { name: 'status', type: 'select', label: 'Trạng thái', options: [
-      { value: '', text: '--' }, { value: '-9', text: 'Chưa thanh toán' },
-      { value: '1', text: 'Trúng' }, { value: '-1', text: 'Không trúng' },
-      { value: '2', text: 'Hoà' }, { value: '3', text: 'Khách huỷ đơn' },
-      { value: '4', text: 'Hệ thống huỷ đơn' }, { value: '5', text: 'Đơn cược bất thường' },
-      { value: '6', text: 'Chưa thanh toán (khôi phục)' }
-    ]}
-  ],
-  'bet-orders': [
-    { name: 'username', type: 'text', label: 'Tên tài khoản' },
-    { name: 'serial_no', type: 'text', label: 'Mã giao dịch' },
-    { name: 'platform_username', type: 'text', label: 'Tài khoản nhà cái' }
-  ],
-  'report-lottery': [
-    { name: 'username', type: 'text', label: 'Tên tài khoản' },
-    { name: 'lottery_id', type: 'select', label: 'Loại xổ', options: LOTTERY_OPTIONS }
-  ],
-  'report-funds': [
-    { name: 'username', type: 'text', label: 'Tên tài khoản' }
-  ],
-  'report-third': [
-    { name: 'username', type: 'text', label: 'Tên tài khoản' },
-    { name: 'platform_id', type: 'select', label: 'Nhà cung cấp', options: PLATFORM_OPTIONS }
-  ],
-  deposits: [
-    { name: 'username', type: 'text', label: 'Tên tài khoản' },
-    { name: 'type', type: 'select', label: 'Loại hình', options: [
-      { value: '', text: '--' }, { value: '1', text: 'Nạp tiền' }, { value: '2', text: 'Rút tiền' }
-    ]},
-    { name: 'status', type: 'select', label: 'Trạng thái', options: [
-      { value: '', text: '--' }, { value: '0', text: 'Chờ xử lí' },
-      { value: '1', text: 'Hoàn tất' }, { value: '2', text: 'Đang xử lí' }, { value: '3', text: 'Không thành công' }
-    ]}
-  ],
-  withdrawals: [
-    { name: 'username', type: 'text', label: 'Tên tài khoản' },
-    { name: 'serial_no', type: 'text', label: 'Mã giao dịch' },
-    { name: 'status', type: 'select', label: 'Trạng thái', options: [
-      { value: '', text: '--' }, { value: '0', text: 'Chờ xử lí' },
-      { value: '1', text: 'Hoàn tất' }, { value: '2', text: 'Đang xử lí' }, { value: '3', text: 'Không thành công' }
-    ]}
-  ],
-  rebate: []
+export function getEndpointSearch(endpoint) {
+  const search = {
+    members: [
+      { name: 'username', type: 'text', label: t('search.username') },
+      { name: 'status', type: 'select', label: t('search.status'), options: [
+        { value: '', text: t('opt.all') }, { value: '0', text: t('opt.status.unreviewed') },
+        { value: '1', text: t('opt.status.normal') }, { value: '2', text: t('opt.status.frozen') }, { value: '3', text: t('opt.status.locked') }
+      ]},
+      { name: 'sort_field', type: 'select', label: t('search.sort_field'), options: [
+        { value: '', text: t('opt.all') }, { value: 'money', text: t('opt.sort.balance') },
+        { value: 'login_time', text: t('opt.sort.last_login') }, { value: 'register_time', text: t('opt.sort.register') },
+        { value: 'deposit_money', text: t('opt.sort.total_deposit') }, { value: 'withdrawal_money', text: t('opt.sort.total_withdrawal') }
+      ]},
+      { name: 'sort_direction', type: 'select', label: t('search.sort_direction'), options: [
+        { value: 'desc', text: t('opt.direction.desc') }, { value: 'asc', text: t('opt.direction.asc') }
+      ]}
+    ],
+    invites: [
+      { name: 'invite_code', type: 'text', label: t('search.invite_code') },
+      { name: 'user_type', type: 'select', label: t('search.user_type'), options: [
+        { value: '', text: t('opt.all') }, { value: '1', text: t('opt.invite_type.normal') }, { value: '3', text: t('opt.invite_type.invite') }
+      ]}
+    ],
+    bets: [
+      { name: 'username', type: 'text', label: t('search.username') },
+      { name: 'serial_no', type: 'text', label: t('search.serial_no') },
+      { name: 'lottery_id', type: 'select', label: t('search.lottery_id'), options: LOTTERY_OPTIONS },
+      { name: 'status', type: 'select', label: t('search.status'), options: [
+        { value: '', text: t('opt.all') }, { value: '-9', text: t('opt.bet_status.pending') },
+        { value: '1', text: t('opt.bet_status.win') }, { value: '-1', text: t('opt.bet_status.lose') },
+        { value: '2', text: t('opt.bet_status.draw') }, { value: '3', text: t('opt.bet_status.user_cancel') },
+        { value: '4', text: t('opt.bet_status.sys_cancel') }, { value: '5', text: t('opt.bet_status.abnormal') },
+        { value: '6', text: t('opt.bet_status.pending_restore') }
+      ]}
+    ],
+    'bet-orders': [
+      { name: 'username', type: 'text', label: t('search.username') },
+      { name: 'serial_no', type: 'text', label: t('search.serial_no') },
+      { name: 'platform_username', type: 'text', label: t('search.platform_username') }
+    ],
+    'report-lottery': [
+      { name: 'username', type: 'text', label: t('search.username') },
+      { name: 'lottery_id', type: 'select', label: t('search.lottery_type'), options: LOTTERY_OPTIONS }
+    ],
+    'report-funds': [
+      { name: 'username', type: 'text', label: t('search.username') }
+    ],
+    'report-third': [
+      { name: 'username', type: 'text', label: t('search.username') },
+      { name: 'platform_id', type: 'select', label: t('search.platform_id'), options: PLATFORM_OPTIONS }
+    ],
+    deposits: [
+      { name: 'username', type: 'text', label: t('search.username') },
+      { name: 'type', type: 'select', label: t('search.type'), options: [
+        { value: '', text: t('opt.all') }, { value: '1', text: t('opt.tx_type.deposit') }, { value: '2', text: t('opt.tx_type.withdrawal') }
+      ]},
+      { name: 'status', type: 'select', label: t('search.status'), options: [
+        { value: '', text: t('opt.all') }, { value: '0', text: t('opt.tx_status.pending') },
+        { value: '1', text: t('opt.tx_status.completed') }, { value: '2', text: t('opt.tx_status.processing') }, { value: '3', text: t('opt.tx_status.failed') }
+      ]}
+    ],
+    withdrawals: [
+      { name: 'username', type: 'text', label: t('search.username') },
+      { name: 'serial_no', type: 'text', label: t('search.serial_no') },
+      { name: 'status', type: 'select', label: t('search.status'), options: [
+        { value: '', text: t('opt.all') }, { value: '0', text: t('opt.tx_status.pending') },
+        { value: '1', text: t('opt.tx_status.completed') }, { value: '2', text: t('opt.tx_status.processing') }, { value: '3', text: t('opt.tx_status.failed') }
+      ]}
+    ],
+    rebate: []
+  }
+  return search[endpoint] || []
 }
 
 /** Endpoint → backend proxy URL (parallel fetch from all agents) */
@@ -285,39 +284,38 @@ export const HASH_TO_ICON = {
   '#/settings-sync': 'hub-icon-settings'
 }
 
-/** Report total summary — fields to sum for blockquote below table
- *  type: 'unique' → count distinct values (e.g. unique usernames)
- *  type: 'sum'    → sum numeric values (default)
- *  color: true    → green/red based on positive/negative
- */
-export const REPORT_TOTAL_FIELDS = {
-  'report-lottery': [
-    { field: 'username', label: 'Số khách đặt cược', type: 'unique' },
-    { field: 'bet_count', label: 'Số lần cược' },
-    { field: 'bet_amount', label: 'Tiền cược' },
-    { field: 'valid_amount', label: 'Tiền cược hợp lệ (trừ cược hoà)' },
-    { field: 'rebate_amount', label: 'Hoàn trả' },
-    { field: 'result', label: 'Thắng thua', color: true },
-    { field: 'win_lose', label: 'Kết quả thắng thua (không gồm hoàn trả)', color: true },
-    { field: 'prize', label: 'Tiền trúng' }
-  ],
-  'report-funds': [
-    { field: 'deposit_amount', label: 'Số tiền nạp' },
-    { field: 'withdrawal_amount', label: 'Số tiền rút' },
-    { field: 'charge_fee', label: 'Phí dịch vụ' },
-    { field: 'agent_commission', label: 'Hoa hồng đại lý' },
-    { field: 'promotion', label: 'Ưu đãi' },
-    { field: 'third_rebate', label: 'Hoàn trả bên thứ 3' },
-    { field: 'third_activity_amount', label: 'Tiền thưởng từ bên thứ 3' }
-  ],
-  'report-third': [
-    { field: 't_bet_times', label: 'Số lần cược' },
-    { field: 'username', label: 'Số khách đặt cược', type: 'unique' },
-    { field: 't_bet_amount', label: 'Tiền cược' },
-    { field: 't_turnover', label: 'Tiền cược hợp lệ' },
-    { field: 't_prize', label: 'Tiền thưởng' },
-    { field: 't_win_lose', label: 'Thắng thua', color: true }
-  ]
+/** Report total summary — fields to sum for blockquote below table */
+export function getReportTotalFields(endpoint) {
+  const fields = {
+    'report-lottery': [
+      { field: 'username', label: t('total.report_lottery.bettors'), type: 'unique' },
+      { field: 'bet_count', label: t('total.report_lottery.bet_count') },
+      { field: 'bet_amount', label: t('total.report_lottery.bet_amount') },
+      { field: 'valid_amount', label: t('total.report_lottery.valid_amount') },
+      { field: 'rebate_amount', label: t('total.report_lottery.rebate_amount') },
+      { field: 'result', label: t('total.report_lottery.result'), color: true },
+      { field: 'win_lose', label: t('total.report_lottery.win_lose'), color: true },
+      { field: 'prize', label: t('total.report_lottery.prize') }
+    ],
+    'report-funds': [
+      { field: 'deposit_amount', label: t('total.report_funds.deposit_amount') },
+      { field: 'withdrawal_amount', label: t('total.report_funds.withdrawal_amount') },
+      { field: 'charge_fee', label: t('total.report_funds.charge_fee') },
+      { field: 'agent_commission', label: t('total.report_funds.agent_commission') },
+      { field: 'promotion', label: t('total.report_funds.promotion') },
+      { field: 'third_rebate', label: t('total.report_funds.third_rebate') },
+      { field: 'third_activity_amount', label: t('total.report_funds.third_activity_amount') }
+    ],
+    'report-third': [
+      { field: 't_bet_times', label: t('total.report_third.bet_times') },
+      { field: 'username', label: t('total.report_third.bettors'), type: 'unique' },
+      { field: 't_bet_amount', label: t('total.report_third.bet_amount') },
+      { field: 't_turnover', label: t('total.report_third.turnover') },
+      { field: 't_prize', label: t('total.report_third.prize') },
+      { field: 't_win_lose', label: t('total.report_third.win_lose'), color: true }
+    ]
+  }
+  return fields[endpoint]
 }
 
 /** Hash → endpoint mapping */

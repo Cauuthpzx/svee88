@@ -1,23 +1,14 @@
 import { ROUTE_TITLES } from '../../constants/index.js'
 import { escapeHtml } from '../../utils/index.js'
+import { t, onLangChange } from '../../i18n/index.js'
 import {
-  ENDPOINT_COLS, ENDPOINT_NAMES, ENDPOINT_HAS_DATE,
-  ENDPOINT_SEARCH, HASH_TO_ENDPOINT, HASH_TO_ICON, DATE_PARAM_NAME,
-  UPSTREAM_URL, REPORT_TOTAL_FIELDS
+  getEndpointCols, getEndpointNames, ENDPOINT_HAS_DATE,
+  getEndpointSearch, HASH_TO_ENDPOINT, HASH_TO_ICON, DATE_PARAM_NAME,
+  UPSTREAM_URL, getReportTotalFields
 } from './config.js'
 import './index.css'
 
-/* ── Sync endpoint display names (Vietnamese) ── */
-const SYNC_EP_LABELS = {
-  members: 'Danh sách hội viên',
-  bet_order: 'Cược bên thứ 3',
-  bet_lottery: 'Cược xổ số',
-  deposit_withdrawal: 'Nạp / Rút tiền',
-  report_lottery: 'Báo cáo xổ số',
-  report_funds: 'Báo cáo tài chính',
-  report_third_game: 'Báo cáo nhà cung cấp'
-}
-
+/* ── Sync endpoint icons (language-independent) ── */
 const SYNC_EP_ICONS = {
   members: 'hub-icon-user',
   bet_order: 'hub-icon-monitor',
@@ -33,51 +24,52 @@ const SYNC_ORDER = [
   'deposit_withdrawal', 'report_lottery', 'report_funds', 'report_third_game'
 ]
 
+const getSyncEpLabel = (ep) => t(`sync.ep.${ep}`)
+
 /* ── Sync tool panel HTML ── */
 const syncToolPanel = () => {
   const epCards = SYNC_ORDER.map((ep) => `
     <div class="sync-card" data-ep="${ep}">
       <div class="sync-card-header">
         <i class="hub-icon ${SYNC_EP_ICONS[ep]}"></i>
-        <span class="sync-card-name">${SYNC_EP_LABELS[ep]}</span>
+        <span class="sync-card-name">${getSyncEpLabel(ep)}</span>
         <span class="sync-card-badge" data-badge="${ep}"></span>
       </div>
       <div class="sync-card-progress">
         <div class="sync-progress-bar" data-bar="${ep}"></div>
       </div>
       <div class="sync-card-status" data-status="${ep}">
-        <i class="hub-icon hub-icon-clock"></i> Chờ đồng bộ
+        <i class="hub-icon hub-icon-clock"></i> ${t('sync.waiting')}
       </div>
     </div>
   `).join('')
 
   return `
     <div class="sync-tool-panel">
-      <!-- Thanh điều khiển -->
       <fieldset class="layui-elem-field sync-control-field">
-        <legend><i class="hub-icon hub-icon-tools"></i> Bảng Điều Khiển Đồng Bộ</legend>
+        <legend><i class="hub-icon hub-icon-tools"></i> ${t('sync.control_panel')}</legend>
         <div class="layui-field-box sync-control-box">
           <div class="sync-control-row">
             <div class="sync-btns">
               <button type="button" class="layui-btn layui-btn-sm" id="addAccountBtn">
-                <i class="hub-icon hub-icon-plus"></i> Thêm Tài Khoản
+                <i class="hub-icon hub-icon-plus"></i> ${t('sync.add_account')}
               </button>
               <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" id="syncAllBtn">
-                <i class="hub-icon hub-icon-sync" id="syncAllIcon"></i> Đồng Bộ Tất Cả
+                <i class="hub-icon hub-icon-sync" id="syncAllIcon"></i> ${t('sync.sync_all')}
               </button>
               <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" id="hardSyncAllBtn">
-                <i class="hub-icon hub-icon-lightning" id="hardSyncIcon"></i> Đồng Bộ Toàn Bộ
+                <i class="hub-icon hub-icon-lightning" id="hardSyncIcon"></i> ${t('sync.sync_full')}
               </button>
               <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="testAllBtn">
-                <i class="hub-icon hub-icon-checklist" id="testAllIcon"></i> Kiểm Tra Dữ Liệu
+                <i class="hub-icon hub-icon-checklist" id="testAllIcon"></i> ${t('sync.test_data')}
               </button>
               <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" id="stopSyncBtn" style="display:none;">
-                <i class="hub-icon hub-icon-stop"></i> Dừng Lại
+                <i class="hub-icon hub-icon-stop"></i> ${t('sync.stop')}
               </button>
             </div>
             <div class="sync-speed-wrap">
               <label class="sync-speed-label">
-                <i class="hub-icon hub-icon-speedometer"></i> Tốc độ:
+                <i class="hub-icon hub-icon-speedometer"></i> ${t('sync.speed')}:
               </label>
               <input type="range" id="syncSpeedSlider" min="0" max="2000" step="100" value="500" class="sync-speed-slider">
               <span class="sync-speed-value" id="syncSpeedValue">500ms</span>
@@ -85,7 +77,7 @@ const syncToolPanel = () => {
           </div>
           <div class="sync-overall" id="syncOverall" style="display:none;">
             <div class="sync-overall-info">
-              <span id="syncOverallLabel"><i class="hub-icon hub-icon-sync hub-icon-spin"></i> Đang đồng bộ...</span>
+              <span id="syncOverallLabel"><i class="hub-icon hub-icon-sync hub-icon-spin"></i> ${t('sync.syncing')}</span>
               <span id="syncOverallCount"></span>
             </div>
             <div class="sync-overall-progress">
@@ -95,22 +87,20 @@ const syncToolPanel = () => {
         </div>
       </fieldset>
 
-      <!-- Trạng thái từng endpoint -->
       <fieldset class="layui-elem-field sync-status-field">
-        <legend><i class="hub-icon hub-icon-activity"></i> Trạng Thái Đồng Bộ</legend>
+        <legend><i class="hub-icon hub-icon-activity"></i> ${t('sync.status_title')}</legend>
         <div class="layui-field-box">
           <div class="sync-cards" id="syncCards">${epCards}</div>
         </div>
       </fieldset>
 
-      <!-- Nhật ký hoạt động -->
       <fieldset class="layui-elem-field sync-log-field">
-        <legend><i class="hub-icon hub-icon-list"></i> Nhật Ký Hoạt Động</legend>
+        <legend><i class="hub-icon hub-icon-list"></i> ${t('sync.log_title')}</legend>
         <div class="layui-field-box">
           <div class="sync-log" id="syncLog">
             <div class="sync-log-item sync-log-info">
               <i class="hub-icon hub-icon-clock"></i>
-              <span>Sẵn sàng. Nhấn nút để bắt đầu đồng bộ dữ liệu.</span>
+              <span>${t('sync.log_ready')}</span>
             </div>
           </div>
         </div>
@@ -123,7 +113,7 @@ const syncToolPanel = () => {
 const template = (title, endpoint, hash) => {
   const isSync = hash === '#/settings-sync'
   const hasDate = isSync ? false : ENDPOINT_HAS_DATE[endpoint]
-  const searchFields = isSync ? [] : (ENDPOINT_SEARCH[endpoint] || [])
+  const searchFields = isSync ? [] : (getEndpointSearch(endpoint) || [])
   const showAgentFilter = !isSync && !!UPSTREAM_URL[endpoint]
   const isRebate = endpoint === 'rebate'
   const hasSearch = searchFields.length > 0 || hasDate || showAgentFilter || isRebate
@@ -162,44 +152,44 @@ const template = (title, endpoint, hash) => {
             <form class="layui-form" lay-filter="dataSearchForm">
               ${hasDate ? `
               <div class="layui-inline" id="data-date-wrap">
-                <label>Thời gian</label>:
+                <label>${t('search.date')}</label>:
                 <div class="layui-input-inline data-date-input">
-                  <input type="text" name="date" id="dataDateRange" placeholder="Bắt đầu - Kết thúc" class="layui-input" readonly autocomplete="off">
+                  <input type="text" name="date" id="dataDateRange" placeholder="${t('date.start_end')}" class="layui-input" readonly autocomplete="off">
                 </div>
                 <div class="layui-input-inline data-quick-select">
                   <select id="quickDateSelect" lay-filter="quickDateSelect">
-                    <option value="">Chọn nhanh</option>
-                    <option value="yesterday">Hôm qua</option>
-                    <option value="today">Hôm nay</option>
-                    <option value="thisWeek">Tuần này</option>
-                    <option value="thisMonth">Tháng này</option>
-                    <option value="lastMonth">Tháng trước</option>
+                    <option value="">${t('date.quick_select')}</option>
+                    <option value="yesterday">${t('date.yesterday')}</option>
+                    <option value="today">${t('date.today')}</option>
+                    <option value="thisWeek">${t('date.this_week')}</option>
+                    <option value="thisMonth">${t('date.this_month')}</option>
+                    <option value="lastMonth">${t('date.last_month')}</option>
                   </select>
                 </div>
               </div>
               ` : ''}
               ${showAgentFilter ? `
               <div class="layui-inline" id="data-agent-wrap">
-                <label>Đại lý</label>:
+                <label>${t('search.agent')}</label>:
                 <div class="layui-input-inline data-input-sm">
                   <select name="agent_id" id="agentFilter" lay-filter="search_agent_id">
-                    <option value="0">-- Tất cả --</option>
+                    <option value="0">${t('opt.all_agents')}</option>
                   </select>
                 </div>
               </div>
               ` : ''}
               ${isRebate ? `
               <div class="layui-inline" id="data-rebate-wrap">
-                <label>Loại xổ</label>:
+                <label>${t('search.series')}</label>:
                 <div class="layui-input-inline data-input-md">
                   <select id="rebateSeriesSelect" lay-filter="rebateSeriesSelect">
-                    <option value="">Đang tải...</option>
+                    <option value="">${t('opt.loading')}</option>
                   </select>
                 </div>
-                <label>Trò chơi</label>:
+                <label>${t('search.game')}</label>:
                 <div class="layui-input-inline data-input-md">
                   <select id="rebateGameSelect" lay-filter="rebateGameSelect">
-                    <option value="">--</option>
+                    <option value="">${t('opt.all')}</option>
                   </select>
                 </div>
               </div>
@@ -207,12 +197,12 @@ const template = (title, endpoint, hash) => {
               <div class="layui-inline" id="data-search-wrap">${searchInputs}</div>
               <div class="layui-inline">
                 <button type="button" class="layui-btn" lay-submit lay-filter="doDataSearch">
-                  <i class="hub-icon hub-icon-search"></i> Tìm kiếm
+                  <i class="hub-icon hub-icon-search"></i> ${t('btn.search')}
                 </button>
               </div>
               <div class="layui-inline">
                 <button type="button" class="layui-btn layui-btn-primary" id="dataResetBtn">
-                  <i class="hub-icon hub-icon-refresh"></i> Đặt lại
+                  <i class="hub-icon hub-icon-refresh"></i> ${t('btn.reset')}
                 </button>
               </div>
             </form>
@@ -225,7 +215,7 @@ const template = (title, endpoint, hash) => {
 
       <div id="data-total-wrap" class="data-total-wrap">
         <blockquote class="layui-elem-quote total-summary-quote" id="data-total-body">
-          <i class="hub-icon hub-icon-chart"></i> <b>Tổng kết</b>
+          <i class="hub-icon hub-icon-chart"></i> <b>${t('table.summary')}</b>
         </blockquote>
       </div>
     </div>
@@ -233,11 +223,13 @@ const template = (title, endpoint, hash) => {
 }
 
 let currentEndpoint = null
+let currentHash = null
 let syncAbort = false
 let swrReloading = false
 let swrCurrentWhere = {}
 let swrPage = 1
 let swrLimit = 10
+let unsubLang = null
 
 const getDateStr = (d) => {
   const y = d.getFullYear()
@@ -305,7 +297,7 @@ const initQuickDate = (form) => {
 }
 
 /* ── Sync Tool Log helpers ── */
-const now = () => {
+const nowStr = () => {
   const d = new Date()
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`
 }
@@ -326,7 +318,7 @@ const addLog = (msg, type = 'info') => {
   const icon = iconMap[type] || iconMap.info
   const item = document.createElement('div')
   item.className = `sync-log-item sync-log-${type}`
-  item.innerHTML = `<i class="hub-icon ${icon}"></i><span class="sync-log-time">[${now()}]</span> <span>${msg}</span>`
+  item.innerHTML = `<i class="hub-icon ${icon}"></i><span class="sync-log-time">[${nowStr()}]</span> <span>${msg}</span>`
   log.prepend(item)
   if (log.children.length > 200) log.lastChild.remove()
 }
@@ -361,8 +353,8 @@ const setCardStatus = (ep, status, text, pct) => {
 
   if (badgeEl) {
     const labels = {
-      pending: '', syncing: 'Đang chạy', uploading: 'Tải lên',
-      verifying: 'Kiểm tra', done: 'Xong', error: 'Lỗi', skipped: 'Bỏ qua'
+      pending: '', syncing: t('sync.badge.running'), uploading: t('sync.badge.uploading'),
+      verifying: t('sync.badge.verifying'), done: t('sync.badge.done'), error: t('sync.badge.error'), skipped: t('sync.badge.skipped')
     }
     badgeEl.textContent = labels[status] || ''
     badgeEl.className = `sync-card-badge badge-${status}`
@@ -399,38 +391,34 @@ const delay = (ms) => new Promise((r) => setTimeout(r, ms))
 
 /* ── Sync operations ── */
 const initSyncTool = (form, layer, table) => {
-  // Speed slider display
   const slider = document.getElementById('syncSpeedSlider')
   const speedVal = document.getElementById('syncSpeedValue')
   if (slider && speedVal) {
     slider.addEventListener('input', () => {
       const v = parseInt(slider.value, 10)
-      speedVal.textContent = v === 0 ? 'Tối đa' : `${v}ms`
+      speedVal.textContent = v === 0 ? t('sync.speed_max') : `${v}ms`
     })
   }
 
-  // Stop button
   const stopBtn = document.getElementById('stopSyncBtn')
   if (stopBtn) {
     stopBtn.addEventListener('click', () => {
       syncAbort = true
-      addLog('Người dùng đã yêu cầu dừng đồng bộ.', 'warning')
+      addLog(t('sync.user_stopped'), 'warning')
     })
   }
 
-  // Sync All
   const syncAllBtn = document.getElementById('syncAllBtn')
   if (syncAllBtn) {
     syncAllBtn.addEventListener('click', () => runSyncAll(false, layer, table))
   }
 
-  // Hard Sync All
   const hardSyncBtn = document.getElementById('hardSyncAllBtn')
   if (hardSyncBtn) {
     hardSyncBtn.addEventListener('click', () => {
       layer.confirm(
-        'Đồng bộ toàn bộ sẽ bỏ qua ngày đồng bộ cuối và tải lại tất cả dữ liệu. Tiếp tục?',
-        { icon: 3, title: 'Xác nhận' },
+        t('sync.confirm_full'),
+        { icon: 3, title: t('sync.confirm_title') },
         (idx) => {
           layer.close(idx)
           runSyncAll(true, layer, table)
@@ -439,13 +427,11 @@ const initSyncTool = (form, layer, table) => {
     })
   }
 
-  // Test All
   const testBtn = document.getElementById('testAllBtn')
   if (testBtn) {
     testBtn.addEventListener('click', () => runTestAll(layer))
   }
 
-  // Add Account popup
   const addAccountBtn = document.getElementById('addAccountBtn')
   if (addAccountBtn) {
     addAccountBtn.addEventListener('click', () => openAddAccountDialog(form, layer))
@@ -453,31 +439,31 @@ const initSyncTool = (form, layer, table) => {
 }
 
 const runSyncAll = async (hard, layer, table) => {
-  const { syncAll, syncEndpoint, getStatus, ENDPOINTS } = await import('../../services/sync.js')
+  const { syncEndpoint } = await import('../../services/sync.js')
 
   syncAbort = false
   setSyncBtnsDisabled(true)
-  SYNC_ORDER.forEach((ep) => setCardStatus(ep, 'pending', 'Chờ đồng bộ', 0))
+  SYNC_ORDER.forEach((ep) => setCardStatus(ep, 'pending', t('sync.waiting'), 0))
 
   const total = SYNC_ORDER.length
   let completed = 0
   const results = []
 
-  const modeLabel = hard ? 'Đồng bộ toàn bộ' : 'Đồng bộ tăng dần'
-  addLog(`Bắt đầu ${modeLabel} — ${total} endpoint`, 'sync')
+  const modeLabel = hard ? t('sync.log.mode_full') : t('sync.log.mode_incremental')
+  addLog(t('sync.log.start', { mode: modeLabel, total }), 'sync')
   setOverall(true, `<i class="hub-icon hub-icon-sync hub-icon-spin"></i> ${modeLabel}...`, `0 / ${total}`, 0)
 
   const startTime = Date.now()
 
   for (const ep of SYNC_ORDER) {
     if (syncAbort) {
-      setCardStatus(ep, 'skipped', 'Đã dừng', 0)
-      addLog(`${SYNC_EP_LABELS[ep]}: Đã bỏ qua (dừng bởi người dùng)`, 'warning')
+      setCardStatus(ep, 'skipped', t('sync.status.stopped'), 0)
+      addLog(t('sync.log.ep_skipped_user', { ep: getSyncEpLabel(ep) }), 'warning')
       continue
     }
 
-    setCardStatus(ep, 'syncing', 'Đang tải dữ liệu...', 10)
-    addLog(`${SYNC_EP_LABELS[ep]}: Bắt đầu đồng bộ...`, 'sync')
+    setCardStatus(ep, 'syncing', t('sync.status.loading'), 10)
+    addLog(t('sync.log.ep_start', { ep: getSyncEpLabel(ep) }), 'sync')
 
     try {
       const result = await syncEndpoint(ep, (progress) => {
@@ -485,29 +471,29 @@ const runSyncAll = async (hard, layer, table) => {
         const { step, message } = progress
 
         if (step === 'fetch') {
-          setCardStatus(ep, 'syncing', message || 'Đang tải...', 30)
+          setCardStatus(ep, 'syncing', message || t('sync.status.fetching'), 30)
         } else if (step === 'upload') {
-          setCardStatus(ep, 'uploading', message || 'Đang tải lên...', 60)
+          setCardStatus(ep, 'uploading', message || t('sync.status.uploading'), 60)
         } else if (step === 'verify') {
-          setCardStatus(ep, 'verifying', message || 'Đang kiểm tra...', 85)
+          setCardStatus(ep, 'verifying', message || t('sync.status.verifying'), 85)
         }
 
-        if (message) addLog(`${SYNC_EP_LABELS[ep]}: ${message}`, step === 'error' ? 'error' : 'info')
+        if (message) addLog(`${getSyncEpLabel(ep)}: ${message}`, step === 'error' ? 'error' : 'info')
       })
 
       results.push(result)
 
       if (result.skipped) {
-        setCardStatus(ep, 'skipped', `Đã cập nhật (${result.lastDate || ''})`, 100)
-        addLog(`${SYNC_EP_LABELS[ep]}: Đã cập nhật, bỏ qua`, 'warning')
+        setCardStatus(ep, 'skipped', t('sync.status.updated', { date: result.lastDate || '' }), 100)
+        addLog(t('sync.log.ep_skipped', { ep: getSyncEpLabel(ep) }), 'warning')
       } else {
         const count = result.fetched || result.processed || 0
-        setCardStatus(ep, 'done', `Hoàn tất — ${count} bản ghi`, 100)
-        addLog(`${SYNC_EP_LABELS[ep]}: Xong — ${count} bản ghi`, 'success')
+        setCardStatus(ep, 'done', t('sync.status.done', { count }), 100)
+        addLog(t('sync.log.ep_done', { ep: getSyncEpLabel(ep), count }), 'success')
       }
     } catch (e) {
-      setCardStatus(ep, 'error', `Lỗi: ${e.message}`, 0)
-      addLog(`${SYNC_EP_LABELS[ep]}: Lỗi — ${e.message}`, 'error')
+      setCardStatus(ep, 'error', `${t('sync.badge.error')}: ${e.message}`, 0)
+      addLog(t('sync.log.ep_error', { ep: getSyncEpLabel(ep), message: e.message }), 'error')
       results.push({ endpoint: ep, error: e.message })
     }
 
@@ -515,7 +501,6 @@ const runSyncAll = async (hard, layer, table) => {
     const pct = Math.round((completed / total) * 100)
     setOverall(true, `<i class="hub-icon hub-icon-sync hub-icon-spin"></i> ${modeLabel}...`, `${completed} / ${total}`, pct)
 
-    // Delay between endpoints based on speed slider
     const spd = getSpeed()
     if (spd > 0 && completed < total && !syncAbort) await delay(spd)
   }
@@ -524,16 +509,15 @@ const runSyncAll = async (hard, layer, table) => {
   const errors = results.filter((r) => r.error).length
 
   if (syncAbort) {
-    setOverall(true, '<i class="hub-icon hub-icon-warning"></i> Đã dừng', `${completed} / ${total}`, Math.round((completed / total) * 100))
-    addLog(`Đồng bộ đã dừng sau ${elapsed}s (${errors} lỗi)`, 'warning')
+    setOverall(true, `<i class="hub-icon hub-icon-warning"></i> ${t('sync.log.overall_stopped')}`, `${completed} / ${total}`, Math.round((completed / total) * 100))
+    addLog(t('sync.log.stopped', { elapsed, errors }), 'warning')
   } else {
-    setOverall(true, '<i class="hub-icon hub-icon-ok"></i> Hoàn tất!', `${total} / ${total}`, 100)
-    addLog(`Đồng bộ hoàn tất trong ${elapsed}s — ${errors} lỗi`, errors > 0 ? 'warning' : 'done')
+    setOverall(true, `<i class="hub-icon hub-icon-ok"></i> ${t('sync.log.overall_done')}`, `${total} / ${total}`, 100)
+    addLog(t('sync.log.done', { elapsed, errors }), errors > 0 ? 'warning' : 'done')
   }
 
   setSyncBtnsDisabled(false)
 
-  // Reload members table
   if (table) {
     try {
       table.reload('dataTable', { page: { curr: 1 } })
@@ -542,7 +526,7 @@ const runSyncAll = async (hard, layer, table) => {
 }
 
 const runTestAll = async (layer) => {
-  const { verifyRandom, getStatus } = await import('../../services/sync.js')
+  const { verifyRandom } = await import('../../services/sync.js')
   const { fetchAllPages } = await import('../../api/upstream-sync.js')
   const {
     memberApi, betOrderApi, betApi, depositWithdrawalApi,
@@ -562,8 +546,8 @@ const runTestAll = async (layer) => {
     { name: 'report_third_game', listFn: reportThirdGameApi.list }
   ]
 
-  addLog('Bắt đầu kiểm tra dữ liệu...', 'verify')
-  setOverall(true, '<i class="hub-icon hub-icon-checklist"></i> Đang kiểm tra...', `0 / ${testEndpoints.length}`, 0)
+  addLog(t('sync.test.start'), 'verify')
+  setOverall(true, `<i class="hub-icon hub-icon-checklist"></i> ${t('sync.test.checking')}`, `0 / ${testEndpoints.length}`, 0)
 
   let completed = 0
   let passed = 0
@@ -571,12 +555,12 @@ const runTestAll = async (layer) => {
 
   for (const { name, listFn } of testEndpoints) {
     if (syncAbort) {
-      setCardStatus(name, 'skipped', 'Đã dừng', 0)
+      setCardStatus(name, 'skipped', t('sync.status.stopped'), 0)
       continue
     }
 
-    setCardStatus(name, 'verifying', 'Đang kiểm tra...', 50)
-    addLog(`${SYNC_EP_LABELS[name]}: Đang kiểm tra...`, 'verify')
+    setCardStatus(name, 'verifying', t('sync.test.checking'), 50)
+    addLog(`${getSyncEpLabel(name)}: ${t('sync.test.checking')}`, 'verify')
 
     try {
       const { data } = await fetchAllPages(listFn, {}, { pageSize: 10, maxPages: 1, sensitive: name === 'members' })
@@ -584,21 +568,21 @@ const runTestAll = async (layer) => {
 
       if (result.ok) {
         passed++
-        setCardStatus(name, 'done', `Đạt — ${result.checked} mẫu kiểm tra`, 100)
-        addLog(`${SYNC_EP_LABELS[name]}: Đạt (${result.checked} mẫu)`, 'success')
+        setCardStatus(name, 'done', t('sync.test.pass', { checked: result.checked }), 100)
+        addLog(t('sync.test.ep_pass', { ep: getSyncEpLabel(name), checked: result.checked }), 'success')
       } else {
         failed++
-        setCardStatus(name, 'error', `Không đạt — thiếu ${(result.missing || []).length} bản ghi`, 100)
-        addLog(`${SYNC_EP_LABELS[name]}: Không đạt — thiếu dữ liệu`, 'error')
+        setCardStatus(name, 'error', t('sync.test.fail', { missing: (result.missing || []).length }), 100)
+        addLog(t('sync.test.ep_fail', { ep: getSyncEpLabel(name) }), 'error')
       }
     } catch (e) {
       failed++
-      setCardStatus(name, 'error', `Lỗi: ${e.message}`, 0)
-      addLog(`${SYNC_EP_LABELS[name]}: Lỗi — ${e.message}`, 'error')
+      setCardStatus(name, 'error', `${t('sync.badge.error')}: ${e.message}`, 0)
+      addLog(t('sync.test.ep_error', { ep: getSyncEpLabel(name), message: e.message }), 'error')
     }
 
     completed++
-    setOverall(true, '<i class="hub-icon hub-icon-checklist"></i> Đang kiểm tra...', `${completed} / ${testEndpoints.length}`, Math.round((completed / testEndpoints.length) * 100))
+    setOverall(true, `<i class="hub-icon hub-icon-checklist"></i> ${t('sync.test.checking')}`, `${completed} / ${testEndpoints.length}`, Math.round((completed / testEndpoints.length) * 100))
 
     const spd = getSpeed()
     if (spd > 0 && !syncAbort) await delay(spd)
@@ -607,12 +591,12 @@ const runTestAll = async (layer) => {
   setOverall(
     true,
     failed > 0
-      ? '<i class="hub-icon hub-icon-warning"></i> Kiểm tra xong (có lỗi)'
-      : '<i class="hub-icon hub-icon-ok"></i> Kiểm tra xong',
-    `Đạt: ${passed} | Lỗi: ${failed}`,
+      ? `<i class="hub-icon hub-icon-warning"></i> ${t('sync.test.done_error')}`
+      : `<i class="hub-icon hub-icon-ok"></i> ${t('sync.test.done_ok')}`,
+    t('sync.test.result', { passed, failed }),
     100
   )
-  addLog(`Kiểm tra hoàn tất: ${passed} đạt, ${failed} lỗi`, failed > 0 ? 'warning' : 'done')
+  addLog(t('sync.test.summary', { passed, failed }), failed > 0 ? 'warning' : 'done')
 
   setSyncBtnsDisabled(false)
 }
@@ -620,7 +604,7 @@ const runTestAll = async (layer) => {
 const openAddAccountDialog = (form, layer) => {
   layer.open({
     type: 1,
-    title: '<i class="hub-icon hub-icon-plus" style="vertical-align:middle;margin-right:6px;"></i>Thêm Tài Khoản',
+    title: `<i class="hub-icon hub-icon-plus" style="vertical-align:middle;margin-right:6px;"></i>${t('sync.account.title')}`,
     area: '380px',
     maxHeight: 500,
     content: `
@@ -630,7 +614,7 @@ const openAddAccountDialog = (form, layer) => {
             <div class="layui-input-prefix">
               <i class="hub-icon hub-icon-user"></i>
             </div>
-            <input type="text" name="owner" lay-verify="required" placeholder="Tên người sở hữu" lay-reqtext="Vui lòng nhập tên người sở hữu" autocomplete="off" class="layui-input" lay-affix="clear">
+            <input type="text" name="owner" lay-verify="required" placeholder="${t('sync.account.owner')}" lay-reqtext="${t('sync.account.owner_required')}" autocomplete="off" class="layui-input" lay-affix="clear">
           </div>
         </div>
         <div class="layui-form-item">
@@ -638,7 +622,7 @@ const openAddAccountDialog = (form, layer) => {
             <div class="layui-input-prefix">
               <i class="hub-icon hub-icon-user"></i>
             </div>
-            <input type="text" name="username" lay-verify="required" placeholder="Tài khoản ee88" lay-reqtext="Vui lòng nhập tài khoản" autocomplete="off" class="layui-input" lay-affix="clear">
+            <input type="text" name="username" lay-verify="required" placeholder="${t('sync.account.username')}" lay-reqtext="${t('sync.account.username_required')}" autocomplete="off" class="layui-input" lay-affix="clear">
           </div>
         </div>
         <div class="layui-form-item">
@@ -646,7 +630,7 @@ const openAddAccountDialog = (form, layer) => {
             <div class="layui-input-prefix">
               <i class="hub-icon hub-icon-lock"></i>
             </div>
-            <input type="password" name="password" lay-verify="required" placeholder="Mật khẩu ee88" lay-reqtext="Vui lòng nhập mật khẩu" autocomplete="off" class="layui-input" lay-affix="eye">
+            <input type="password" name="password" lay-verify="required" placeholder="${t('sync.account.password')}" lay-reqtext="${t('sync.account.password_required')}" autocomplete="off" class="layui-input" lay-affix="eye">
           </div>
         </div>
         <div class="layui-form-item">
@@ -654,7 +638,7 @@ const openAddAccountDialog = (form, layer) => {
             <div class="layui-input-prefix">
               <i class="hub-icon hub-icon-link"></i>
             </div>
-            <input type="text" name="base_url" lay-verify="required|url" placeholder="Link URL Base" lay-reqtext="Vui lòng nhập URL Base" value="https://a2u4k.ee88dly.com/" autocomplete="off" class="layui-input" lay-affix="clear">
+            <input type="text" name="base_url" lay-verify="required|url" placeholder="${t('sync.account.base_url')}" lay-reqtext="${t('sync.account.base_url_required')}" value="https://a2u4k.ee88dly.com/" autocomplete="off" class="layui-input" lay-affix="clear">
           </div>
         </div>
         <div class="layui-form-item">
@@ -664,7 +648,7 @@ const openAddAccountDialog = (form, layer) => {
                 <div class="layui-input-prefix">
                   <i class="hub-icon hub-icon-security"></i>
                 </div>
-                <input type="text" name="captcha" lay-verify="required" placeholder="Mã xác nhận" lay-reqtext="Vui lòng nhập mã xác nhận" autocomplete="off" class="layui-input" lay-affix="clear">
+                <input type="text" name="captcha" lay-verify="required" placeholder="${t('sync.account.captcha')}" lay-reqtext="${t('sync.account.captcha_required')}" autocomplete="off" class="layui-input" lay-affix="clear">
               </div>
             </div>
             <div class="layui-col-xs5">
@@ -675,11 +659,11 @@ const openAddAccountDialog = (form, layer) => {
           </div>
         </div>
         <div class="layui-form-item">
-          <input type="checkbox" name="remember" lay-skin="primary" title="Ghi nhớ mật khẩu">
+          <input type="checkbox" name="remember" lay-skin="primary" title="${t('sync.account.remember')}">
         </div>
         <div class="layui-form-item">
           <button type="button" class="layui-btn layui-btn-fluid" lay-submit lay-filter="submitAddAccount">
-            <i class="hub-icon hub-icon-login"></i> Đăng nhập
+            <i class="hub-icon hub-icon-login"></i> ${t('btn.login')}
           </button>
         </div>
       </form>
@@ -687,7 +671,7 @@ const openAddAccountDialog = (form, layer) => {
     success: () => {
       form.render(null, 'addAccountForm')
       form.on('submit(submitAddAccount)', (data) => {
-        const { owner, username, base_url, password } = data.field
+        const { owner, username, base_url } = data.field
         fetch('/api/v1/sync/agents', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -696,13 +680,13 @@ const openAddAccountDialog = (form, layer) => {
           .then((r) => r.json())
           .then((res) => {
             if (res.agent) {
-              layer.msg('Thêm tài khoản thành công!', { icon: 1 })
+              layer.msg(t('sync.account.success'), { icon: 1 })
               layer.closeAll()
             } else {
-              layer.msg('Lỗi: ' + (res.error || 'Không thể thêm'), { icon: 2 })
+              layer.msg(t('sync.account.error', { message: res.error || t('sync.account.error_unknown') }), { icon: 2 })
             }
           })
-          .catch((e) => layer.msg('Lỗi: ' + e.message, { icon: 2 }))
+          .catch((e) => layer.msg(t('sync.account.error', { message: e.message }), { icon: 2 }))
         return false
       })
     }
@@ -713,7 +697,6 @@ const openAddAccountDialog = (form, layer) => {
 const initRebatePage = (table, form, layer, tableCols) => {
   const rebateUrl = UPSTREAM_URL['rebate']
 
-  // Populate agent dropdown
   const agentSelect = document.getElementById('agentFilter')
   if (agentSelect) {
     fetch('/api/v1/sync/agents')
@@ -733,7 +716,6 @@ const initRebatePage = (table, form, layer, tableCols) => {
       .catch(() => {})
   }
 
-  // Fetch lottery init data (series + games for first series)
   fetch('/api/v1/sync/proxy/rebate-init', { method: 'POST' })
     .then((r) => r.json())
     .then((res) => {
@@ -741,7 +723,6 @@ const initRebatePage = (table, form, layer, tableCols) => {
       const gameSel = document.getElementById('rebateGameSelect')
       if (!seriesSel || !gameSel) return
 
-      // Populate series dropdown
       seriesSel.innerHTML = ''
       for (const s of (res.series || [])) {
         const opt = document.createElement('option')
@@ -750,7 +731,6 @@ const initRebatePage = (table, form, layer, tableCols) => {
         seriesSel.appendChild(opt)
       }
 
-      // Populate games dropdown (first series' games)
       gameSel.innerHTML = ''
       for (const g of (res.games || [])) {
         const opt = document.createElement('option')
@@ -761,7 +741,6 @@ const initRebatePage = (table, form, layer, tableCols) => {
 
       form.render('select')
 
-      // Render table with first game's data
       const firstSeries = (res.series || [])[0]
       const firstGame = (res.games || [])[0]
       const initWhere = {}
@@ -783,11 +762,10 @@ const initRebatePage = (table, form, layer, tableCols) => {
         skin: 'grid',
         even: true,
         size: 'sm',
-        text: { none: 'Không có dữ liệu' }
+        text: { none: t('table.no_data') }
       })
     })
     .catch(() => {
-      // If init fails, render empty table
       table.render({
         elem: '#dataTable',
         id: 'dataTable',
@@ -799,11 +777,10 @@ const initRebatePage = (table, form, layer, tableCols) => {
         skin: 'grid',
         even: true,
         size: 'sm',
-        text: { none: 'Không có dữ liệu — kiểm tra kết nối' }
+        text: { none: t('table.no_data_check') }
       })
     })
 
-  // Series change → load games for that series
   form.on('select(rebateSeriesSelect)', (data) => {
     const seriesId = data.value
     fetch('/api/v1/sync/proxy/rebate-games', {
@@ -824,7 +801,6 @@ const initRebatePage = (table, form, layer, tableCols) => {
         }
         form.render('select')
 
-        // Auto-load first game
         const firstGame = (res.games || [])[0]
         if (firstGame) {
           table.reload('dataTable', {
@@ -835,7 +811,6 @@ const initRebatePage = (table, form, layer, tableCols) => {
       .catch(() => {})
   })
 
-  // Game change → reload table
   form.on('select(rebateGameSelect)', (data) => {
     const seriesSel = document.getElementById('rebateSeriesSelect')
     table.reload('dataTable', {
@@ -843,7 +818,6 @@ const initRebatePage = (table, form, layer, tableCols) => {
     })
   })
 
-  // Search button
   form.on('submit(doDataSearch)', () => {
     const seriesSel = document.getElementById('rebateSeriesSelect')
     const gameSel = document.getElementById('rebateGameSelect')
@@ -853,16 +827,13 @@ const initRebatePage = (table, form, layer, tableCols) => {
     return false
   })
 
-  // Reset button
   const resetBtn = document.getElementById('dataResetBtn')
   if (resetBtn) {
     resetBtn.addEventListener('click', () => {
       const seriesSel = document.getElementById('rebateSeriesSelect')
-      const gameSel = document.getElementById('rebateGameSelect')
       if (seriesSel && seriesSel.options.length) {
         seriesSel.selectedIndex = 0
         form.render('select')
-        // Trigger series change to reload games
         const evt = new Event('change')
         seriesSel.dispatchEvent(evt)
       }
@@ -877,7 +848,7 @@ const fmtVN = (v, isInt) => {
 }
 
 const renderTotalSummary = (endpoint, data) => {
-  const fields = REPORT_TOTAL_FIELDS[endpoint]
+  const fields = getReportTotalFields(endpoint)
   const wrap = document.getElementById('data-total-wrap')
   if (!fields || !data || !data.length) {
     if (wrap) wrap.style.display = 'none'
@@ -916,8 +887,8 @@ const renderTotalSummary = (endpoint, data) => {
   }).join('<span class="total-sep">|</span>')
 
   const body = document.getElementById('data-total-body')
-  if (body) body.innerHTML = `<i class="hub-icon hub-icon-chart"></i> <b>Tổng kết:</b> ${items}`
-  if (wrap) wrap.style.display = ''
+  if (body) body.innerHTML = `<i class="hub-icon hub-icon-chart"></i> <b>${t('table.summary')}:</b> ${items}`
+  if (wrap) wrap.style.display = 'block'
 }
 
 /* ── SWR silent background refresh (zero flash) ── */
@@ -944,7 +915,6 @@ const swrSilentRefresh = async (upstreamUrl, endpoint) => {
     if (currentEndpoint !== endpoint) return
     if (!freshRes.data || !freshRes.data.length) return
 
-    // Direct DOM update — only change cells whose value differs
     const view = document.querySelector('#dataTable')?.closest('.layui-table-view')
     if (!view) return
 
@@ -956,7 +926,7 @@ const swrSilentRefresh = async (upstreamUrl, endpoint) => {
         )
         const newVal = String(value ?? '')
         cells.forEach((cell) => {
-          if (cell.children.length > 0) return // skip template cells (buttons)
+          if (cell.children.length > 0) return
           if (cell.textContent.trim() !== newVal.trim()) {
             cell.textContent = newVal
           }
@@ -964,7 +934,6 @@ const swrSilentRefresh = async (upstreamUrl, endpoint) => {
       }
     })
 
-    // Update layui internal cache for exports/sort
     if (typeof layui !== 'undefined' && layui.table && layui.table.cache) {
       layui.table.cache['dataTable'] = freshRes.data.map((row, i) => ({
         ...row, LAY_TABLE_INDEX: i
@@ -979,7 +948,7 @@ const swrSilentRefresh = async (upstreamUrl, endpoint) => {
 
 /* ── Load table ── */
 const loadTable = (endpoint, hash) => {
-  const cols = ENDPOINT_COLS[endpoint]
+  const cols = getEndpointCols(endpoint)
   if (!cols) return
   const isSync = hash === '#/settings-sync'
   const tableCols = isSync ? [{ type: 'checkbox', fixed: 'left' }, ...cols] : cols
@@ -992,7 +961,6 @@ const loadTable = (endpoint, hash) => {
       initQuickDate(form)
     }
 
-    // Populate agent dropdown
     const agentSelect = document.getElementById('agentFilter')
     if (agentSelect) {
       fetch('/api/v1/sync/agents')
@@ -1015,7 +983,6 @@ const loadTable = (endpoint, hash) => {
     const upstreamUrl = UPSTREAM_URL[endpoint]
     const useUpstream = !!upstreamUrl && !isSync
 
-    // Rebate page: fetch init data first, then render table
     if (endpoint === 'rebate') {
       initRebatePage(table, form, layer, tableCols)
       return
@@ -1032,7 +999,6 @@ const loadTable = (endpoint, hash) => {
       request: { pageName: 'page', limitName: 'limit' },
       parseData: (res) => {
         if (useUpstream) {
-          // SWR: data stale → silent background refresh (zero flash)
           if (res._cache_status === 'stale' && !swrReloading) {
             swrReloading = true
             swrSilentRefresh(upstreamUrl, endpoint)
@@ -1056,7 +1022,7 @@ const loadTable = (endpoint, hash) => {
       skin: 'grid',
       even: true,
       size: 'sm',
-      text: { none: 'Không có dữ liệu' },
+      text: { none: t('table.no_data') },
       done: function(res, curr) {
         swrPage = curr || 1
         const limitEl = document.querySelector('.layui-laypage-limits select')
@@ -1065,14 +1031,12 @@ const loadTable = (endpoint, hash) => {
       }
     })
 
-    // Convert toolbar native title → lay-tips
     document.querySelectorAll('.layui-table-tool-self [title]').forEach((el) => {
       el.setAttribute('lay-tips', el.getAttribute('title'))
       el.setAttribute('lay-direction', '3')
       el.removeAttribute('title')
     })
 
-    // Search submit
     form.on('submit(doDataSearch)', (data) => {
       const where = { ...data.field }
       if (where.date) {
@@ -1088,7 +1052,6 @@ const loadTable = (endpoint, hash) => {
       return false
     })
 
-    // Reset
     const resetBtn = document.getElementById('dataResetBtn')
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
@@ -1102,7 +1065,6 @@ const loadTable = (endpoint, hash) => {
       })
     }
 
-    // Invite action buttons (Copy đường link, Xem cài đặt, Mã QR)
     if (endpoint === 'invites') {
       document.querySelector('#dataTable')?.closest('.layui-table-view')
         ?.addEventListener('click', (e) => {
@@ -1112,10 +1074,9 @@ const loadTable = (endpoint, hash) => {
 
           if (copyBtn) {
             const code = copyBtn.dataset.code
-            // Upstream dùng domain cố định: https://dly8828.com/?inviteCode=CODE
             const link = `https://dly8828.com/?inviteCode=${code}`
             navigator.clipboard.writeText(link).then(() => {
-              layer.msg('Đã copy đường link!', { icon: 1, time: 1500 })
+              layer.msg(t('invite.link_copied'), { icon: 1, time: 1500 })
             }).catch(() => {
               const ta = document.createElement('textarea')
               ta.value = link
@@ -1123,7 +1084,7 @@ const loadTable = (endpoint, hash) => {
               ta.select()
               document.execCommand('copy')
               ta.remove()
-              layer.msg('Đã copy đường link!', { icon: 1, time: 1500 })
+              layer.msg(t('invite.link_copied'), { icon: 1, time: 1500 })
             })
           }
 
@@ -1133,7 +1094,7 @@ const loadTable = (endpoint, hash) => {
             if (!base || !id) return
             layer.open({
               type: 2,
-              title: 'Cài đặt hoàn trả',
+              title: t('table.rebate_settings'),
               area: ['650px', '500px'],
               content: `${base}/agent/inviteDetail?id=${id}`
             })
@@ -1145,7 +1106,7 @@ const loadTable = (endpoint, hash) => {
             if (!base || !id) return
             layer.open({
               type: 2,
-              title: 'Mã QR',
+              title: t('btn.qr_code'),
               area: ['350px', '385px'],
               content: `${base}/agent/inviteQrcode?id=${id}`
             })
@@ -1153,7 +1114,6 @@ const loadTable = (endpoint, hash) => {
         })
     }
 
-    // Init sync tool for sync page
     if (isSync) {
       initSyncTool(form, layer, table)
     }
@@ -1164,17 +1124,33 @@ export const render = (hash, container) => {
   const endpoint = HASH_TO_ENDPOINT[hash]
   if (!endpoint) return
   currentEndpoint = endpoint
+  currentHash = hash
   const el = container || document.getElementById('main-content')
-  const title = ROUTE_TITLES[hash] || ENDPOINT_NAMES[endpoint] || endpoint
+  const title = ROUTE_TITLES[hash] || getEndpointNames(endpoint) || endpoint
   el.innerHTML = template(title, endpoint, hash)
   loadTable(endpoint, hash)
+
+  unsubLang = onLangChange(() => {
+    if (!currentEndpoint || !currentHash) return
+    const ep = currentEndpoint
+    const h = currentHash
+    const cont = container || document.getElementById('main-content')
+    const newTitle = ROUTE_TITLES[h] || getEndpointNames(ep) || ep
+    cont.innerHTML = template(newTitle, ep, h)
+    loadTable(ep, h)
+  })
 }
 
 export const destroy = () => {
   currentEndpoint = null
+  currentHash = null
   syncAbort = true
   swrReloading = false
   swrCurrentWhere = {}
   swrPage = 1
   swrLimit = 10
+  if (unsubLang) {
+    unsubLang()
+    unsubLang = null
+  }
 }

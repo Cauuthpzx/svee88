@@ -1,5 +1,11 @@
 /* Global resets and shared styles */
 
+/* ── i18n: Chinese font stack ── */
+html[lang="zh"] {
+  font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC',
+    'Helvetica Neue', Arial, sans-serif;
+}
+
 /* ── Fix: layui table border-right trùng lặp ──
    Layui tạo 3 nguồn border-right chồng nhau:
    1. ::after pseudo-element (background 1px tại right:0, z-index:101)

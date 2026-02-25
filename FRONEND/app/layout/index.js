@@ -4,52 +4,53 @@ import { initTheme, toggleTheme } from '../utils/theme.js'
 import { preloadRoute } from '../router/index.js'
 import { store } from '../store/index.js'
 import { ROUTES, MSG } from '../constants/index.js'
+import { t, onLangChange, setLang, getLang, LANG_OPTIONS } from '../i18n/index.js'
 import '../icons/index.css'
 import './index.css'
 
 const LAYOUT_ID = 'admin-layout'
 const CONTENT_ID = 'main-content'
 
-const MENU_ITEMS = [
-  { hash: ROUTES.DASHBOARD, icon: 'hub-icon-home', label: 'Trang chủ' },
+const getMenuItems = () => [
+  { hash: ROUTES.DASHBOARD, icon: 'hub-icon-home', label: t('menu.home') },
   {
-    icon: 'hub-icon-user', label: 'Quản lý hạ cấp',
+    icon: 'hub-icon-user', label: t('menu.members_group'),
     children: [
-      { hash: ROUTES.USERS, label: 'Danh sách hội viên' },
-      { hash: ROUTES.INVITE_LIST, label: 'Mã giới thiệu' }
+      { hash: ROUTES.USERS, label: t('menu.members') },
+      { hash: ROUTES.INVITE_LIST, label: t('menu.invites') }
     ]
   },
   {
-    icon: 'hub-icon-document', label: 'Báo cáo',
+    icon: 'hub-icon-document', label: t('menu.reports_group'),
     children: [
-      { hash: ROUTES.REPORT_LOTTERY, label: 'Báo cáo xổ số' },
-      { hash: ROUTES.REPORT_FUNDS, label: 'Báo cáo tài chính' },
-      { hash: ROUTES.REPORT_PROVIDER, label: 'Báo cáo nhà cung cấp' }
+      { hash: ROUTES.REPORT_LOTTERY, label: t('menu.report_lottery') },
+      { hash: ROUTES.REPORT_FUNDS, label: t('menu.report_funds') },
+      { hash: ROUTES.REPORT_PROVIDER, label: t('menu.report_provider') }
     ]
   },
   {
-    icon: 'hub-icon-money', label: 'Rút hoa hồng',
+    icon: 'hub-icon-money', label: t('menu.finance_group'),
     children: [
-      { hash: ROUTES.DEPOSIT_LIST, label: 'Nạp / Rút tiền' },
-      { hash: ROUTES.WITHDRAWAL_HISTORY, label: 'Lịch sử rút tiền' }
+      { hash: ROUTES.DEPOSIT_LIST, label: t('menu.deposits') },
+      { hash: ROUTES.WITHDRAWAL_HISTORY, label: t('menu.withdrawals') }
     ]
   },
   {
-    icon: 'hub-icon-monitor', label: 'Quản lý cược',
+    icon: 'hub-icon-monitor', label: t('menu.bets_group'),
     children: [
-      { hash: ROUTES.BET_LIST, label: 'Cược xổ số' },
-      { hash: ROUTES.BET_THIRD_PARTY, label: 'Cược bên thứ 3' }
+      { hash: ROUTES.BET_LIST, label: t('menu.bets') },
+      { hash: ROUTES.BET_THIRD_PARTY, label: t('menu.bet_orders') }
     ]
   },
   {
-    icon: 'hub-icon-menu', label: 'Quản lý hoàn trả',
-    children: [{ hash: ROUTES.REBATE_LIST, label: 'Tỷ lệ hoàn trả' }]
+    icon: 'hub-icon-menu', label: t('menu.rebate_group'),
+    children: [{ hash: ROUTES.REBATE_LIST, label: t('menu.rebate') }]
   },
   {
-    icon: 'hub-icon-settings', label: 'Cài đặt',
+    icon: 'hub-icon-settings', label: t('menu.settings_group'),
     children: [
-      { hash: ROUTES.SETTINGS_SYSTEM, label: 'Hệ thống' },
-      { hash: ROUTES.SETTINGS_SYNC, label: 'Đồng bộ & Tài khoản' }
+      { hash: ROUTES.SETTINGS_SYSTEM, label: t('menu.settings_system') },
+      { hash: ROUTES.SETTINGS_SYNC, label: t('menu.settings_sync') }
     ]
   }
 ]
@@ -120,18 +121,21 @@ const template = () => `
         </div>
       </div>
       <ul class="layui-nav layui-layout-right" role="toolbar">
-        <li class="layui-nav-item">
-          <a href="javascript:;" id="i18nToggle" lay-tips="Ngôn ngữ" lay-direction="3" aria-label="Ngôn ngữ" role="button">
+        <li class="layui-nav-item" id="i18nDropdown">
+          <a href="javascript:;" aria-label="${t('header.language')}" role="button">
             <i class="hub-icon hub-icon-globe"></i>
           </a>
+          <dl class="layui-nav-child">
+            ${LANG_OPTIONS.map(opt => `<dd class="${opt.code === getLang() ? 'layui-this' : ''}"><a href="javascript:;" data-lang="${opt.code}">${opt.label}</a></dd>`).join('')}
+          </dl>
         </li>
         <li class="layui-nav-item">
-          <a href="javascript:;" id="themeToggle" lay-tips="Giao diện sáng/tối" lay-direction="3" aria-label="Chuyển đổi giao diện sáng/tối" role="button">
+          <a href="javascript:;" id="themeToggle" lay-tips="${t('header.theme')}" lay-direction="3" aria-label="${t('header.theme_aria')}" role="button">
             <i class="hub-icon hub-icon-moon" id="themeIcon"></i>
           </a>
         </li>
         <li class="layui-nav-item">
-          <a href="javascript:;" id="notifyBtn" lay-tips="Thông báo" lay-direction="3" aria-label="Thông báo" role="button">
+          <a href="javascript:;" id="notifyBtn" lay-tips="${t('header.notifications')}" lay-direction="3" aria-label="${t('header.notifications')}" role="button">
             <i class="hub-icon hub-icon-bell"></i>
           </a>
         </li>
@@ -141,18 +145,18 @@ const template = () => `
             <span id="headerUserName"></span>
           </a>
           <dl class="layui-nav-child">
-            <dd><a href="javascript:;" id="logoutBtn" role="button">Đăng xuất</a></dd>
+            <dd><a href="javascript:;" id="logoutBtn" role="button">${t('header.logout')}</a></dd>
           </dl>
         </li>
       </ul>
     </header>
-    <nav class="hub-sidebar hub-sidebar-l" id="hubSidebarL" role="navigation" aria-label="Menu chính">
+    <nav class="hub-sidebar hub-sidebar-l" id="hubSidebarL" role="navigation" aria-label="${t('header.main_menu')}">
       <ul class="layui-nav layui-nav-tree" lay-filter="sideNav">
-        ${MENU_ITEMS.map(renderMenuItem).join('')}
+        ${getMenuItems().map(renderMenuItem).join('')}
       </ul>
     </nav>
     <main class="layui-body" id="${CONTENT_ID}" role="main">
-      <div class="skeleton-loading" id="routeLoading" aria-label="Đang tải">
+      <div class="skeleton-loading" id="routeLoading" aria-label="${t('header.loading')}">
         <div class="skeleton-card">
           <div class="skeleton-line skeleton-title"></div>
           <div class="skeleton-line skeleton-text"></div>
@@ -165,7 +169,7 @@ const template = () => `
 
 const handleLogout = () => {
   layui.use('layer', function (layer) {
-    layer.confirm('Bạn muốn đăng xuất?', { icon: 3 }, async (idx) => {
+    layer.confirm(t('header.logout_confirm'), { icon: 3 }, async (idx) => {
       try { await authApi.logout() } catch (_) { /* noop */ }
       clearToken()
       store.set('user', null)
@@ -250,11 +254,64 @@ const initTips = () => {
   })
 }
 
+const initI18nDropdown = () => {
+  const dropdown = document.getElementById('i18nDropdown')
+  if (!dropdown) return
+  dropdown.addEventListener('click', (e) => {
+    const link = e.target.closest('a[data-lang]')
+    if (!link) return
+    setLang(link.dataset.lang)
+  })
+}
+
+const updateLayoutTexts = () => {
+  // Update sidebar menu labels
+  const sidebar = document.getElementById('hubSidebarL')
+  if (sidebar) {
+    const navUl = sidebar.querySelector('.layui-nav')
+    if (navUl) {
+      navUl.innerHTML = getMenuItems().map(renderMenuItem).join('')
+      layui.use('element', function (element) { element.render('nav', 'sideNav') })
+      // Restore active menu state
+      const hash = location.hash || ROUTES.DASHBOARD
+      setActiveMenu(hash)
+    }
+    sidebar.setAttribute('aria-label', t('header.main_menu'))
+  }
+
+  // Update i18n dropdown active state
+  const dropdown = document.getElementById('i18nDropdown')
+  if (dropdown) {
+    const lang = getLang()
+    dropdown.querySelectorAll('dd').forEach((dd) => {
+      const a = dd.querySelector('a[data-lang]')
+      if (a) dd.classList.toggle('layui-this', a.dataset.lang === lang)
+    })
+  }
+
+  // Update header tooltips and labels
+  const themeToggle = document.getElementById('themeToggle')
+  if (themeToggle) {
+    themeToggle.setAttribute('lay-tips', t('header.theme'))
+    themeToggle.setAttribute('aria-label', t('header.theme_aria'))
+  }
+  const notifyBtn = document.getElementById('notifyBtn')
+  if (notifyBtn) {
+    notifyBtn.setAttribute('lay-tips', t('header.notifications'))
+    notifyBtn.setAttribute('aria-label', t('header.notifications'))
+  }
+  const logoutBtn = document.getElementById('logoutBtn')
+  if (logoutBtn) logoutBtn.textContent = t('header.logout')
+}
+
+let unsubLang = null
+
 export const render = async () => {
   document.getElementById('app').innerHTML = template()
   layui.use('element', function (element) { element.render('nav') })
   initTheme()
   initTips()
+  initI18nDropdown()
   document.getElementById('themeToggle')
     ?.addEventListener('click', toggleTheme)
   document.getElementById('logoutBtn')
@@ -263,6 +320,7 @@ export const render = async () => {
     ?.addEventListener('mouseenter', handleSidebarHover, true)
   startClock()
   await loadUserInfo()
+  unsubLang = onLangChange(updateLayoutTexts)
 }
 
 export const getContentContainer = () => document.getElementById(CONTENT_ID)

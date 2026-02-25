@@ -1,11 +1,12 @@
 import { store } from '../../store/index.js'
 import { escapeHtml } from '../../utils/index.js'
+import { t } from '../../i18n/index.js'
 
 const template = (user) => `
   <div class="layui-card">
-    <div class="layui-card-header">Dashboard</div>
+    <div class="layui-card-header">${t('dashboard.title')}</div>
     <div class="layui-card-body">
-      <p>Xin chào, <strong>${escapeHtml(user?.name)}</strong>!</p>
+      <p>${t('dashboard.greeting', { name: `<strong>${escapeHtml(user?.name)}</strong>` })}</p>
       <p>Username: ${escapeHtml(user?.username)}</p>
       <p>Email: ${escapeHtml(user?.email)}</p>
     </div>

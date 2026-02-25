@@ -1,3 +1,5 @@
+import { t } from '../i18n/index.js'
+
 export const TOKEN_KEY = 'token'
 export const THEME_KEY = 'color-scheme'
 export const DEBOUNCE_MS = 300
@@ -35,26 +37,36 @@ export const ROUTES = {
   SETTINGS_SYNC: '#/settings-sync'
 }
 
-export const ROUTE_TITLES = {
-  [ROUTES.DASHBOARD]: 'Trang chủ',
-  [ROUTES.USERS]: 'Danh sách hội viên',
-  [ROUTES.INVITE_LIST]: 'Mã giới thiệu',
-  [ROUTES.REPORT_LOTTERY]: 'Báo cáo xổ số',
-  [ROUTES.REPORT_FUNDS]: 'Báo cáo tài chính',
-  [ROUTES.REPORT_PROVIDER]: 'Báo cáo nhà cung cấp',
-  [ROUTES.DEPOSIT_LIST]: 'Nạp / Rút tiền',
-  [ROUTES.WITHDRAWAL_HISTORY]: 'Lịch sử rút tiền',
-  [ROUTES.BET_LIST]: 'Cược xổ số',
-  [ROUTES.BET_THIRD_PARTY]: 'Cược bên thứ 3',
-  [ROUTES.CHANGE_LOGIN_PW]: 'Đổi mật khẩu đăng nhập',
-  [ROUTES.CHANGE_TRADE_PW]: 'Đổi mật khẩu giao dịch',
-  [ROUTES.REBATE_LIST]: 'Tỷ lệ hoàn trả',
-  [ROUTES.POSTS]: 'Quản lý bài viết',
-  [ROUTES.TIERS]: 'Quản lý cấp bậc',
-  [ROUTES.TASKS]: 'Quản lý tác vụ',
-  [ROUTES.SETTINGS_SYSTEM]: 'Hệ thống',
-  [ROUTES.SETTINGS_SYNC]: 'Đồng bộ & Tài khoản'
+const ROUTE_TITLE_KEYS = {
+  [ROUTES.DASHBOARD]: 'route.dashboard',
+  [ROUTES.USERS]: 'route.members',
+  [ROUTES.INVITE_LIST]: 'route.invites',
+  [ROUTES.REPORT_LOTTERY]: 'route.report_lottery',
+  [ROUTES.REPORT_FUNDS]: 'route.report_funds',
+  [ROUTES.REPORT_PROVIDER]: 'route.report_provider',
+  [ROUTES.DEPOSIT_LIST]: 'route.deposits',
+  [ROUTES.WITHDRAWAL_HISTORY]: 'route.withdrawals',
+  [ROUTES.BET_LIST]: 'route.bets',
+  [ROUTES.BET_THIRD_PARTY]: 'route.bet_orders',
+  [ROUTES.CHANGE_LOGIN_PW]: 'route.change_login_pw',
+  [ROUTES.CHANGE_TRADE_PW]: 'route.change_trade_pw',
+  [ROUTES.REBATE_LIST]: 'route.rebate',
+  [ROUTES.POSTS]: 'route.posts',
+  [ROUTES.TIERS]: 'route.tiers',
+  [ROUTES.TASKS]: 'route.tasks',
+  [ROUTES.SETTINGS_SYSTEM]: 'route.settings_system',
+  [ROUTES.SETTINGS_SYNC]: 'route.settings_sync'
 }
+
+export const getRouteTitle = (hash) => {
+  const key = ROUTE_TITLE_KEYS[hash]
+  return key ? t(key) : ''
+}
+
+/** @deprecated Use getRouteTitle(hash) — kept for backward compatibility */
+export const ROUTE_TITLES = new Proxy({}, {
+  get: (_, hash) => getRouteTitle(hash)
+})
 
 export const API = {
   LOGIN: '/api/v1/login',
@@ -130,15 +142,15 @@ export const ROUTE_SECTIONS = {
 export const TRANSITION_MS = 350
 
 export const MSG = {
-  LOGIN_SUCCESS: 'Đăng nhập thành công',
-  REGISTER_SUCCESS: 'Đăng ký thành công, vui lòng đăng nhập',
-  LOGOUT_SUCCESS: 'Đăng xuất thành công',
-  INVALID_EMAIL: 'Email không hợp lệ',
-  PASSWORD_TOO_SHORT: 'Mật khẩu tối thiểu 8 ký tự',
-  PASSWORD_MISMATCH: 'Mật khẩu xác nhận không khớp',
-  USERNAME_INVALID: 'Tên đăng nhập chỉ gồm chữ thường và số',
-  USERNAME_LENGTH: 'Tên đăng nhập từ 2–20 ký tự',
-  NAME_LENGTH: 'Họ tên từ 2–30 ký tự',
-  NETWORK_ERROR: 'Lỗi kết nối, vui lòng thử lại',
-  SERVER_ERROR: 'Lỗi hệ thống, vui lòng thử lại sau'
+  get LOGIN_SUCCESS() { return t('msg.login_success') },
+  get REGISTER_SUCCESS() { return t('msg.register_success') },
+  get LOGOUT_SUCCESS() { return t('msg.logout_success') },
+  get INVALID_EMAIL() { return t('msg.invalid_email') },
+  get PASSWORD_TOO_SHORT() { return t('msg.password_too_short') },
+  get PASSWORD_MISMATCH() { return t('msg.password_mismatch') },
+  get USERNAME_INVALID() { return t('msg.username_invalid') },
+  get USERNAME_LENGTH() { return t('msg.username_length') },
+  get NAME_LENGTH() { return t('msg.name_length') },
+  get NETWORK_ERROR() { return t('msg.network_error') },
+  get SERVER_ERROR() { return t('msg.server_error') }
 }

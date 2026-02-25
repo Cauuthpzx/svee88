@@ -254,6 +254,15 @@
   vertical-align: middle;
 }
 
+/* ── i18n dropdown ── */
+#i18nDropdown .layui-nav-child {
+  min-width: 120px;
+}
+#i18nDropdown .layui-nav-child dd.layui-this a {
+  color: var(--lay-color-primary, #16BAAA);
+  font-weight: 600;
+}
+
 /* ── Theme toggle ── */
 #themeToggle .hub-icon {
   animation: none;

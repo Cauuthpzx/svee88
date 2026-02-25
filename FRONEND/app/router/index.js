@@ -1,5 +1,6 @@
 import { getToken, escapeHtml } from '../utils/index.js'
 import { ROUTES, INTENDED_ROUTE_KEY } from '../constants/index.js'
+import { t } from '../i18n/index.js'
 
 /* ── Route map (lazy imports) ── */
 const placeholder = () => import('../modules/placeholder/index.js')
@@ -17,7 +18,6 @@ const ROUTE_MAP = {
   [ROUTES.REPORT_LOTTERY]: dataTable,
   [ROUTES.REPORT_FUNDS]: dataTable,
   [ROUTES.REPORT_PROVIDER]: dataTable,
-  [ROUTES.BANK_LIST]: dataTable,
   [ROUTES.DEPOSIT_LIST]: dataTable,
   [ROUTES.WITHDRAWAL_HISTORY]: dataTable,
   [ROUTES.BET_LIST]: dataTable,
@@ -77,9 +77,9 @@ const renderError = (err) => {
   page.className = 'page'
   page.innerHTML = `
     <div class="error-boundary">
-      <p class="error-boundary-title">Đã xảy ra lỗi</p>
-      <p class="error-boundary-text">${escapeHtml(err?.message) || 'Không thể tải trang'}</p>
-      <a href="${ROUTES.DASHBOARD}" class="layui-btn layui-btn-sm">Về trang chủ</a>
+      <p class="error-boundary-title">${t('error.occurred')}</p>
+      <p class="error-boundary-text">${escapeHtml(err?.message) || t('error.page_load_failed')}</p>
+      <a href="${ROUTES.DASHBOARD}" class="layui-btn layui-btn-sm">${t('error.back_home')}</a>
     </div>`
   container.appendChild(page)
   currentPage = page

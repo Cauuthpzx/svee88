@@ -1,3 +1,4 @@
+import { t } from '../i18n/index.js'
 import { MSG } from '../constants/index.js'
 
 /**
@@ -19,8 +20,8 @@ export const classifyError = (error) => {
   const status = error.response.status
   const data = error.response.data
 
-  if (status === 401) return { type: ErrorType.AUTH, message: 'Phiên đăng nhập hết hạn' }
-  if (status === 403) return { type: ErrorType.AUTH, message: 'Không có quyền truy cập' }
+  if (status === 401) return { type: ErrorType.AUTH, message: t('error.session_expired') }
+  if (status === 403) return { type: ErrorType.AUTH, message: t('error.no_permission') }
 
   if (status === 422) {
     const fieldErrors = data?.errors || data?.detail
