@@ -8,6 +8,13 @@ export default {
   'header.logout_confirm': '确定要退出登录吗？',
   'header.loading': '加载中',
   'header.main_menu': '主菜单',
+  'header.tools': '工具',
+  'header.tools.change_login_pw': '修改登录密码',
+  'header.tools.change_trade_pw': '修改交易密码',
+  'header.tools.tiers': '层级管理',
+  'header.support': '支持',
+  'header.support.invites': '邀请码',
+  'header.support.settings': '系统设置',
 
   // ── Menu ──
   'menu.home': '首页',
@@ -96,6 +103,7 @@ export default {
 
   // ── Column: shared ──
   'col.agent': '代理',
+  'col.owner': '所有者',
 
   // ── Column: members ──
   'col.members.username': '会员',

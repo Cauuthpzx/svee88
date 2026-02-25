@@ -8,6 +8,13 @@ export default {
   'header.logout_confirm': 'Are you sure you want to log out?',
   'header.loading': 'Loading',
   'header.main_menu': 'Main menu',
+  'header.tools': 'Tools',
+  'header.tools.change_login_pw': 'Change Login PW',
+  'header.tools.change_trade_pw': 'Change Trade PW',
+  'header.tools.tiers': 'Tier Management',
+  'header.support': 'Support',
+  'header.support.invites': 'Invite Codes',
+  'header.support.settings': 'System Settings',
 
   // ── Menu ──
   'menu.home': 'Dashboard',
@@ -96,6 +103,7 @@ export default {
 
   // ── Column: shared ──
   'col.agent': 'Agent',
+  'col.owner': 'Owner',
 
   // ── Column: members ──
   'col.members.username': 'Member',

@@ -8,6 +8,13 @@ export default {
   'header.logout_confirm': 'Bạn muốn đăng xuất?',
   'header.loading': 'Đang tải',
   'header.main_menu': 'Menu chính',
+  'header.tools': 'Công Cụ',
+  'header.tools.change_login_pw': 'Đổi MK đăng nhập',
+  'header.tools.change_trade_pw': 'Đổi MK giao dịch',
+  'header.tools.tiers': 'Quản lý cấp bậc',
+  'header.support': 'Hỗ Trợ',
+  'header.support.invites': 'Mã giới thiệu',
+  'header.support.settings': 'Cài đặt hệ thống',
 
   // ── Menu ──
   'menu.home': 'Trang chủ',
@@ -96,6 +103,7 @@ export default {
 
   // ── Column: shared ──
   'col.agent': 'Đại lý',
+  'col.owner': 'Chủ sở hữu',
 
   // ── Column: members ──
   'col.members.username': 'Hội viên',
