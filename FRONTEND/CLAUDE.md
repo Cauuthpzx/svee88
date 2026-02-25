@@ -2,7 +2,7 @@
 
 Commit all tiếng việt offline
 
-> **BẮT BUỘC:** Luôn đọc `CODING_STANDARDS.md` (root project) — coi như CLAUDE.md thứ 2.
+> **BẮT BUỘC:** Luôn đọc `docs/CODING_STANDARDS.md` (root project) — coi như CLAUDE.md thứ 2.
 > File đó chứa quy tắc chung FE + BE: API contracts, error handling, auth, validation, security, performance, naming...
 
 ## STACK
