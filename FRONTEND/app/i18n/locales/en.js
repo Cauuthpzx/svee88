@@ -94,6 +94,8 @@ export default {
   'auth.required_name': 'Please enter your full name',
   'auth.required_email': 'Please enter your email',
   'auth.required_confirm': 'Please confirm your password',
+  'auth.no_account': 'Don\'t have an account?',
+  'auth.have_account': 'Already have an account?',
 
   // ── Dashboard ──
   'dashboard.title': 'Dashboard',

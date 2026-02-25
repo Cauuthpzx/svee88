@@ -94,6 +94,8 @@ export default {
   'auth.required_name': '请输入姓名',
   'auth.required_email': '请输入邮箱',
   'auth.required_confirm': '请确认密码',
+  'auth.no_account': '还没有账户？',
+  'auth.have_account': '已有账户？',
 
   // ── Dashboard ──
   'dashboard.title': '仪表盘',

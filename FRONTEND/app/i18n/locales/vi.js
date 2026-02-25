@@ -94,6 +94,8 @@ export default {
   'auth.required_name': 'Vui lòng nhập họ tên',
   'auth.required_email': 'Vui lòng nhập email',
   'auth.required_confirm': 'Vui lòng xác nhận mật khẩu',
+  'auth.no_account': 'Chưa có tài khoản?',
+  'auth.have_account': 'Đã có tài khoản?',
 
   // ── Dashboard ──
   'dashboard.title': 'Dashboard',

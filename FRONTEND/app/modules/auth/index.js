@@ -66,6 +66,9 @@ const loginTemplate = () => `
             <button class="layui-btn layui-btn-fluid" lay-submit
               lay-filter="submitLogin">${t('auth.login')}</button>
           </div>
+          <div class="auth-switch">
+            ${t('auth.no_account')} <a href="#/register">${t('auth.register')}</a>
+          </div>
         </form>
       </div>
     </div>
@@ -141,6 +144,9 @@ const registerTemplate = () => `
           <div class="layui-form-item">
             <button class="layui-btn layui-btn-fluid" lay-submit
               lay-filter="submitRegister">${t('auth.register')}</button>
+          </div>
+          <div class="auth-switch">
+            ${t('auth.have_account')} <a href="#/login">${t('auth.login')}</a>
           </div>
         </form>
       </div>
