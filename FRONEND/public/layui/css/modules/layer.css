@@ -722,6 +722,7 @@ html #layuicss-layer {
   background: none;
   box-shadow: none;
   border: none;
+  pointer-events: none;
 }
 .layui-layer-tips .layui-layer-content {
   position: relative;

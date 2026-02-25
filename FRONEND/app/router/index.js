@@ -26,8 +26,7 @@ const ROUTE_MAP = {
   [ROUTES.CHANGE_TRADE_PW]: placeholder,
   [ROUTES.REBATE_LIST]: dataTable,
   [ROUTES.SETTINGS_SYSTEM]: placeholder,
-  [ROUTES.SETTINGS_SYNC]: placeholder,
-  [ROUTES.SETTINGS_ACCOUNTS]: placeholder
+  [ROUTES.SETTINGS_SYNC]: dataTable
 }
 
 const PUBLIC_ROUTES = new Set([ROUTES.LOGIN, ROUTES.REGISTER])
@@ -63,7 +62,7 @@ const createPage = (container) => {
   if (currentPage) currentPage.remove()
   removeSkeleton()
   const page = document.createElement('div')
-  page.className = 'page layui-anim layui-anim-down'
+  page.className = 'page page-enter'
   container.appendChild(page)
   return page
 }

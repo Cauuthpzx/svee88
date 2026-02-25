@@ -840,7 +840,7 @@ a cite {
 }
 .layui-side-scroll {
   position: relative;
-  width: 200px;
+  width: 220px;
   height: 100%;
   overflow-x: hidden;
 }
@@ -852,7 +852,6 @@ a cite {
   bottom: 0;
   width: auto;
   box-sizing: border-box;
-  transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* 后台框架大布局 */
@@ -864,24 +863,49 @@ a cite {
   top: 0;
   left: 0;
   right: 0;
-  background-color: #23292e;
+  background-color: #fff;
+  border-bottom: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  z-index: 1010;
 }
 .layui-layout-admin .layui-side {
-  display: none;
+  top: 60px;
+  width: 200px;
+  overflow-x: hidden;
 }
 .layui-layout-admin .layui-body {
   position: absolute;
   left: 50px;
+  right: 0;
   top: 50px;
-  padding-bottom: 44px;
+  bottom: 0;
+  padding: 0;
+  overflow-y: auto;
+  background-color: #e8e4dc;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, .12) 2px,
+      rgba(255, 255, 255, .12) 3px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, .03) 2px,
+      rgba(0, 0, 0, .03) 3px
+    );
 }
+
 .layui-layout-admin .layui-main {
   width: auto;
   margin: 0 15px;
 }
 .layui-layout-admin .layui-footer {
   position: fixed;
-  left: 50px;
+  left: 200px;
   right: 0;
   bottom: 0;
   z-index: 990;
@@ -897,28 +921,40 @@ a cite {
   top: 0;
   width: 200px;
   height: 100%;
-  line-height: 50px;
+  line-height: 1;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  gap: 0;
   text-align: center;
-  background-color: #fff;
-  color: #333;
+  color: #16baaa;
   font-size: 16px;
-  overflow: hidden;
-  white-space: nowrap;
-  border-right: 1px solid #e8e8e8;
-  box-shadow: none;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 15%);
 }
 .layui-layout-admin .layui-header .layui-nav {
   background: none;
 }
+.layui-layout-admin .layui-header .layui-nav .layui-nav-item a {
+  color: #555;
+}
+.layui-layout-admin .layui-header .layui-nav .layui-nav-item a .layui-icon {
+  font-size: 18px;
+}
+.layui-layout-admin .layui-header .layui-nav .layui-nav-item a:hover {
+  color: #16baaa;
+}
 .layui-layout-left {
   position: absolute !important;
-  left: 50px;
+  left: 200px;
   top: 0;
 }
 .layui-layout-right {
   position: absolute !important;
   right: 0;
   top: 0;
+  margin-right: 30px;
 }
 
 /* 栅格布局 */
@@ -1856,15 +1892,13 @@ a cite {
 .layui-card-header,
 .layui-card-body {
   position: relative;
-  padding: 12px 16px;
+  padding: 10px 15px;
 }
 .layui-card-header {
-  border-bottom: 1px solid #eee;
-  color: #1a1a1a;
+  border-bottom: 1px solid #f8f8f8;
+  color: #333;
   border-radius: 2px 2px 0 0;
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
+  font-size: 14px;
 }
 .layui-card-body .layui-table {
   margin: 5px 0;
@@ -4558,23 +4592,31 @@ body .layui-table-tips .layui-layer-content {
 .layui-nav-img {
   width: 30px;
   height: 30px;
-  margin-right: 10px;
+  margin-right: 6px;
   border-radius: 50%;
 }
 
 .layui-nav .layui-nav-more {
-  display: none;
+  position: absolute;
+  top: 0;
+  right: 3px;
+  left: auto !important;
+  margin-top: 0;
+  font-size: 12px;
+  cursor: pointer;
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s;
 }
 .layui-nav .layui-nav-mored,
 .layui-nav-itemed > a .layui-nav-more {
-  display: none;
+  transform: rotate(180deg);
 }
 
 .layui-nav-child {
   display: none;
   position: absolute;
   left: 0;
-  top: 55px;
+  top: 50px;
   min-width: 100%;
   line-height: 36px;
   padding: 5px 0;
@@ -4621,7 +4663,7 @@ body .layui-table-tips .layui-layer-content {
 .layui-nav-tree .layui-nav-item {
   display: block;
   width: 100%;
-  line-height: 36px;
+  line-height: 40px;
 }
 .layui-nav-tree .layui-nav-item a {
   position: relative;
@@ -4632,14 +4674,14 @@ body .layui-table-tips .layui-layer-content {
   white-space: nowrap;
 }
 .layui-nav-tree .layui-nav-item > a {
-  padding-top: 0;
-  padding-bottom: 0;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 .layui-nav-tree .layui-nav-more {
-  display: none;
+  right: 15px;
 }
 .layui-nav-tree .layui-nav-item > a .layui-nav-more {
-  display: none;
+  padding: 5px 0;
 }
 .layui-nav-tree .layui-nav-bar {
   width: 5px;

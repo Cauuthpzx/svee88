@@ -17,11 +17,22 @@ def drop_color_message_key(_, __, event_dict: EventDict) -> EventDict:
     return event_dict
 
 
+_LEVEL_COLORS: dict[str, str] = {
+    "debug": "\033[36m",     # cyan
+    "info": "\033[34m",      # blue
+    "warning": "\033[33m",   # yellow
+    "error": "\033[31m",     # red
+    "critical": "\033[1;31m",  # bold red
+}
+_RESET = "\033[0m"
+
+
 def pad_log_level(_, __, event_dict: EventDict) -> EventDict:
-    """Format level as [ INFO  ], [ WARN  ], [ ERROR ] etc."""
+    """Format level as colored [ INFO  ], [ WARN  ], [ ERROR ] etc."""
     level = event_dict.get("level", "")
     if level:
-        event_dict["level"] = f"[{level.upper():^7s}]"
+        color = _LEVEL_COLORS.get(level.lower(), "")
+        event_dict["level"] = f"{color}[{level.upper():^7s}]{_RESET}"
     return event_dict
 
 

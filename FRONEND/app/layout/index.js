@@ -56,8 +56,7 @@ const MENU_ITEMS = [
     icon: 'layui-icon-set', label: 'Settings',
     children: [
       { hash: ROUTES.SETTINGS_SYSTEM, label: 'System' },
-      { hash: ROUTES.SETTINGS_SYNC, label: 'Đồng bộ' },
-      { hash: ROUTES.SETTINGS_ACCOUNTS, label: 'Tài khoản & phân quyền' }
+      { hash: ROUTES.SETTINGS_SYNC, label: 'Sync & Account' }
     ]
   }
 ]

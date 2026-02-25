@@ -823,7 +823,7 @@ a cite {
 .layui-header {
   position: relative;
   z-index: 1000;
-  height: 60px;
+  height: 50px;
 }
 .layui-header a:hover {
   -webkit-transition: all 0.5s;
@@ -846,7 +846,7 @@ a cite {
 }
 .layui-body {
   position: relative;
-  left: 200px;
+  left: 50px;
   right: 0;
   top: 0;
   bottom: 0;
@@ -863,7 +863,10 @@ a cite {
   top: 0;
   left: 0;
   right: 0;
-  background-color: #23292e;
+  background-color: #fff;
+  border-bottom: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  z-index: 1010;
 }
 .layui-layout-admin .layui-side {
   top: 60px;
@@ -872,9 +875,30 @@ a cite {
 }
 .layui-layout-admin .layui-body {
   position: absolute;
-  top: 60px;
-  padding-bottom: 44px;
+  left: 50px;
+  right: 0;
+  top: 50px;
+  bottom: 0;
+  padding: 0;
+  overflow-y: auto;
+  background-color: #e8e4dc;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, .12) 2px,
+      rgba(255, 255, 255, .12) 3px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, .03) 2px,
+      rgba(0, 0, 0, .03) 3px
+    );
 }
+
 .layui-layout-admin .layui-main {
   width: auto;
   margin: 0 15px;
@@ -897,7 +921,13 @@ a cite {
   top: 0;
   width: 200px;
   height: 100%;
-  line-height: 60px;
+  line-height: 1;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  gap: 0;
   text-align: center;
   color: #16baaa;
   font-size: 16px;
@@ -905,6 +935,15 @@ a cite {
 }
 .layui-layout-admin .layui-header .layui-nav {
   background: none;
+}
+.layui-layout-admin .layui-header .layui-nav .layui-nav-item a {
+  color: #555;
+}
+.layui-layout-admin .layui-header .layui-nav .layui-nav-item a .layui-icon {
+  font-size: 18px;
+}
+.layui-layout-admin .layui-header .layui-nav .layui-nav-item a:hover {
+  color: #16baaa;
 }
 .layui-layout-left {
   position: absolute !important;
@@ -915,6 +954,7 @@ a cite {
   position: absolute !important;
   right: 0;
   top: 0;
+  margin-right: 30px;
 }
 
 /* 栅格布局 */
@@ -4510,7 +4550,7 @@ body .layui-table-tips .layui-layer-content {
   margin-top: 0;
   list-style: none;
   vertical-align: middle;
-  line-height: 60px;
+  line-height: 50px;
 }
 .layui-nav .layui-nav-item a {
   display: block;
@@ -4552,7 +4592,7 @@ body .layui-table-tips .layui-layer-content {
 .layui-nav-img {
   width: 30px;
   height: 30px;
-  margin-right: 10px;
+  margin-right: 6px;
   border-radius: 50%;
 }
 
@@ -4576,7 +4616,7 @@ body .layui-table-tips .layui-layer-content {
   display: none;
   position: absolute;
   left: 0;
-  top: 65px;
+  top: 50px;
   min-width: 100%;
   line-height: 36px;
   padding: 5px 0;

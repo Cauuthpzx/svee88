@@ -81,6 +81,25 @@ Mỗi lần viết code xong, **tự kiểm tra lại toàn bộ** theo checklis
 
 ---
 
+## ⛔ TUYỆT ĐỐI KHÔNG OVERRIDE CSS
+
+**KHÔNG BAO GIỜ ĐƯỢC OVERRIDE thuộc tính CSS gốc Layui bằng file riêng.**
+- Cần sửa `left`, `top`, `padding`, `background`... của Layui → **sửa thẳng trong `src/css/layui.css` (SOURCE)**
+- Cần thêm thuộc tính mới (custom class, animation) → OK viết trong file CSS riêng
+- KHÔNG dùng `!important`
+- KHÔNG dùng ID selector hay specificity trick để "thắng" Layui CSS
+- Nếu bị conflict → tìm đúng rule gốc trong `src/css/layui.css` → sửa tại đó
+
+## ⛔ KHÔNG SỬA DIST — CHỈ SỬA SOURCE
+
+**TUYỆT ĐỐI KHÔNG sửa file trong `public/layui/` (dist) trực tiếp.**
+- Source: `src/css/layui.css`, `src/css/modules/`
+- Dist: `public/layui/css/layui.css`, `public/layui/css/modules/`
+- Quy trình: **Sửa source (`src/css/`) → Copy sang dist (`public/layui/css/`)**
+- Copy lệnh: `cp src/css/layui.css public/layui/css/layui.css`
+
+---
+
 ## QUY TẮC BẮT BUỘC
 
 ### Code Quality

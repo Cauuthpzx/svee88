@@ -264,5 +264,6 @@ export const HASH_TO_ENDPOINT = {
   '#/withdrawal-history': 'withdrawals',
   '#/bet-list': 'bets',
   '#/bet-third-party': 'bet-orders',
-  '#/rebate-list': 'rebate'
+  '#/rebate-list': 'rebate',
+  '#/settings-sync': 'members'
 }

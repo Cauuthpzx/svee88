@@ -33,8 +33,7 @@ export const ROUTES = {
   CHANGE_TRADE_PW: '#/change-trade-pw',
   REBATE_LIST: '#/rebate-list',
   SETTINGS_SYSTEM: '#/settings-system',
-  SETTINGS_SYNC: '#/settings-sync',
-  SETTINGS_ACCOUNTS: '#/settings-accounts'
+  SETTINGS_SYNC: '#/settings-sync'
 }
 
 export const ROUTE_TITLES = {
@@ -56,8 +55,7 @@ export const ROUTE_TITLES = {
   [ROUTES.TIERS]: 'Quản lý cấp bậc',
   [ROUTES.TASKS]: 'Quản lý tác vụ',
   [ROUTES.SETTINGS_SYSTEM]: 'System',
-  [ROUTES.SETTINGS_SYNC]: 'Đồng bộ',
-  [ROUTES.SETTINGS_ACCOUNTS]: 'Tài khoản & phân quyền'
+  [ROUTES.SETTINGS_SYNC]: 'Sync & Account'
 }
 
 export const API = {
@@ -129,8 +127,7 @@ export const ROUTE_SECTIONS = {
   [ROUTES.TIERS]: 'system',
   [ROUTES.TASKS]: 'system',
   [ROUTES.SETTINGS_SYSTEM]: 'settings',
-  [ROUTES.SETTINGS_SYNC]: 'settings',
-  [ROUTES.SETTINGS_ACCOUNTS]: 'settings'
+  [ROUTES.SETTINGS_SYNC]: 'settings'
 }
 
 /** Must match longest CSS transition duration */
