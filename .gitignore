@@ -44,3 +44,16 @@ node_modules/
 
 # Logs
 *.log
+logs/
+
+# Data / scratch files
+*.xlsx
+*.csv
+scripts/data/
+
+# Build output
+src/
+
+# Frontend build
+FRONTEND/build/
+FRONTEND/dist/
