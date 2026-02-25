@@ -291,6 +291,7 @@ export const HASH_TO_ICON = {
   '#/rebate-list': 'hub-icon-menu',
   '#/settings-sync': 'hub-icon-settings',
   '#/settings-account': 'hub-icon-settings'
+
 }
 
 /** Report total summary — fields to sum for blockquote below table */
@@ -339,6 +340,5 @@ export const HASH_TO_ENDPOINT = {
   '#/bet-list': 'bets',
   '#/bet-third-party': 'bet-orders',
   '#/rebate-list': 'rebate',
-  '#/settings-sync': 'agents',
-  '#/settings-account': 'agents'
+  '#/settings-sync': 'agents'
 }

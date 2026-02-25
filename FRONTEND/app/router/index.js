@@ -30,7 +30,7 @@ const ROUTE_MAP = {
   [ROUTES.REBATE_LIST]: dataTable,
   [ROUTES.SETTINGS_SYSTEM]: placeholder,
   [ROUTES.SETTINGS_SYNC]: dataTable,
-  [ROUTES.SETTINGS_ACCOUNT]: dataTable
+  [ROUTES.SETTINGS_ACCOUNT]: () => import('../modules/hub-users/index.js')
 }
 
 const PUBLIC_ROUTES = new Set([ROUTES.LOGIN, ROUTES.REGISTER])

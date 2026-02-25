@@ -6,6 +6,7 @@ def create_api_router() -> APIRouter:
     from .auth.router import router as auth_router
     from .data.router import router as data_router
     from .health.router import router as health_router
+    from .hub_user.router import router as hub_user_router
     from .sync.router import router as sync_router
     from .tier.router import router as tier_router
     from .user.router import router as user_router
@@ -17,4 +18,5 @@ def create_api_router() -> APIRouter:
     api_router.include_router(tier_router)
     api_router.include_router(sync_router)
     api_router.include_router(data_router)
+    api_router.include_router(hub_user_router)
     return api_router

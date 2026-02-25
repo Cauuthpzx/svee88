@@ -9,9 +9,10 @@ from .sync.finance.model import DepositWithdrawal  # noqa: F401
 from .sync.member.model import Member  # noqa: F401
 
 # Sync
-from .sync.model import SyncMetadata  # noqa: F401
+from .sync.model import SyncLog, SyncMetadata  # noqa: F401
 from .sync.report.model import ReportFunds, ReportLottery, ReportThirdGame  # noqa: F401
 from .tier.model import RateLimit, Tier  # noqa: F401
 
 # Features
+from .hub_user.model import HubUser  # noqa: F401
 from .user.model import User  # noqa: F401

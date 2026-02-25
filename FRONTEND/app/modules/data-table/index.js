@@ -82,7 +82,7 @@ const initQuickDate = (form) => {
 const loadTable = (endpoint, hash) => {
   const cols = getEndpointCols(endpoint)
   if (!cols) return
-  const isSync = hash === '#/settings-sync' || hash === '#/settings-account'
+  const isSync = hash === '#/settings-sync'
   const tableCols = isSync ? [{ type: 'checkbox', fixed: 'left' }, ...cols] : cols
 
   layui.use(['table', 'form', 'laydate', 'layer'], function (table, form, laydate, layer) {
