@@ -1,1 +1,20 @@
 /* Global resets and shared styles */
+
+/* ── Fix: layui table border-right trùng lặp ──
+   Layui tạo 3 nguồn border-right chồng nhau:
+   1. ::after pseudo-element (background 1px tại right:0, z-index:101)
+   2. .layui-table-view border-right (từ custom CSS hoặc layui default)
+   3. Cell cuối cùng (th/td) có border-right mặc định
+   → Giữ lại chỉ border-right của .layui-table-view, xoá 2 nguồn còn lại
+*/
+.layui-table-view::after {
+  display: none;
+}
+.layui-table-view {
+  border-right-width: 1px;
+  border-right-style: solid;
+}
+.layui-table-view .layui-table th:last-child,
+.layui-table-view .layui-table td:last-child {
+  border-right: none;
+}

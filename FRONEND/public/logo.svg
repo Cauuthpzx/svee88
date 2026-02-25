@@ -1,4 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 42">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 42" role="img" aria-labelledby="logo-title">
+  <title id="logo-title">HUB SYSTEM</title>
   <defs>
     <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#ff4060"/>
@@ -6,11 +7,54 @@
       <stop offset="100%" stop-color="#ffcc00"/>
     </linearGradient>
   </defs>
-  <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
-    font-family="'Arial Black','Impact',sans-serif" font-size="23" font-weight="900"
-    letter-spacing="1" fill="none" stroke="#ffffff" stroke-width="3" stroke-linejoin="round">HUB SYSTEM</text>
-  <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
-    font-family="'Arial Black','Impact',sans-serif" font-size="23" font-weight="900"
-    letter-spacing="1" fill="url(#logoGrad)" stroke="#ff2040" stroke-width="0.4"
+
+  <!-- ═══ Hub Network Icon ═══ -->
+  <!-- Hexagonal arrangement: 6 outer nodes at r=12 from center (18,21) -->
+  <!-- Flat-top orientation: vertices at 0°,60°,120°,180°,240°,300° -->
+
+  <!-- Radiating connection lines (center → each vertex) -->
+  <g stroke="url(#logoGrad)" stroke-width="1.6" stroke-linecap="round" fill="none">
+    <line x1="18" y1="21" x2="30"   y2="21"/>
+    <line x1="18" y1="21" x2="24"   y2="10.6"/>
+    <line x1="18" y1="21" x2="12"   y2="10.6"/>
+    <line x1="18" y1="21" x2="6"    y2="21"/>
+    <line x1="18" y1="21" x2="12"   y2="31.4"/>
+    <line x1="18" y1="21" x2="24"   y2="31.4"/>
+  </g>
+
+  <!-- Hexagon edge connections (adjacent nodes, subtle) -->
+  <g stroke="url(#logoGrad)" stroke-width="0.6" stroke-linecap="round" fill="none" opacity="0.35">
+    <line x1="30"  y1="21"   x2="24" y2="10.6"/>
+    <line x1="24"  y1="10.6" x2="12" y2="10.6"/>
+    <line x1="12"  y1="10.6" x2="6"  y2="21"/>
+    <line x1="6"   y1="21"   x2="12" y2="31.4"/>
+    <line x1="12"  y1="31.4" x2="24" y2="31.4"/>
+    <line x1="24"  y1="31.4" x2="30" y2="21"/>
+  </g>
+
+  <!-- 6 outer network nodes -->
+  <g fill="url(#logoGrad)">
+    <circle cx="30"  cy="21"   r="2.4"/>
+    <circle cx="24"  cy="10.6" r="2.4"/>
+    <circle cx="12"  cy="10.6" r="2.4"/>
+    <circle cx="6"   cy="21"   r="2.4"/>
+    <circle cx="12"  cy="31.4" r="2.4"/>
+    <circle cx="24"  cy="31.4" r="2.4"/>
+  </g>
+
+  <!-- Central hub node (larger, with inner highlight) -->
+  <circle cx="18" cy="21" r="4.2" fill="url(#logoGrad)"/>
+  <circle cx="18" cy="21" r="1.6" fill="#fff" opacity="0.92"/>
+
+  <!-- ═══ Wordmark: HUB SYSTEM ═══ -->
+  <!-- White outline layer (provides contrast on dark backgrounds) -->
+  <text class="logo-outline" x="118" y="21" text-anchor="middle" dominant-baseline="middle"
+    font-family="'Arial Black','Impact',sans-serif" font-size="20" font-weight="900"
+    letter-spacing="1" fill="none" stroke-width="2.5" stroke-linejoin="round">HUB SYSTEM</text>
+
+  <!-- Gradient fill layer with subtle red stroke -->
+  <text class="logo-fill" x="118" y="21" text-anchor="middle" dominant-baseline="middle"
+    font-family="'Arial Black','Impact',sans-serif" font-size="20" font-weight="900"
+    letter-spacing="1" fill="url(#logoGrad)" stroke-width="0.3"
     paint-order="stroke fill">HUB SYSTEM</text>
 </svg>

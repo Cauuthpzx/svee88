@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill-rule="evenodd">
+  <!-- Outlined circle: outer minus inner using evenodd -->
+  <path d="M12 2.5a9.5 9.5 0 1 1 0 19 9.5 9.5 0 0 1 0-19zM12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16z" fill="#000"/>
+  <!-- Hour hand: vertical line from center (12,12) up to (12,7) as thin rect -->
+  <rect x="11.25" y="6.5" width="1.5" height="6.25" rx="0.75" fill="#000"/>
+  <!-- Minute hand: angled line from center (12,12) to (16,14) as a rotated thin rect -->
+  <path d="M12.6 11.4l3.6 1.8a.75.75 0 0 1-.67 1.34l-3.6-1.8a.75.75 0 0 1 .67-1.34z" fill="#000"/>
+</svg>

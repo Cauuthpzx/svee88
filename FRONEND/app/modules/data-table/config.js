@@ -252,6 +252,22 @@ export const ENDPOINT_SEARCH = {
   rebate: []
 }
 
+/** Hash → icon mapping (matches sidebar menu icons) */
+export const HASH_TO_ICON = {
+  '#/users': 'hub-icon-user',
+  '#/invite-list': 'hub-icon-user',
+  '#/report-lottery': 'hub-icon-document',
+  '#/report-funds': 'hub-icon-document',
+  '#/report-provider': 'hub-icon-document',
+  '#/bank-list': 'hub-icon-money',
+  '#/deposit-list': 'hub-icon-money',
+  '#/withdrawal-history': 'hub-icon-money',
+  '#/bet-list': 'hub-icon-monitor',
+  '#/bet-third-party': 'hub-icon-monitor',
+  '#/rebate-list': 'hub-icon-menu',
+  '#/settings-sync': 'hub-icon-settings'
+}
+
 /** Hash → endpoint mapping */
 export const HASH_TO_ENDPOINT = {
   '#/users': 'members',

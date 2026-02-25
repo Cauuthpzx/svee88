@@ -5,13 +5,29 @@
 .data-panel-title {
   margin-bottom: 10px;
 }
-.data-panel-title .layui-icon {
+.data-panel-title .hub-icon {
   margin-right: 6px;
 }
 
 /* ── Toolbar / Search ── */
 .data-toolbar {
   margin-bottom: 10px;
+}
+.data-panel .layui-elem-field legend {
+  font-weight: 600;
+}
+.data-panel .layui-elem-field legend .hub-icon {
+  margin-right: 4px;
+}
+.data-panel .layui-elem-field {
+  margin-left: 0;
+  margin-right: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(200, 190, 170, 0.06) 1px, rgba(200, 190, 170, 0.06) 3px),
+    repeating-linear-gradient(90deg, transparent, transparent 1px, rgba(200, 190, 170, 0.05) 1px, rgba(200, 190, 170, 0.05) 3px),
+    repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(180, 170, 150, 0.03) 10px, rgba(180, 170, 150, 0.03) 12px),
+    linear-gradient(180deg, #fcfbf9 0%, #f9f8f5 50%, #f7f6f2 100%);
+  border-color: #e6e2da;
 }
 .data-toolbar .layui-elem-field {
   margin-bottom: 0;
@@ -38,18 +54,26 @@
 
 /* ── Layui Table overrides ── */
 .data-panel .layui-table-tool {
-  background: #f2f2f2;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(200, 190, 170, 0.06) 1px, rgba(200, 190, 170, 0.06) 3px),
+    repeating-linear-gradient(90deg, transparent, transparent 1px, rgba(200, 190, 170, 0.05) 1px, rgba(200, 190, 170, 0.05) 3px),
+    repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(180, 170, 150, 0.03) 10px, rgba(180, 170, 150, 0.03) 12px),
+    linear-gradient(180deg, #fcfbf9 0%, #f9f8f5 50%, #f7f6f2 100%);
   border: none;
-  border-bottom: 1px solid #e6e6e6;
+  border-bottom: 1px solid #e6e2da;
 }
 .data-panel .layui-table-header {
   border: none;
 }
 .data-panel .layui-table-header th,
 .data-panel .layui-table thead th {
-  background: #f2f2f2;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(200, 190, 170, 0.06) 1px, rgba(200, 190, 170, 0.06) 3px),
+    repeating-linear-gradient(90deg, transparent, transparent 1px, rgba(200, 190, 170, 0.05) 1px, rgba(200, 190, 170, 0.05) 3px),
+    repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(180, 170, 150, 0.03) 10px, rgba(180, 170, 150, 0.03) 12px),
+    linear-gradient(180deg, #fcfbf9 0%, #f9f8f5 50%, #f7f6f2 100%);
   border: none;
-  border-right: 1px solid #e6e6e6;
+  border-right: 1px solid #e6e2da;
 }
 .data-panel .layui-table-header th:last-child,
 .data-panel .layui-table thead th:last-child {
@@ -69,7 +93,7 @@
   line-height: 1.8;
   font-size: 13px;
 }
-.total-summary-quote .layui-icon {
+.total-summary-quote .hub-icon {
   margin-right: 4px;
   color: #16baaa;
 }
@@ -100,7 +124,7 @@
 }
 .layui-layer [lay-filter="addAccountForm"] .layui-form-checkbox span,
 .layui-layer [lay-filter="addAccountForm"] label,
-.layui-layer [lay-filter="addAccountForm"] .layui-input-prefix .layui-icon {
+.layui-layer [lay-filter="addAccountForm"] .layui-input-prefix .hub-icon {
   color: #000;
   font-weight: 500;
 }
@@ -108,7 +132,268 @@
   font-weight: 600;
 }
 
-/* ── Dark mode ── */
+/* ════════════════════════════════════════════════
+   ── SYNC TOOL PANEL ──
+   ════════════════════════════════════════════════ */
+
+.sync-tool-panel {
+  margin-bottom: 15px;
+}
+
+/* ── Control field ── */
+.sync-control-field {
+  margin-bottom: 10px;
+}
+.sync-control-box {
+  padding: 12px 15px !important;
+}
+
+.sync-control-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.sync-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.sync-btns .layui-btn {
+  margin: 0;
+}
+.sync-btns .layui-btn .hub-icon {
+  font-size: 14px;
+  margin-right: 3px;
+}
+
+/* ── Speed slider ── */
+.sync-speed-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  white-space: nowrap;
+}
+.sync-speed-label {
+  font-size: 13px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.sync-speed-label .hub-icon {
+  font-size: 16px;
+}
+.sync-speed-slider {
+  width: 140px;
+  height: 6px;
+  cursor: pointer;
+  accent-color: #16baaa;
+}
+.sync-speed-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: #16baaa;
+  min-width: 46px;
+  text-align: center;
+}
+
+/* ── Overall progress ── */
+.sync-overall {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed #e6e6e6;
+}
+.sync-overall-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+.sync-overall-info .hub-icon {
+  margin-right: 4px;
+}
+.sync-overall-progress {
+  height: 8px;
+  background: #f2f2f2;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.sync-overall-bar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #16baaa, #1e9fff);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+/* ── Sync status cards ── */
+.sync-status-field {
+  margin-bottom: 10px;
+}
+.sync-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+.sync-card {
+  background: #fafafa;
+  border: 1px solid #e6e6e6;
+  border-radius: 6px;
+  padding: 12px;
+  transition: border-color 0.3s, background 0.3s, box-shadow 0.3s;
+}
+.sync-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.sync-card-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.sync-card-header .hub-icon {
+  font-size: 16px;
+  color: #666;
+}
+.sync-card-name {
+  font-size: 13px;
+  font-weight: 600;
+  flex: 1;
+}
+.sync-card-badge {
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+.badge-syncing, .badge-uploading {
+  background: #e8f4ff;
+  color: #1e9fff;
+}
+.badge-verifying {
+  background: #fff7e6;
+  color: #ffb800;
+}
+.badge-done {
+  background: #e8f8f5;
+  color: #16baaa;
+}
+.badge-error {
+  background: #fff0ed;
+  color: #ff5722;
+}
+.badge-skipped {
+  background: #fff7e6;
+  color: #ffb800;
+}
+
+/* ── Card progress bar ── */
+.sync-card-progress {
+  height: 4px;
+  background: #eee;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+.sync-progress-bar {
+  height: 100%;
+  width: 0;
+  border-radius: 2px;
+  transition: width 0.4s ease;
+  background: #16baaa;
+}
+
+/* Card states */
+.sync-card-syncing { border-color: #1e9fff; }
+.sync-card-syncing .sync-progress-bar { background: #1e9fff; }
+.sync-card-syncing .sync-card-header .hub-icon { color: #1e9fff; }
+
+.sync-card-uploading { border-color: #1e9fff; background: #f8fcff; }
+.sync-card-uploading .sync-progress-bar { background: #1e9fff; }
+.sync-card-uploading .sync-card-header .hub-icon { color: #1e9fff; }
+
+.sync-card-verifying { border-color: #ffb800; background: #fffef8; }
+.sync-card-verifying .sync-progress-bar { background: #ffb800; }
+.sync-card-verifying .sync-card-header .hub-icon { color: #ffb800; }
+
+.sync-card-done { border-color: #16baaa; background: #f4fffe; }
+.sync-card-done .sync-progress-bar { background: #16baaa; }
+.sync-card-done .sync-card-header .hub-icon { color: #16baaa; }
+
+.sync-card-error { border-color: #ff5722; background: #fffaf8; }
+.sync-card-error .sync-progress-bar { background: #ff5722; }
+.sync-card-error .sync-card-header .hub-icon { color: #ff5722; }
+
+.sync-card-skipped { border-color: #ffb800; background: #fffef8; }
+.sync-card-skipped .sync-progress-bar { background: #ffb800; }
+.sync-card-skipped .sync-card-header .hub-icon { color: #ffb800; }
+
+.sync-card-status {
+  font-size: 12px;
+  color: #999;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.sync-card-status .hub-icon {
+  font-size: 12px;
+}
+
+/* ── Sync log ── */
+.sync-log-field {
+  margin-bottom: 10px;
+}
+.sync-log {
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 12px;
+  font-family: 'Consolas', 'Monaco', 'Menlo', monospace;
+  line-height: 1.6;
+}
+.sync-log-item {
+  padding: 2px 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  border-bottom: 1px solid #f5f5f5;
+}
+.sync-log-item:hover {
+  background: #fafafa;
+}
+.sync-log-item .hub-icon {
+  font-size: 12px;
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+.sync-log-time {
+  color: #999;
+  flex-shrink: 0;
+}
+.sync-log-info { color: #666; }
+.sync-log-info .hub-icon { color: #999; }
+.sync-log-success { color: #16baaa; }
+.sync-log-success .hub-icon { color: #16baaa; }
+.sync-log-error { color: #ff5722; }
+.sync-log-error .hub-icon { color: #ff5722; }
+.sync-log-warning { color: #ffb800; }
+.sync-log-warning .hub-icon { color: #ffb800; }
+.sync-log-sync { color: #1e9fff; }
+.sync-log-sync .hub-icon { color: #1e9fff; }
+.sync-log-upload { color: #1e9fff; }
+.sync-log-upload .hub-icon { color: #1e9fff; }
+.sync-log-verify { color: #ffb800; }
+.sync-log-verify .hub-icon { color: #ffb800; }
+.sync-log-done { color: #16baaa; font-weight: 600; }
+.sync-log-done .hub-icon { color: #16baaa; }
+
+/* ════════════════════════════════════════════════
+   ── DARK MODE ──
+   ════════════════════════════════════════════════ */
+
 .dark .data-panel .layui-table-tool {
   background: var(--lay-color-bg-2);
   border-bottom-color: var(--lay-color-border-1);
@@ -117,6 +402,10 @@
 .dark .data-panel .layui-table thead th {
   background: var(--lay-color-bg-2);
   border-right-color: var(--lay-color-border-1);
+}
+.dark .data-panel .layui-elem-field {
+  background: var(--lay-color-bg-2);
+  border-color: var(--lay-color-border-1);
 }
 .dark .data-panel .layui-table-view {
   border-color: var(--lay-color-border-1);
@@ -130,4 +419,70 @@
 }
 .dark .total-summary-quote .total-item b {
   color: var(--lay-color-text-2);
+}
+
+/* Dark — Sync tool */
+.dark .sync-card {
+  background: var(--lay-color-bg-2);
+  border-color: var(--lay-color-border-1);
+}
+.dark .sync-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.dark .sync-card-progress {
+  background: var(--lay-color-bg-3, #333);
+}
+.dark .sync-card-status {
+  color: var(--lay-color-text-3);
+}
+.dark .sync-card-header .hub-icon {
+  color: var(--lay-color-text-2);
+}
+.dark .sync-card-name {
+  color: var(--lay-color-text-1, #ddd);
+}
+.dark .sync-speed-label {
+  color: var(--lay-color-text-3);
+}
+.dark .sync-overall {
+  border-top-color: var(--lay-color-border-1);
+}
+.dark .sync-overall-progress {
+  background: var(--lay-color-bg-3, #333);
+}
+.dark .sync-log-item {
+  border-bottom-color: var(--lay-color-border-1);
+}
+.dark .sync-log-item:hover {
+  background: var(--lay-color-bg-2);
+}
+.dark .sync-log-info {
+  color: var(--lay-color-text-3);
+}
+.dark .sync-log-time {
+  color: var(--lay-color-text-3);
+}
+
+/* Dark card states */
+.dark .sync-card-syncing { border-color: #1e9fff; background: rgba(30,159,255,0.08); }
+.dark .sync-card-uploading { border-color: #1e9fff; background: rgba(30,159,255,0.06); }
+.dark .sync-card-verifying { border-color: #ffb800; background: rgba(255,184,0,0.06); }
+.dark .sync-card-done { border-color: #16baaa; background: rgba(22,186,170,0.08); }
+.dark .sync-card-error { border-color: #ff5722; background: rgba(255,87,34,0.08); }
+.dark .sync-card-skipped { border-color: #ffb800; background: rgba(255,184,0,0.06); }
+
+.dark .badge-syncing, .dark .badge-uploading {
+  background: rgba(30,159,255,0.15);
+}
+.dark .badge-verifying {
+  background: rgba(255,184,0,0.15);
+}
+.dark .badge-done {
+  background: rgba(22,186,170,0.15);
+}
+.dark .badge-error {
+  background: rgba(255,87,34,0.15);
+}
+.dark .badge-skipped {
+  background: rgba(255,184,0,0.15);
 }

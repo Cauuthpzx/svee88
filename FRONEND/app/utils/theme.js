@@ -8,8 +8,8 @@ const apply = (mode) => {
   const icon = document.getElementById('themeIcon')
   if (icon) {
     icon.className = mode === 'dark'
-      ? 'layui-icon layui-icon-light'
-      : 'layui-icon layui-icon-moon'
+      ? 'hub-icon hub-icon-sun'
+      : 'hub-icon hub-icon-moon'
   }
 }
 

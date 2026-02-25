@@ -42,7 +42,7 @@ const loginTemplate = () => `
           <div class="layui-form-item">
             <div class="layui-input-wrap">
               <div class="layui-input-prefix">
-                <i class="layui-icon layui-icon-username"></i>
+                <i class="hub-icon hub-icon-user"></i>
               </div>
               <input type="text" name="username" class="layui-input"
                 placeholder="Tên đăng nhập hoặc email" autocomplete="username"
@@ -53,7 +53,7 @@ const loginTemplate = () => `
           <div class="layui-form-item">
             <div class="layui-input-wrap">
               <div class="layui-input-prefix">
-                <i class="layui-icon layui-icon-password"></i>
+                <i class="hub-icon hub-icon-lock"></i>
               </div>
               <input type="password" name="password" class="layui-input"
                 placeholder="Mật khẩu" autocomplete="current-password"
@@ -83,7 +83,7 @@ const registerTemplate = () => `
           <div class="layui-form-item">
             <div class="layui-input-wrap">
               <div class="layui-input-prefix">
-                <i class="layui-icon layui-icon-user"></i>
+                <i class="hub-icon hub-icon-user"></i>
               </div>
               <input type="text" name="name" class="layui-input"
                 placeholder="Họ và tên" autocomplete="name"
@@ -94,7 +94,7 @@ const registerTemplate = () => `
           <div class="layui-form-item">
             <div class="layui-input-wrap">
               <div class="layui-input-prefix">
-                <i class="layui-icon layui-icon-username"></i>
+                <i class="hub-icon hub-icon-user"></i>
               </div>
               <input type="text" name="username" class="layui-input"
                 placeholder="Tên đăng nhập" autocomplete="username"
@@ -105,7 +105,7 @@ const registerTemplate = () => `
           <div class="layui-form-item">
             <div class="layui-input-wrap">
               <div class="layui-input-prefix">
-                <i class="layui-icon layui-icon-email"></i>
+                <i class="hub-icon hub-icon-mail"></i>
               </div>
               <input type="text" name="email" class="layui-input"
                 placeholder="Email" autocomplete="email"
@@ -116,7 +116,7 @@ const registerTemplate = () => `
           <div class="layui-form-item">
             <div class="layui-input-wrap">
               <div class="layui-input-prefix">
-                <i class="layui-icon layui-icon-password"></i>
+                <i class="hub-icon hub-icon-lock"></i>
               </div>
               <input type="password" name="password" id="regPassword"
                 class="layui-input" placeholder="Mật khẩu (tối thiểu 8 ký tự)"
@@ -128,7 +128,7 @@ const registerTemplate = () => `
           <div class="layui-form-item">
             <div class="layui-input-wrap">
               <div class="layui-input-prefix">
-                <i class="layui-icon layui-icon-password"></i>
+                <i class="hub-icon hub-icon-lock"></i>
               </div>
               <input type="password" name="confirmPassword"
                 class="layui-input" placeholder="Xác nhận mật khẩu"

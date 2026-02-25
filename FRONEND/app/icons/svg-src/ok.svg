@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill-rule="evenodd">
+  <!-- Outlined circle: r=10.25 outer, r=8.75 inner => 1.5 unit ring -->
+  <path d="M12 1.75 A10.25 10.25 0 1 1 12 22.25 A10.25 10.25 0 1 1 12 1.75 Z
+            M12 3.25 A8.75 8.75 0 1 0 12 20.75 A8.75 8.75 0 1 0 12 3.25 Z" fill="#000"/>
+  <!-- Thick checkmark inside -->
+  <path d="M7 11.8 L6 12.9 L10.5 17.5 L18 9.2 L17 8.1 L10.5 15.2 Z" fill="#000"/>
+</svg>

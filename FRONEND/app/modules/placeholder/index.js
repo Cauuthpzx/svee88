@@ -5,7 +5,7 @@ const template = (title) => `
   <div class="layui-card">
     <div class="layui-card-header">${escapeHtml(title)}</div>
     <div class="layui-card-body placeholder-body">
-      <i class="layui-icon layui-icon-template-1 placeholder-icon"></i>
+      <i class="hub-icon hub-icon-layout placeholder-icon"></i>
       <p class="placeholder-text">Trang đang được phát triển</p>
     </div>
   </div>

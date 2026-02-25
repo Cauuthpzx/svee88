@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill-rule="evenodd">
+  <!-- Axes -->
+  <rect x="2" y="2" width="1.5" height="20" fill="#000"/>
+  <rect x="2" y="20.5" width="20" height="1.5" fill="#000"/>
+  <!-- Line as thick filled polygon -->
+  <polygon points="6,17 6.6,15.4 9.5,12.2 10.4,12.8 12,14 12.6,13.2 16,8 16.6,7.2 19.5,4.5 20.5,5.5 17,9 13,14.5 12,15.5 10.2,13.8 9.5,13.2 6.8,16.5" fill="#000"/>
+  <!-- Data points -->
+  <circle cx="6" cy="16.5" r="1.5" fill="#000"/>
+  <circle cx="9.5" cy="12.5" r="1.5" fill="#000"/>
+  <circle cx="12" cy="14" r="1.5" fill="#000"/>
+  <circle cx="16.5" cy="8" r="1.5" fill="#000"/>
+  <circle cx="19.5" cy="5" r="1.5" fill="#000"/>
+</svg>

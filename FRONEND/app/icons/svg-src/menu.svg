@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill-rule="evenodd">
+  <!-- Line 1: y=6, x=4 to x=20 (width 16) -->
+  <rect x="4" y="5.25" width="16" height="1.5" rx="0.75" fill="#000"/>
+  <!-- Line 2: y=12, x=4 to x=16 (width 12, shorter) -->
+  <rect x="4" y="11.25" width="12" height="1.5" rx="0.75" fill="#000"/>
+  <!-- Line 3: y=18, x=4 to x=20 (width 16) -->
+  <rect x="4" y="17.25" width="16" height="1.5" rx="0.75" fill="#000"/>
+</svg>

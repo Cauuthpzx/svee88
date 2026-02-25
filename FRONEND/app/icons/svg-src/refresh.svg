@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill-rule="evenodd">
+  <!-- Top arrow: curved path from left going clockwise to right, with arrowhead at bottom-left -->
+  <path d="M2 4.75a.75.75 0 0 1 .75.75v4.5h4.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1-.75-.75V5.5a.75.75 0 0 1 .75-.75z" fill="#000"/>
+  <path d="M19.96 8.27a8.25 8.25 0 0 0-13.6-2.63L2.28 9.72a.75.75 0 0 1-1.06-1.06l4.08-4.08A9.75 9.75 0 0 1 21.38 7.6a.75.75 0 1 1-1.42.67z" fill="#000"/>
+  <!-- Bottom arrow: curved path from right going counter-clockwise to left, with arrowhead at top-right -->
+  <path d="M22 19.25a.75.75 0 0 1-.75-.75v-4.5h-4.5a.75.75 0 0 1 0-1.5h5.5a.75.75 0 0 1 .75.75v5.25a.75.75 0 0 1-.75.75z" fill="#000"/>
+  <path d="M4.04 15.73a8.25 8.25 0 0 0 13.6 2.63l4.08-4.08a.75.75 0 1 1 1.06 1.06l-4.08 4.08A9.75 9.75 0 0 1 2.62 16.4a.75.75 0 1 1 1.42-.67z" fill="#000"/>
+</svg>

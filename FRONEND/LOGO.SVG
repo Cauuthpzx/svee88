@@ -1,4 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" id="svg5" viewBox="0 0 820 170" width="820" height="170">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 170" width="820" height="170" role="img" aria-labelledby="logo-title-lg">
+  <title id="logo-title-lg">HUB SYSTEM</title>
   <defs>
     <linearGradient id="outlineFill5" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#ff4060"/>
@@ -6,6 +7,50 @@
       <stop offset="100%" stop-color="#ffcc00"/>
     </linearGradient>
   </defs>
-  <text x="50%" y="78%" text-anchor="middle" dominant-baseline="middle" font-family="'Arial Black','Impact',sans-serif" font-size="128" font-weight="900" letter-spacing="-2" fill="none" stroke="#ffffff" stroke-width="12" stroke-linejoin="round">HUB SYSTEM</text>
-  <text x="50%" y="78%" text-anchor="middle" dominant-baseline="middle" font-family="'Arial Black','Impact',sans-serif" font-size="128" font-weight="900" letter-spacing="-2" fill="url(#outlineFill5)" stroke="#ff2040" stroke-width="2" paint-order="stroke fill">HUB SYSTEM</text>
+
+  <!-- ═══ Hub Network Icon (large) ═══ -->
+  <!-- Hexagonal arrangement: 6 outer nodes at r=50 from center (73, 85) -->
+
+  <!-- Radiating connection lines -->
+  <g stroke="url(#outlineFill5)" stroke-width="6.5" stroke-linecap="round" fill="none">
+    <line x1="73" y1="85" x2="123" y2="85"/>
+    <line x1="73" y1="85" x2="98"  y2="41.7"/>
+    <line x1="73" y1="85" x2="48"  y2="41.7"/>
+    <line x1="73" y1="85" x2="23"  y2="85"/>
+    <line x1="73" y1="85" x2="48"  y2="128.3"/>
+    <line x1="73" y1="85" x2="98"  y2="128.3"/>
+  </g>
+
+  <!-- Hexagon edge connections (adjacent nodes, subtle) -->
+  <g stroke="url(#outlineFill5)" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.35">
+    <line x1="123" y1="85"    x2="98"  y2="41.7"/>
+    <line x1="98"  y1="41.7"  x2="48"  y2="41.7"/>
+    <line x1="48"  y1="41.7"  x2="23"  y2="85"/>
+    <line x1="23"  y1="85"    x2="48"  y2="128.3"/>
+    <line x1="48"  y1="128.3" x2="98"  y2="128.3"/>
+    <line x1="98"  y1="128.3" x2="123" y2="85"/>
+  </g>
+
+  <!-- 6 outer network nodes -->
+  <g fill="url(#outlineFill5)">
+    <circle cx="123" cy="85"    r="10"/>
+    <circle cx="98"  cy="41.7"  r="10"/>
+    <circle cx="48"  cy="41.7"  r="10"/>
+    <circle cx="23"  cy="85"    r="10"/>
+    <circle cx="48"  cy="128.3" r="10"/>
+    <circle cx="98"  cy="128.3" r="10"/>
+  </g>
+
+  <!-- Central hub node -->
+  <circle cx="73" cy="85" r="17" fill="url(#outlineFill5)"/>
+  <circle cx="73" cy="85" r="6.5" fill="#fff" opacity="0.92"/>
+
+  <!-- ═══ Wordmark ═══ -->
+  <text x="478" y="85" text-anchor="middle" dominant-baseline="middle"
+    font-family="'Arial Black','Impact',sans-serif" font-size="92" font-weight="900"
+    letter-spacing="3" fill="none" stroke="#ffffff" stroke-width="10" stroke-linejoin="round">HUB SYSTEM</text>
+  <text x="478" y="85" text-anchor="middle" dominant-baseline="middle"
+    font-family="'Arial Black','Impact',sans-serif" font-size="92" font-weight="900"
+    letter-spacing="3" fill="url(#outlineFill5)" stroke="#ff2040" stroke-width="2"
+    paint-order="stroke fill">HUB SYSTEM</text>
 </svg>
